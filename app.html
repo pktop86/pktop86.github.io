@@ -1,0 +1,3647 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta name="description" content="로또 회차 데이터를 바탕으로 참고용 번호, 결과 기록, 주변 판매점 정보를 확인할 수 있는 번호도구입니다. 본 서비스는 참고용이며 결과를 보장하지 않습니다.">
+<title>🎰 로또엔진 참고번호도구</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9933896132600937" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Black+Han+Sans&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080f;--panel:#0f1020;--card:#161828;--border:rgba(255,255,255,0.08);--accent:#f0c040;--accent2:#e05c20;--accent3:#3ab8ff;--green:#40d080;--red:#ff5050;--text:#dde0f0;--muted:#505870;--glow:rgba(240,192,64,0.22)}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);background-size:44px 44px}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px 80px;position:relative;z-index:1}
+.ad-banner-top{width:100%;margin:12px 0 0;min-height:60px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ad-banner-bottom{width:100%;margin:16px 0;min-height:90px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+header{text-align:center;padding:20px 0 16px}
+.badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;font-weight:900;font-size:10px;letter-spacing:1.5px;padding:3px 12px;border-radius:20px;margin-bottom:10px;text-transform:uppercase}
+h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);background:linear-gradient(120deg,#fff 0%,var(--accent) 50%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;line-height:1.15}
+.subtitle{color:var(--muted);font-size:11px;line-height:1.5}
+.credit{color:var(--muted);font-size:10px;margin-top:4px;opacity:.7}
+.tabs{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:3px;margin:14px 0 16px;gap:3px}
+.tab-btn{flex:1;background:transparent;border:none;color:var(--muted);padding:8px 2px;border-radius:9px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap}
+.tab-btn.on{background:var(--card);color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.tab-btn.disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+.tab-content{display:none}
+.tab-content.on{display:block}
+.status-bar{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px}
+.s-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--muted)}
+.s-dot.loading{background:var(--accent);animation:blink .9s infinite}
+.s-dot.ok{background:var(--green)}
+.s-dot.err{background:var(--red)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+#s-text{flex:1;font-size:11px}
+#s-extra{color:var(--muted);font-size:10px;white-space:nowrap}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.sc{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 6px;text-align:center}
+.sc-val{font-family:'Black Han Sans',sans-serif;font-size:1.2rem;color:var(--accent);line-height:1;margin-bottom:3px}
+.sc-label{font-size:9px;color:var(--muted)}
+.schedule-notice{background:var(--panel);border:1px solid rgba(64,208,128,.15);border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;font-size:11px}
+.sch-icon{font-size:18px;flex-shrink:0}
+.sch-title{font-weight:700;color:var(--green);font-size:12px;margin-bottom:2px}
+.sch-desc{color:var(--muted);line-height:1.6}
+#next-update{color:var(--accent);font-weight:700}
+.algo-panel{background:var(--panel);border:1px solid rgba(58,184,255,.14);border-radius:12px;padding:14px;margin-bottom:14px}
+.sec-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
+.algo-rules{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rule-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.rule-title{font-size:9px;font-weight:700;color:var(--accent3);letter-spacing:.8px;margin-bottom:4px;text-transform:uppercase}
+.rule-desc{font-size:10px;color:var(--muted);line-height:1.55}
+.section-box{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px}
+.freq-bars{display:grid;grid-template-columns:repeat(45,1fr);gap:1px;align-items:end;height:72px;overflow:hidden}
+.fb-col{display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end;min-width:0}
+.fb-bar{width:100%;border-radius:2px 2px 0 0;min-height:2px;flex-shrink:0}
+.fb-lbl{font-size:5.5px;color:var(--muted);line-height:1;flex-shrink:0;overflow:hidden;white-space:nowrap}
+.fb-hot .fb-bar{background:var(--accent)}
+.fb-mid .fb-bar{background:var(--accent3);opacity:.6}
+.fb-cold .fb-bar{background:rgba(255,255,255,.1)}
+.gen-box{background:var(--panel);border:1px solid rgba(240,192,64,.2);border-radius:14px;padding:18px;margin-bottom:14px}
+.ctrl-section{margin-bottom:14px}
+.ctrl-label{font-size:11px;color:var(--muted);margin-bottom:8px;display:block}
+.seg{display:flex;background:var(--card);border-radius:8px;padding:3px;gap:2px;border:1px solid var(--border)}
+.seg-btn{flex:1;background:transparent;border:none;color:var(--muted);padding:9px 4px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
+.seg-btn.on{background:var(--accent);color:#000}
+.ad-notice{background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.18);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--muted);margin-bottom:14px;display:flex;gap:8px;align-items:flex-start}
+.ad-notice .icon{font-size:16px;flex-shrink:0}
+.gen-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;border:none;border-radius:11px;padding:16px;font-size:1rem;font-weight:900;font-family:'Black Han Sans',sans-serif;cursor:pointer;letter-spacing:1px;transition:all .25s;margin-bottom:16px}
+.gen-btn:hover{transform:translateY(-2px);box-shadow:0 6px 22px var(--glow)}
+.gen-btn:disabled{opacity:.38;cursor:not-allowed;transform:none}
+#results{display:flex;flex-direction:column;gap:10px}
+.r-row{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;animation:fadeUp .3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.r-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.r-num{font-size:10px;font-weight:700;color:var(--muted);width:18px;flex-shrink:0;text-align:center}
+.r-balls{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.r-saved{font-size:10px;color:var(--green);flex-shrink:0}
+.ball{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0;box-shadow:inset 0 -2px 5px rgba(0,0,0,.3)}
+.b1{background:radial-gradient(circle at 38% 35%,#ffe060,#c88000);color:#5a2e00}
+.b2{background:radial-gradient(circle at 38% 35%,#60c8ff,#0a60c0);color:#fff}
+.b3{background:radial-gradient(circle at 38% 35%,#ff7a5a,#c01818);color:#fff}
+.b4{background:radial-gradient(circle at 38% 35%,#a0a8b8,#383848);color:#fff}
+.b5{background:radial-gradient(circle at 38% 35%,#70e890,#0a7028);color:#fff}
+.ball.hit{outline:3px solid var(--accent);outline-offset:1px}
+.r-tags{display:flex;flex-wrap:wrap;gap:4px;padding-top:8px;border-top:1px solid var(--border)}
+.tag{font-size:9px;border-radius:4px;padding:2px 7px;font-weight:700}
+.tag.ok{background:rgba(64,208,128,.1);color:var(--green);border:1px solid rgba(64,208,128,.2)}
+.tag.warn{background:rgba(240,192,64,.1);color:var(--accent);border:1px solid rgba(240,192,64,.2)}
+.tag.info{background:rgba(58,184,255,.08);color:var(--accent3);border:1px solid rgba(58,184,255,.18)}
+.tag.win1{background:rgba(240,192,64,.25);color:var(--accent);border:1px solid var(--accent);font-size:10px}
+.tag.win2{background:rgba(58,184,255,.2);color:var(--accent3);border:1px solid var(--accent3)}
+.tag.win3{background:rgba(64,208,128,.15);color:var(--green);border:1px solid var(--green)}
+.tag.win4,.tag.win5{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.freq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:4px}
+.fi{background:var(--card);border:1px solid transparent;border-radius:7px;padding:5px 2px;text-align:center;position:relative;overflow:hidden}
+.fi.hot1{border-color:var(--accent);background:rgba(240,192,64,.09)}
+.fi.hot2{border-color:rgba(240,192,64,.4)}
+.fi.hot3{border-color:rgba(240,192,64,.18)}
+.fi.cold{border-color:rgba(58,184,255,.2)}
+.fi-n{font-weight:900;font-size:13px;line-height:1.2}
+.fi-c{font-size:8px;color:var(--muted);line-height:1.1}
+.fi-prog{position:absolute;bottom:0;left:0;height:2px;background:var(--accent)}
+.free-counter{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:14px;font-size:11px}
+.free-pips{display:flex;gap:4px}
+.pip{width:10px;height:10px;border-radius:50%;background:var(--accent);transition:background .3s}
+.pip.used{background:var(--border)}
+.free-text{flex:1;color:var(--muted)}
+/* 내 번호 탭 */
+.my-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px}
+.my-sc{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 4px;text-align:center}
+.my-sc.rank1{border-color:var(--accent);background:rgba(240,192,64,.07)}
+.my-sc.rank2{border-color:rgba(58,184,255,.4)}
+.my-sc.rank3{border-color:rgba(64,208,128,.4)}
+.my-sc-val{font-family:'Black Han Sans',sans-serif;font-size:1.3rem;color:var(--accent);line-height:1;margin-bottom:2px}
+.my-sc.rank2 .my-sc-val{color:var(--accent3)}
+.my-sc.rank3 .my-sc-val{color:var(--green)}
+.my-sc.rank4 .my-sc-val,.my-sc.rank5 .my-sc-val{color:var(--text)}
+.my-sc-label{font-size:9px;color:var(--muted)}
+.my-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.my-toolbar-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.my-toolbar-btn:hover{color:var(--text)}
+.my-toolbar-btn.danger{background:rgba(255,80,80,.1);border-color:rgba(255,80,80,.3);color:var(--red)}
+.my-toolbar-btn.primary{background:var(--accent);color:#000;border-color:var(--accent)}
+.my-sel-count{font-size:11px;color:var(--accent);font-weight:700;margin-left:auto}
+.my-round-section{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+.my-round-title{font-family:'Black Han Sans',sans-serif;font-size:1rem;color:var(--accent);margin-bottom:4px}
+.my-round-sub{font-size:10px;color:var(--muted);margin-bottom:12px}
+.my-nums-list{display:flex;flex-direction:column;gap:8px}
+.my-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.my-item-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.my-item-idx{font-size:10px;color:var(--muted);width:20px;flex-shrink:0;text-align:center}
+.my-item-balls{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+.my-item-prize{font-size:10px;flex-shrink:0}
+.my-item-tags{display:flex;flex-wrap:wrap;gap:3px;padding-top:6px;border-top:1px solid var(--border)}
+.my-checkbox{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);cursor:pointer;flex-shrink:0;accent-color:var(--accent)}
+.del-btn{background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.25);color:var(--red);border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer;flex-shrink:0;transition:all .2s}
+.del-btn:hover{background:rgba(255,80,80,.25)}
+.result-pending{background:var(--panel);border:1px solid rgba(240,192,64,.15);border-radius:10px;padding:14px;text-align:center;margin-bottom:12px}
+.result-pending-icon{font-size:28px;margin-bottom:6px}
+.result-pending-text{font-size:12px;color:var(--muted);line-height:1.7}
+.result-pending-time{color:var(--accent);font-weight:700}
+.win-banner{background:linear-gradient(135deg,rgba(240,192,64,.15),rgba(224,92,32,.1));border:1px solid var(--accent);border-radius:10px;padding:12px 14px;margin-bottom:12px;text-align:center}
+.win-banner-icon{font-size:28px;margin-bottom:4px}
+.win-banner-text{font-family:'Black Han Sans',sans-serif;font-size:1rem;color:var(--accent)}
+.win-banner-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.empty-state{text-align:center;padding:36px 16px;color:var(--muted);font-size:12px}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:.35}
+/* 내주변 판매점 */
+#map-container{width:100%;height:360px;border-radius:12px;overflow:hidden;margin-bottom:16px;background:var(--panel);border:1px solid var(--border);position:relative}
+#map{width:100%;height:100%}
+.map-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--panel);color:var(--muted);font-size:13px}
+.map-loading-icon{font-size:36px;animation:spin 2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.near-filter{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.near-chip{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.near-chip.on{background:var(--accent);color:#000;border-color:var(--accent)}
+.near-table{width:100%;border-collapse:collapse;font-size:12px}
+.near-table th{background:var(--panel);color:var(--muted);font-weight:700;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);font-size:11px}
+.near-table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
+.near-table tr:hover td{background:rgba(255,255,255,0.03)}
+.near-table tr:last-child td{border-bottom:none}
+.near-name{font-weight:700;color:var(--text);margin-bottom:2px}
+.near-addr{font-size:10px;color:var(--muted)}
+.near-dist{color:var(--accent);font-weight:700;font-size:12px;white-space:nowrap}
+.near-tel{font-size:10px;color:var(--accent3)}
+.near-rank{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#000;font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center}
+.near-rank.r2{background:var(--muted)}
+.near-rank.r3{background:#c88000}
+.loc-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;border:none;border-radius:10px;padding:12px 20px;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit;width:100%;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+.loc-btn:disabled{opacity:.5;cursor:not-allowed}
+.near-empty{text-align:center;padding:32px;color:var(--muted);font-size:13px}
+.near-count{font-size:11px;color:var(--muted);margin-bottom:10px}
+/* 당첨현황 */
+.prize-locked{background:var(--panel);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:36px 20px;text-align:center;margin-bottom:14px}
+.prize-locked-icon{font-size:48px;margin-bottom:14px;opacity:.5}
+.prize-locked-title{font-family:'Black Han Sans',sans-serif;font-size:1.2rem;color:var(--muted);margin-bottom:8px}
+.prize-locked-desc{font-size:11px;color:var(--muted);line-height:1.8;opacity:.7}
+.prize-header{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;text-align:center}
+.prize-round{font-family:'Black Han Sans',sans-serif;font-size:1.4rem;color:var(--accent);margin-bottom:10px}
+.prize-winning-balls{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.prize-date{font-size:10px;color:var(--muted)}
+.prize-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:14px}
+.prize-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 6px;text-align:center}
+.prize-card.p1{border-color:var(--accent);background:rgba(240,192,64,.06)}
+.prize-card.p2{border-color:rgba(58,184,255,.4)}
+.prize-card.p3{border-color:rgba(64,208,128,.4)}
+.pz-rank{font-family:'Black Han Sans',sans-serif;font-size:.9rem;margin-bottom:5px}
+.p1 .pz-rank{color:var(--accent)}
+.p2 .pz-rank{color:var(--accent3)}
+.p3 .pz-rank{color:var(--green)}
+.p4 .pz-rank,.p5 .pz-rank{color:var(--muted)}
+.pz-count{font-family:'Black Han Sans',sans-serif;font-size:1.5rem;color:var(--text);line-height:1}
+.pz-label{font-size:9px;color:var(--muted);margin-top:2px}
+.summary-bar{background:var(--panel);border:1px solid rgba(58,184,255,.15);border-radius:10px;padding:12px 14px;margin-bottom:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sum-item{text-align:center}
+.sum-val{font-family:'Black Han Sans',sans-serif;font-size:1.1rem;color:var(--accent3)}
+.sum-label{font-size:9px;color:var(--muted);margin-top:2px}
+.round-chip{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:16px;padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-right:6px;margin-bottom:6px}
+.round-chip.on{background:var(--accent);color:#000;border-color:var(--accent)}
+.history-section{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px}
+.history-list{display:flex;flex-direction:column;gap:7px;max-height:480px;overflow-y:auto}
+.hist-item{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hist-round{font-size:10px;color:var(--muted);flex-shrink:0;width:46px;line-height:1.4}
+.hist-balls{display:flex;gap:3px;flex:1;flex-wrap:wrap}
+.hist-ball{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;flex-shrink:0}
+.hist-ball.hit{outline:2px solid var(--accent);outline-offset:1px}
+.hist-time{font-size:9px;color:var(--muted);flex-shrink:0}
+/* 모달 */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--panel);border:1px solid rgba(240,192,64,.25);border-radius:20px;padding:28px 24px;max-width:340px;width:100%;text-align:center;animation:modalIn .3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.modal-icon{font-size:44px;margin-bottom:12px}
+.modal-title{font-family:'Black Han Sans',sans-serif;font-size:1.25rem;color:var(--accent);margin-bottom:8px}
+.modal-desc{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px}
+.modal-ad-area{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;min-height:100px;margin-bottom:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;overflow:hidden}
+.timer-bar-bg{width:100%;height:4px;background:var(--card);border-radius:2px;overflow:hidden}
+.timer-bar{height:100%;background:var(--accent);border-radius:2px;transition:width .1s linear}
+.timer-text{font-size:11px;color:var(--muted);margin-top:4px;text-align:center}
+.modal-btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:13px;font-weight:900;font-family:'Black Han Sans',sans-serif;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.modal-btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000}
+.modal-btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.modal-btn-secondary{background:var(--card);color:var(--muted);border:1px solid var(--border);margin-top:8px;font-size:12px}
+@media(max-width:400px){.stats-row{grid-template-columns:repeat(2,1fr)}.prize-cards{grid-template-columns:repeat(3,1fr)}.algo-rules{grid-template-columns:1fr}.ball{width:30px;height:30px;font-size:11px}}
+ 
+/* ── 오늘의 숫자 카드 카드 ── */
+.lucky-card{background:linear-gradient(135deg,rgba(240,192,64,.12),rgba(224,92,32,.08));border:1px solid rgba(240,192,64,.35);border-radius:16px;padding:18px 16px;margin-bottom:16px;position:relative;overflow:hidden}
+.lucky-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(240,192,64,.06));pointer-events:none}
+.lucky-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.lucky-card-title{font-size:13px;font-weight:900;color:var(--accent);display:flex;align-items:center;gap:6px}
+.lucky-refresh{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:0;line-height:1;transition:transform .4s}
+.lucky-refresh:hover{transform:rotate(180deg)}
+.lucky-balls-row{display:flex;gap:7px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+.lucky-ball{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;box-shadow:0 3px 10px rgba(0,0,0,.4),inset 0 -2px 5px rgba(0,0,0,.25);transition:transform .3s;animation:luckySpin .6s ease both}
+@keyframes luckySpin{from{opacity:0;transform:scale(.5) rotate(-180deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+.lucky-ball:nth-child(1){animation-delay:.05s}
+.lucky-ball:nth-child(2){animation-delay:.1s}
+.lucky-ball:nth-child(3){animation-delay:.15s}
+.lucky-ball:nth-child(4){animation-delay:.2s}
+.lucky-ball:nth-child(5){animation-delay:.25s}
+.lucky-ball:nth-child(6){animation-delay:.3s}
+.lucky-info-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.lucky-info{background:rgba(0,0,0,.2);border-radius:10px;padding:8px 6px;text-align:center}
+.lucky-info-val{font-size:14px;font-weight:900;color:var(--accent);line-height:1.2}
+.lucky-info-label{font-size:9px;color:var(--muted);margin-top:2px}
+.lucky-score-bar{height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.lucky-score-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:3px;transition:width 1s ease}
+.lucky-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lucky-btn{border:none;border-radius:10px;padding:10px 6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;letter-spacing:.3px}
+.lucky-btn-sim{background:var(--accent);color:#000}
+.lucky-btn-sim:hover{transform:translateY(-1px);box-shadow:0 4px 14px var(--glow)}
+.lucky-btn-challenge{background:rgba(58,184,255,.15);color:var(--accent3);border:1px solid rgba(58,184,255,.3)}
+.lucky-btn-challenge:hover{background:rgba(58,184,255,.25)}
+.lucky-analyzing{text-align:center;padding:20px;color:var(--muted);font-size:12px}
+.lucky-analyzing-icon{font-size:28px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.7}}
+.lucky-challenge-banner{background:rgba(58,184,255,.08);border:1px solid rgba(58,184,255,.2);border-radius:8px;padding:8px 12px;font-size:10px;color:var(--accent3);text-align:center;margin-top:8px;display:none}
+.lucky-challenge-banner.show{display:block}
+ 
+/* ── 번호 시뮬레이션 ── */
+.sim-box{background:var(--panel);border:1px solid rgba(58,184,255,.2);border-radius:14px;padding:16px;margin-top:14px}
+.sim-title{font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--accent3);text-transform:uppercase;margin-bottom:12px}
+.sim-target{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;min-height:38px;align-items:center}
+.sim-target-empty{font-size:12px;color:var(--muted)}
+.sim-btns{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.sim-btn{flex:1;min-width:80px;border:none;border-radius:9px;padding:10px 6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
+.sim-btn-free{background:var(--accent);color:#000}
+.sim-btn-free:hover{transform:translateY(-1px);box-shadow:0 4px 12px var(--glow)}
+.sim-btn-ad{background:var(--card);color:var(--muted);border:1px solid var(--border)}
+.sim-btn-ad:hover{color:var(--text);border-color:var(--accent3)}
+.sim-btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.sim-running{text-align:center;padding:16px;color:var(--accent3);font-size:12px}
+.sim-running-anim{font-size:24px;animation:simSpin 1s linear infinite;display:inline-block;margin-bottom:6px}
+@keyframes simSpin{to{transform:rotate(360deg)}}
+.sim-progress{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin-top:8px}
+.sim-progress-bar{height:100%;background:var(--accent3);border-radius:2px;transition:width .1s linear}
+.sim-results{margin-top:4px}
+.sim-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px}
+.sim-table th{background:var(--card);color:var(--muted);font-weight:700;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);font-size:10px}
+.sim-table td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.sim-table tr:last-child td{border-bottom:none}
+.sim-rank{font-weight:900;font-size:13px}
+.sim-rank.r1{color:var(--accent)}
+.sim-rank.r2{color:var(--accent3)}
+.sim-rank.r3{color:var(--green)}
+.sim-rank.r4,.sim-rank.r5{color:var(--text)}
+.sim-rank.r0{color:var(--muted)}
+.sim-count{font-weight:700;color:var(--text)}
+.sim-pct{color:var(--muted);font-size:10px}
+.sim-bar-wrap{flex:1;background:rgba(255,255,255,.06);border-radius:3px;height:8px;overflow:hidden;min-width:60px}
+.sim-bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.sim-bar-r1{background:var(--accent)}
+.sim-bar-r2{background:var(--accent3)}
+.sim-bar-r3{background:var(--green)}
+.sim-bar-r4,.sim-bar-r5{background:var(--muted)}
+.sim-bar-r0{background:rgba(255,255,255,.1)}
+.sim-summary{background:var(--card);border-radius:10px;padding:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
+.sim-sum-val{font-family:"Black Han Sans",sans-serif;font-size:1.1rem;color:var(--accent3);line-height:1;margin-bottom:3px}
+.sim-sum-label{font-size:9px;color:var(--muted)}
+ 
+/* ── 주간 번호 참여 ── */
+.challenge-card{background:linear-gradient(135deg,rgba(176,96,255,.1),rgba(58,184,255,.08));border:1px solid rgba(176,96,255,.3);border-radius:16px;padding:16px;margin-bottom:14px}
+.challenge-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.challenge-title{font-size:13px;font-weight:900;color:#b060ff;display:flex;align-items:center;gap:6px}
+.challenge-round-badge{background:rgba(176,96,255,.2);color:#b060ff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px}
+.challenge-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.challenge-stat{background:rgba(0,0,0,.2);border-radius:10px;padding:10px;text-align:center}
+.challenge-stat-val{font-family:"Black Han Sans",sans-serif;font-size:1.2rem;color:#b060ff;line-height:1;margin-bottom:3px}
+.challenge-stat-label{font-size:9px;color:var(--muted)}
+.challenge-my-status{background:rgba(176,96,255,.08);border:1px solid rgba(176,96,255,.2);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:11px;display:none}
+.challenge-my-status.show{display:block}
+.challenge-my-nums{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.challenge-rank-badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;margin-left:6px}
+.rank-top10{background:rgba(240,192,64,.25);color:var(--accent)}
+.rank-top100{background:rgba(58,184,255,.2);color:var(--accent3)}
+.rank-done{background:rgba(255,255,255,.08);color:var(--muted)}
+.challenge-btns{display:flex;flex-direction:column;gap:7px}
+.challenge-btn{border:none;border-radius:10px;padding:11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center;width:100%}
+.challenge-btn-main{background:linear-gradient(135deg,#b060ff,#3ab8ff);color:#fff}
+.challenge-btn-main:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(176,96,255,.4)}
+.challenge-btn-main:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.challenge-btn-lucky{background:rgba(240,192,64,.15);color:var(--accent);border:1px solid rgba(240,192,64,.3)}
+.challenge-btn-custom{background:var(--card);color:var(--muted);border:1px solid var(--border)}
+.challenge-btn-custom:hover{color:var(--text)}
+.challenge-entries{margin-top:10px}
+.challenge-entries-title{font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.challenge-entry-item{background:var(--card);border-radius:8px;padding:8px 10px;margin-bottom:5px;display:flex;align-items:center;gap:8px;font-size:11px}
+.challenge-entry-rank{width:28px;height:28px;border-radius:50%;background:rgba(176,96,255,.2);color:#b060ff;font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.challenge-entry-nums{display:flex;gap:3px;flex-wrap:wrap;flex:1}
+.challenge-entry-mine{border:1px solid rgba(176,96,255,.4)}
+.challenge-custom-input{display:none;margin-top:8px}
+.challenge-custom-input.show{display:block}
+.challenge-custom-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin-bottom:8px}
+.challenge-num-btn{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 2px;font-size:11px;font-weight:700;cursor:pointer;text-align:center;color:var(--muted);transition:all .15s}
+.challenge-num-btn.selected{background:var(--accent);color:#000;border-color:var(--accent)}
+.challenge-num-btn:disabled{opacity:.4;cursor:not-allowed}
+ 
+/* ── 내정보 탭 ── */
+.myinfo-section{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px}
+.myinfo-section-title{font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.myinfo-form-row{margin-bottom:14px}
+.myinfo-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:block;font-weight:700}
+.myinfo-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .2s}
+.myinfo-input:focus{border-color:var(--accent)}
+.myinfo-select{width:100%;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--text);font-size:13px;font-family:inherit;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer}
+.myinfo-gender-row{display:flex;gap:8px}
+.myinfo-gender-btn{flex:1;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:9px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
+.myinfo-gender-btn.on{background:var(--accent);color:#000;border-color:var(--accent)}
+.myinfo-checkbox-row{display:flex;align-items:flex-start;gap:10px;background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.2);border-radius:10px;padding:12px 14px;margin-bottom:14px;cursor:pointer}
+.myinfo-checkbox-row input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:2px;cursor:pointer}
+.myinfo-checkbox-label{font-size:12px;color:var(--text);line-height:1.5;cursor:pointer}
+.myinfo-btn-row{display:grid;grid-template-columns:2fr 1fr;gap:10px}
+.myinfo-btn-save{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit;transition:all .2s}
+.myinfo-btn-save:hover{transform:translateY(-1px);box-shadow:0 4px 14px var(--glow)}
+.myinfo-btn-reset{background:var(--card);color:var(--muted);border:1px solid var(--border);border-radius:10px;padding:13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+/* 운세 카드 */
+.fortune-card{background:linear-gradient(135deg,rgba(176,96,255,.08),rgba(240,192,64,.06));border:1px solid rgba(176,96,255,.25);border-radius:16px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden}
+.fortune-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(176,96,255,.15),transparent);border-radius:50%;pointer-events:none}
+.fortune-card-title{font-size:13px;font-weight:900;color:#b060ff;margin-bottom:16px;display:flex;align-items:center;gap:6px}
+.fortune-today{font-size:13px;color:var(--text);line-height:1.7;margin-bottom:14px;padding:12px;background:rgba(0,0,0,.2);border-radius:10px;border-left:3px solid #b060ff}
+.fortune-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.fortune-item{background:rgba(0,0,0,.2);border-radius:10px;padding:10px 12px}
+.fortune-item-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.fortune-item-val{font-size:14px;font-weight:900;color:var(--text)}
+.fortune-lucky-num{background:linear-gradient(135deg,rgba(176,96,255,.2),rgba(58,184,255,.15));border:1px solid rgba(176,96,255,.3);border-radius:12px;padding:14px;text-align:center;margin-bottom:14px}
+.fortune-lucky-num-val{font-family:"Black Han Sans",sans-serif;font-size:2.5rem;color:#b060ff;line-height:1;margin-bottom:4px}
+.fortune-lucky-num-label{font-size:10px;color:var(--muted)}
+.fortune-action{background:rgba(0,0,0,.2);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.fortune-action-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.fortune-action-text{font-size:12px;color:var(--text);line-height:1.6}
+.fortune-empty{text-align:center;padding:32px 16px;color:var(--muted);font-size:12px}
+.fortune-empty-icon{font-size:36px;margin-bottom:10px;opacity:.4}
+ 
+/* ── 챌린지 개선 UI ── */
+.challenge-status-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px}
+.status-open{background:rgba(64,208,128,.15);color:var(--green);border:1px solid rgba(64,208,128,.3)}
+.status-closed{background:rgba(255,80,80,.12);color:var(--red);border:1px solid rgba(255,80,80,.25)}
+.status-scored{background:rgba(240,192,64,.15);color:var(--accent);border:1px solid rgba(240,192,64,.3)}
+.challenge-my-rank-card{background:linear-gradient(135deg,rgba(176,96,255,.12),rgba(58,184,255,.08));border:1px solid rgba(176,96,255,.25);border-radius:12px;padding:14px;margin-bottom:12px;display:none}
+.challenge-my-rank-card.show{display:block}
+.challenge-my-rank-val{font-family:"Black Han Sans",sans-serif;font-size:2rem;color:#b060ff;line-height:1}
+.challenge-my-rank-label{font-size:10px;color:var(--muted);margin-top:3px}
+.challenge-my-rank-nums{display:flex;gap:3px;flex-wrap:wrap;margin-top:8px}
+.challenge-rule-info{font-size:10px;color:var(--muted);margin-bottom:10px;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:8px;line-height:1.6}
+.challenge-top10{margin-top:12px}
+.challenge-top10-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.challenge-top10-list{display:flex;flex-direction:column;gap:5px;max-height:400px;overflow-y:auto}
+.challenge-top10-item{background:var(--card);border-radius:8px;padding:9px 12px;display:flex;align-items:center;gap:8px;font-size:11px}
+.challenge-top10-item.is-me{border:1px solid rgba(176,96,255,.4);background:rgba(176,96,255,.06)}
+.challenge-top10-rank{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;flex-shrink:0}
+.rank-1{background:var(--accent);color:#000}
+.rank-2{background:#c0c0c0;color:#000}
+.rank-3{background:#c88000;color:#fff}
+.rank-other{background:var(--panel);color:var(--muted)}
+.challenge-top10-nums{display:flex;gap:3px;flex-wrap:wrap;flex:1}
+.challenge-top10-match{font-size:10px;color:var(--accent);font-weight:700;flex-shrink:0}
+.challenge-history{margin-top:12px}
+.challenge-history-title{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.challenge-history-list{display:none;flex-direction:column;gap:8px}
+.challenge-history-list.show{display:flex}
+.challenge-hist-item{background:var(--card);border-radius:10px;padding:12px}
+.challenge-hist-round{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.challenge-hist-my{font-size:10px;color:var(--muted);margin-bottom:4px}
+.challenge-hist-nums{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:6px}
+.challenge-hist-result{display:flex;align-items:center;gap:6px}
+.challenge-hist-rank{font-size:11px;font-weight:700}
+ 
+/* ── 내 번호 날짜별 구분 ── */
+.my-date-divider{display:flex;align-items:center;gap:10px;margin:16px 0 8px;opacity:.7}
+.my-date-divider-line{flex:1;height:1px;background:var(--border)}
+.my-date-divider-text{font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap}
+.my-item-sim-btn{background:rgba(58,184,255,.12);border:1px solid rgba(58,184,255,.25);color:var(--accent3);border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.my-item-sim-btn:hover{background:rgba(58,184,255,.25)}
+ 
+/* ── 참고점수 시스템 ── */
+.near-sort-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:0 2px}
+.near-sort-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.near-sort-btn.on{background:var(--accent);color:#000;border-color:var(--accent)}
+.lucky-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:700;margin-top:4px}
+.lucky-badge-gold{background:rgba(240,192,64,.2);color:var(--accent);border:1px solid rgba(240,192,64,.35)}
+.lucky-badge-orange{background:rgba(224,92,32,.15);color:#e05c20;border:1px solid rgba(224,92,32,.3)}
+.lucky-badge-blue{background:rgba(58,184,255,.12);color:var(--accent3);border:1px solid rgba(58,184,255,.25)}
+.lucky-badge-none{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border)}
+.lucky-score-bar-wrap{width:60px;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:4px}
+.lucky-score-bar-fill{height:100%;border-radius:2px}
+.near-loading-lucky{font-size:10px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:4px}
+.near-table td{vertical-align:top;padding:10px 8px}
+.near-lucky-cell{min-width:100px}
+.near-table .lucky-row-gold{border-left:3px solid var(--accent)}
+.near-table .lucky-row-orange{border-left:3px solid #e05c20}
+
+ /* ── 내주변 판매점 정렬 설명 ── */
+.near-sort-help{
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 12px;
+  margin:0 0 12px;
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.near-sort-help strong{
+  color:#fff;
+  font-weight:800;
+}
+.near-sort-help .accent{
+  color:var(--accent);
+}
+.near-sort-help .blue{
+  color:var(--accent3);
+}
+.near-sort-help .orange{
+  color:#ffb347;
+}
+
+/* ── 내 주변 로또명당 TOP10 ── */
+.near-top10-box{
+  background:linear-gradient(135deg,rgba(240,192,64,.10),rgba(224,92,32,.06));
+  border:1px solid rgba(240,192,64,.22);
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:14px;
+}
+.near-top10-title{
+  font-size:12px;
+  font-weight:900;
+  color:var(--accent);
+  margin-bottom:10px;
+}
+.near-top10-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.near-top10-item{
+  background:rgba(0,0,0,.18);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:10px;
+  padding:10px 12px;
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+.near-top10-rank{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:11px;
+  flex-shrink:0;
+  background:var(--panel);
+  color:#fff;
+}
+.near-top10-rank.r1{background:var(--accent);color:#000;}
+.near-top10-rank.r2{background:#c0c0c0;color:#000;}
+.near-top10-rank.r3{background:#c88000;color:#fff;}
+.near-top10-main{flex:1;min-width:0;}
+.near-top10-name{
+  color:#fff;
+  font-weight:800;
+  font-size:12px;
+  margin-bottom:3px;
+}
+.near-top10-sub{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.5;
+}
+.near-top10-side{
+  text-align:right;
+  flex-shrink:0;
+}
+.near-top10-score{
+  color:var(--accent);
+  font-weight:900;
+  font-size:13px;
+}
+.near-top10-first{
+  color:#fff;
+  font-size:10px;
+  margin-top:3px;
+}
+.near-top10-recent{
+  color:var(--muted);
+  font-size:9px;
+  margin-top:2px;
+}
+
+/* ── 참고점수 배지 개선 ── */
+.lucky-badge-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.lucky-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 8px;
+  border-radius:8px;
+  font-size:10px;
+  font-weight:800;
+  width:max-content;
+}
+.lucky-badge-gold{
+  background:rgba(240,192,64,.2);
+  color:var(--accent);
+  border:1px solid rgba(240,192,64,.35);
+}
+.lucky-badge-orange{
+  background:rgba(224,92,32,.15);
+  color:#e05c20;
+  border:1px solid rgba(224,92,32,.3);
+}
+.lucky-badge-blue{
+  background:rgba(58,184,255,.12);
+  color:var(--accent3);
+  border:1px solid rgba(58,184,255,.25);
+}
+.lucky-badge-none{
+  background:rgba(255,255,255,.05);
+  color:var(--muted);
+  border:1px solid var(--border);
+}
+.lucky-score-bar-wrap{
+  width:64px;
+  height:5px;
+  background:rgba(255,255,255,.08);
+  border-radius:3px;
+  overflow:hidden;
+  display:inline-block;
+  vertical-align:middle;
+  margin-left:4px;
+}
+.lucky-score-bar-fill{
+  height:100%;
+  border-radius:3px;
+}
+.lucky-meta{
+  font-size:10px;
+  color:#fff; /* 요청하신 흰색 */
+  line-height:1.5;
+  font-weight:700;
+}
+.lucky-meta .sub{
+  color:#fff;
+}
+.lucky-meta .muted{
+  color:rgba(255,255,255,.72);
+  font-weight:600;
+}
+ /* ── TOP10 열기 버튼 ── */
+.near-top10-open-btn{
+  width:100%;
+  border:none;
+  border-radius:12px;
+  padding:13px 16px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#000;
+  font-size:13px;
+  font-weight:900;
+  font-family:inherit;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(240,192,64,.18);
+  transition:all .18s ease;
+}
+.near-top10-open-btn:active{
+  transform:scale(.98);
+}
+
+/* ── TOP10 모달 내부 리스트 ── */
+.near-top10-modal-list{
+  max-height:52vh;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  text-align:left;
+  margin:14px 0 8px;
+}
+.near-top10-addr{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.45;
+}
+.near-top10-meta{
+  font-size:10px;
+  color:#fff;
+  line-height:1.55;
+  font-weight:700;
+  margin-top:4px;
+}
+.near-top10-meta .muted{
+  color:rgba(255,255,255,.7);
+  font-weight:600;
+}
+.near-top10-dist{
+  color:var(--accent3);
+  font-size:10px;
+  margin-top:4px;
+  font-weight:700;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ad-banner-top">
+    <ins class="adsbygoogle" style="display:block;width:100%;min-height:60px" data-ad-client="ca-pub-9933896132600937" data-ad-slot="auto" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+  </div>
+  <header>
+    <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
+    <h1>로또엔진<br>번호도구</h1>
+    <p class="credit">제작자: Clyde Park (P.K.H)</p>
+    <p class="subtitle">회차 데이터 기반 참고용 번호 도구 · 결과 기록 기능 포함</p>
+  </header>
+  <div class="tabs">
+    <button class="tab-btn on" data-tab="pick">🎲 번호추첨</button>
+    <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
+    <button class="tab-btn" data-tab="myinfo">🔮 오늘의 흐름</button>
+    <button class="tab-btn" data-tab="near">📍 내주변 판매점</button>
+    <button class="tab-btn disabled" data-tab="prize" id="tab-prize-btn">🏆 당첨현황</button>
+  </div>
+ 
+  <!-- 번호추첨 탭 -->
+  <div class="tab-content on" id="tab-pick">
+    <!-- 오늘의 숫자 카드 카드 -->
+    <div class="lucky-card" id="lucky-card">
+      <div class="lucky-card-header">
+        <div class="lucky-card-title">🍀 오늘의 숫자 카드</div>
+        <button class="lucky-refresh" id="lucky-refresh-btn" title="매일 00:00 갱신 · 오늘은 모두 같은 번호">🔄</button>
+      </div>
+      <div id="lucky-content">
+        <div class="lucky-analyzing">
+          <div class="lucky-analyzing-icon">🔮</div>
+          <div>오늘의 숫자 카드를 불러오는 중...</div>
+        </div>
+      </div>
+    </div>
+    <!-- 주간 번호 참여 -->
+    <div class="challenge-card" id="challenge-card">
+      <div class="challenge-header">
+        <div class="challenge-title">🏆 주간 번호 참여</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="challenge-status-badge status-open" id="challenge-status-badge">● 참여 중</span>
+          <div class="challenge-round-badge" id="challenge-round-badge">— 회차</div>
+        </div>
+      </div>
+      <div class="challenge-rule-info">
+        🏅 동률 규칙: 일치 개수 많은 순 → 보너스 번호 일치 → 먼저 참여한 순
+      </div>
+      <div class="challenge-stats">
+        <div class="challenge-stat">
+          <div class="challenge-stat-val" id="challenge-count">—</div>
+          <div class="challenge-stat-label">참가자 수</div>
+        </div>
+        <div class="challenge-stat">
+          <div class="challenge-stat-val" id="challenge-deadline">—</div>
+          <div class="challenge-stat-label">상태</div>
+        </div>
+      </div>
+      <!-- 내 순위 카드 (채점 후 표시) -->
+      <div class="challenge-my-rank-card" id="challenge-my-rank-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div>
+            <div class="challenge-my-rank-val" id="challenge-my-rank-val">—</div>
+            <div class="challenge-my-rank-label">내 순위</div>
+          </div>
+          <div style="text-align:right">
+            <div id="challenge-my-match" style="font-size:13px;font-weight:700;color:var(--accent)">—</div>
+            <div style="font-size:10px;color:var(--muted)">번호 일치</div>
+          </div>
+        </div>
+        <div class="challenge-my-rank-nums" id="challenge-my-rank-nums"></div>
+      </div>
+      <!-- 참여 완료 상태 -->
+      <div class="challenge-my-status" id="challenge-my-status">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="color:var(--text);font-weight:700">✅ 참여 완료</span>
+          <span class="challenge-rank-badge rank-done" id="challenge-rank-badge">집계 대기</span>
+        </div>
+        <div class="challenge-my-nums" id="challenge-my-nums"></div>
+      </div>
+      <!-- 참여 버튼 -->
+      <div class="challenge-btns" id="challenge-btns">
+        <button class="challenge-btn challenge-btn-main" id="challenge-btn-gen" disabled>🎲 생성 번호로 참여</button>
+        <button class="challenge-btn challenge-btn-lucky" id="challenge-btn-lucky">🍀 오늘의 숫자로 참여</button>
+        <button class="challenge-btn challenge-btn-custom" id="challenge-btn-custom-toggle">✏️ 직접 번호 선택</button>
+      </div>
+      <div class="challenge-custom-input" id="challenge-custom-input">
+        <div class="challenge-custom-grid" id="challenge-num-grid"></div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px" id="challenge-select-count">0/6 선택</div>
+        <button class="challenge-btn challenge-btn-main" id="challenge-btn-custom-submit" disabled>✅ 이 번호로 참여</button>
+      </div>
+      <!-- TOP10 랭킹 -->
+      <div class="challenge-top10" id="challenge-top10" style="display:none">
+        <div class="challenge-top10-title">🏆 TOP 10 랭킹</div>
+        <div class="challenge-top10-list" id="challenge-top10-list"></div>
+      </div>
+ 
+      <!-- 지난 회차 히스토리 -->
+      <div class="challenge-history" id="challenge-history">
+        <div class="challenge-history-title" id="challenge-history-toggle">
+          📋 지난 회차 결과 <span id="challenge-history-arrow">▶</span>
+        </div>
+        <div class="challenge-history-list" id="challenge-history-list"></div>
+      </div>
+    </div>
+    <div class="status-bar">
+      <div class="s-dot loading" id="s-dot"></div>
+      <span id="s-text">준비 중...</span>
+      <span id="s-extra"></span>
+    </div>
+    <div class="stats-row">
+      <div class="sc"><div class="sc-val" id="sv-rounds">—</div><div class="sc-label">분석 회차</div></div>
+      <div class="sc"><div class="sc-val" id="sv-latest">—</div><div class="sc-label">최신 회차</div></div>
+      <div class="sc"><div class="sc-val" id="sv-top">—</div><div class="sc-label">최다 출현</div></div>
+      <div class="sc"><div class="sc-val" id="sv-cold">—</div><div class="sc-label">최소 출현</div></div>
+    </div>
+    <div class="schedule-notice">
+      <div class="sch-icon">🔄</div>
+      <div>
+        <div class="sch-title">매주 일요일 새벽 1시 자동 업데이트</div>
+        <div class="sch-desc">토요일 밤 추첨 후 최신 결과번호 자동 수집 → 통계·가중치 즉시 반영<br>다음 업데이트: <span id="next-update">계산 중...</span></div>
+      </div>
+    </div>
+    <div class="algo-panel">
+      <div class="sec-title">번호 구성 기준 4가지</div>
+      <div class="algo-rules">
+        <div class="rule-card"><div class="rule-title">① 고저·홀짝 균형</div><div class="rule-desc">1~22(저):23~45(고) 균형. 홀짝 균형. 자주 보이는 분포 예시를 참고합니다.</div></div>
+        <div class="rule-card"><div class="rule-title">② 연번·끝수 분석</div><div class="rule-desc">연속번호 1쌍 이상 포함. 끝자리 분포를 참고해 균형 있게 구성합니다.</div></div>
+        <div class="rule-card"><div class="rule-title">③ 미출현수 포함</div><div class="rule-desc">최근 8회차 미출현 번호 1~2개 포함. 최근 미출현 번호 흐름을 참고합니다.</div></div>
+        <div class="rule-card"><div class="rule-title">④ 이월수 전략</div><div class="rule-desc">직전 회차 번호 흐름을 참고해 포함 여부를 조정합니다.</div></div>
+      </div>
+    </div>
+    <div class="section-box">
+      <div class="sec-title">번호별 출현 빈도 (1~45)</div>
+      <div class="freq-bars" id="freq-bars"></div>
+    </div>
+    <div class="gen-box">
+      <div class="free-counter" id="free-counter">
+        <div class="free-pips" id="free-pips"></div>
+        <div class="free-text" id="free-text"></div>
+      </div>
+      <div class="ctrl-section">
+        <span class="ctrl-label">생성 수 선택</span>
+        <div class="seg">
+          <button class="seg-btn on" data-n="5">5줄</button>
+          <button class="seg-btn" data-n="10">10줄</button>
+        </div>
+      </div>
+      <div class="ad-notice"><span class="icon">💡</span><div><strong>무료 5회</strong> 이후 또는 <strong>10줄</strong> 선택 시 짧은 광고 시청 후 결과가 표시됩니다.</div></div>
+      <button class="gen-btn" id="gen-btn" disabled>🎲 번호 추첨하기</button>
+      <div id="results"></div>
+ 
+    <!-- 번호 시뮬레이션 -->
+    <div class="sim-box" id="sim-box">
+      <div class="sim-title">🤖 번호 시뮬레이션</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="sim-target" id="sim-target" style="flex:1">
+          <span class="sim-target-empty">번호 생성 또는 오늘의 숫자 카드 로드 후 활성화됩니다</span>
+        </div>
+        <button id="sim-save-to-mynums" style="display:none;background:rgba(64,208,128,.15);color:var(--green);border:1px solid rgba(64,208,128,.3);border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">⭐ 내 번호에 저장</button>
+      </div>
+      <div class="sim-btns">
+        <button class="sim-btn sim-btn-free" id="sim-btn-100" disabled>🎲 100회 (무료)</button>
+        <button class="sim-btn sim-btn-ad" id="sim-btn-1000" disabled>📺 1000회</button>
+        <button class="sim-btn sim-btn-ad" id="sim-btn-10000" disabled>📺 10000회</button>
+      </div>
+      <!-- 직접 번호 선택 -->
+      <div style="margin-bottom:10px">
+        <button class="sim-btn" id="sim-custom-toggle" style="background:var(--card);color:var(--muted);border:1px solid var(--border);width:100%;font-size:11px;padding:8px">✏️ 직접 번호 선택해서 시뮬레이션</button>
+        <div id="sim-custom-area" style="display:none;margin-top:10px">
+          <div id="sim-num-grid" style="display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin-bottom:8px"></div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px" id="sim-custom-count">0/6 선택</div>
+          <button class="sim-btn sim-btn-free" id="sim-custom-apply" disabled style="width:100%">✅ 시뮬레이션 대상 설정</button>
+        </div>
+      </div>
+      <div id="sim-output"></div>
+    </div>
+    </div>
+    <div class="section-box">
+      <div class="sec-title">번호별 상세 통계</div>
+      <div class="freq-grid" id="freq-grid"></div>
+    </div>
+    <div class="ad-banner-bottom">
+      <ins class="adsbygoogle" style="display:block;width:100%;min-height:90px" data-ad-client="ca-pub-9933896132600937" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+    </div>
+  </div>
+ 
+  <!-- 내 번호 탭 -->
+  <div class="tab-content" id="tab-mynums">
+    <div class="my-summary">
+      <div class="my-sc rank1"><div class="my-sc-val" id="my-cnt1">0</div><div class="my-sc-label">🥇 1등</div></div>
+      <div class="my-sc rank2"><div class="my-sc-val" id="my-cnt2">0</div><div class="my-sc-label">🥈 2등</div></div>
+      <div class="my-sc rank3"><div class="my-sc-val" id="my-cnt3">0</div><div class="my-sc-label">🥉 3등</div></div>
+      <div class="my-sc rank4"><div class="my-sc-val" id="my-cnt4">0</div><div class="my-sc-label">4등</div></div>
+      <div class="my-sc rank5"><div class="my-sc-val" id="my-cnt5">0</div><div class="my-sc-label">5등</div></div>
+    </div>
+    <div class="my-toolbar" id="my-toolbar" style="display:none">
+      <button class="my-toolbar-btn" id="btn-select-all">☑️ 전체선택</button>
+      <button class="my-toolbar-btn" id="btn-deselect-all">⬜ 선택해제</button>
+      <button class="my-toolbar-btn danger" id="btn-delete-selected" disabled>🗑️ 선택삭제</button>
+      <button class="my-toolbar-btn danger" id="btn-delete-all">🗑️ 전체삭제</button>
+      <span class="my-sel-count" id="sel-count"></span>
+    </div>
+    <div id="my-nums-container">
+      <div class="empty-state"><div class="empty-icon">⭐</div>아직 생성한 번호가 없습니다.<br>번호 추첨 탭에서 번호를 생성하세요!</div>
+    </div>
+  </div>
+ 
+  <!-- 당첨현황 탭 -->
+  <div class="tab-content" id="tab-prize">
+    <div class="prize-locked" id="prize-locked">
+      <div class="prize-locked-icon">🔒</div>
+      <div class="prize-locked-title">당첨현황 잠금 중</div>
+      <div class="prize-locked-desc">앱 이용자 중 누군가<br><strong style="color:var(--accent)">1등 또는 2등</strong>에 당첨되는 순간<br>이 탭이 활성화됩니다!<br><br>첫 번째 행운의 주인공을 기다리는 중... 🍀</div>
+    </div>
+    <div id="prize-content" style="display:none">
+      <div class="prize-header">
+        <div class="prize-round" id="ph-round">— 회차 결과번호</div>
+        <div class="prize-winning-balls" id="ph-balls"></div>
+        <div id="ph-bonus" style="font-size:11px;color:var(--muted)"></div>
+        <div class="prize-date" id="ph-date"></div>
+      </div>
+      <div class="prize-cards">
+        <div class="prize-card p1"><div class="pz-rank">🥇 1등</div><div class="pz-count" id="pc1">0</div><div class="pz-label">명</div></div>
+        <div class="prize-card p2"><div class="pz-rank">🥈 2등</div><div class="pz-count" id="pc2">0</div><div class="pz-label">명</div></div>
+        <div class="prize-card p3"><div class="pz-rank">🥉 3등</div><div class="pz-count" id="pc3">0</div><div class="pz-label">명</div></div>
+        <div class="prize-card p4"><div class="pz-rank">4등</div><div class="pz-count" id="pc4">0</div><div class="pz-label">명</div></div>
+        <div class="prize-card p5"><div class="pz-rank">5등</div><div class="pz-count" id="pc5">0</div><div class="pz-label">명</div></div>
+      </div>
+      <div class="summary-bar">
+        <div class="sum-item"><div class="sum-val" id="sum-total">0</div><div class="sum-label">총 추첨줄</div></div>
+        <div class="sum-item"><div class="sum-val" id="sum-users">0</div><div class="sum-label">참여자</div></div>
+        <div class="sum-item"><div class="sum-val" id="sum-winners">0</div><div class="sum-label">당첨자</div></div>
+        <div class="sum-item"><div class="sum-val" id="sum-rate">0%</div><div class="sum-label">일치 비율</div></div>
+      </div>
+      <div style="margin-bottom:12px" id="round-chips"></div>
+      <div class="history-section">
+        <div class="sec-title">전체 추첨 기록</div>
+        <div class="history-list" id="history-list"></div>
+      </div>
+    </div>
+  </div>
+  <!-- 내정보 탭 -->
+  <div class="tab-content" id="tab-myinfo">
+    <div class="myinfo-section">
+      <div class="myinfo-section-title">🔮 내 정보 입력</div>
+      <div class="myinfo-form-row">
+        <label class="myinfo-label">생년월일</label>
+        <input type="date" class="myinfo-input" id="myinfo-birth">
+      </div>
+      <div class="myinfo-form-row">
+        <label class="myinfo-label">생시 (태어난 시간대)</label>
+        <select class="myinfo-select" id="myinfo-hour">
+          <option value="">선택 안 함</option>
+          <option value="0">23:00 ~ 01:00 (자시)</option>
+          <option value="1">01:00 ~ 03:00 (축시)</option>
+          <option value="2">03:00 ~ 05:00 (인시)</option>
+          <option value="3">05:00 ~ 07:00 (묘시)</option>
+          <option value="4">07:00 ~ 09:00 (진시)</option>
+          <option value="5">09:00 ~ 11:00 (사시)</option>
+          <option value="6">11:00 ~ 13:00 (오시)</option>
+          <option value="7">13:00 ~ 15:00 (미시)</option>
+          <option value="8">15:00 ~ 17:00 (신시)</option>
+          <option value="9">17:00 ~ 19:00 (유시)</option>
+          <option value="10">19:00 ~ 21:00 (술시)</option>
+          <option value="11">21:00 ~ 23:00 (해시)</option>
+        </select>
+      </div>
+      <div class="myinfo-form-row">
+        <label class="myinfo-label">성별 (선택사항)</label>
+        <div class="myinfo-gender-row">
+          <button class="myinfo-gender-btn" data-gender="male">남</button>
+          <button class="myinfo-gender-btn" data-gender="female">여</button>
+          <button class="myinfo-gender-btn on" data-gender="none">선택 안 함</button>
+        </div>
+      </div>
+      <label class="myinfo-checkbox-row" for="myinfo-lucky-reflect">
+        <input type="checkbox" id="myinfo-lucky-reflect">
+        <span class="myinfo-checkbox-label">✨ <strong>참고 숫자를 오늘의 숫자 카드에 반영</strong><br>내 정보 기반 참고 숫자 1개가 오늘의 숫자 카드 6개 번호 안에 포함됩니다.</span>
+      </label>
+      <div class="myinfo-btn-row">
+        <button class="myinfo-btn-save" id="myinfo-save-btn">💾 저장하기</button>
+        <button class="myinfo-btn-reset" id="myinfo-reset-btn">초기화</button>
+      </div>
+    </div>
+    <!-- 운세 카드 -->
+    <div id="myinfo-fortune-area"></div>
+  </div>
+ 
+  <!-- 내주변 판매점 탭 -->
+  <div class="tab-content" id="tab-near">
+    <button class="loc-btn" id="loc-btn">
+      📍 내 위치로 주변 판매점 찾기
+    </button>
+    <div class="near-filter" id="near-filter" style="display:none">
+      <button class="near-chip on" data-r="500">500m</button>
+      <button class="near-chip" data-r="1000">1km</button>
+      <button class="near-chip" data-r="2000">2km</button>
+      <button class="near-chip" data-r="5000">5km</button>
+    </div>
+    <div id="map-container">
+      <div class="map-loading" id="map-loading">
+        <div class="map-loading-icon">📍</div>
+        <div>버튼을 눌러 내 위치를 찾아주세요</div>
+      </div>
+      <div id="map"></div>
+    </div>
+   <div class="near-count" id="near-count"></div>
+
+<div id="near-top10-open-wrap" style="display:none;margin-bottom:10px">
+  <button id="near-top10-open-btn" class="near-top10-open-btn">
+    🏆 내 500m 주변 로또명당 TOP10 보기
+  </button>
+</div>
+
+<div id="near-sort-row" class="near-sort-row" style="display:none">
+  <button class="near-sort-btn on" data-sort="dist" onclick="sortAndRender('dist',this)">📍 가까운순</button>
+  <button class="near-sort-btn" data-sort="lucky" onclick="sortAndRender('lucky',this)">🏆 참고점수순</button>
+  <button class="near-sort-btn" data-sort="first" onclick="sortAndRender('first',this)">🥇 1등횟수순</button>
+  <button class="near-sort-btn" data-sort="recent" onclick="sortAndRender('recent',this)">⚡ 최근기록순</button>
+</div>
+
+<div id="near-sort-help" class="near-sort-help" style="display:none"></div>
+<div id="near-list"></div>
+ 
+  <div class="section-box" style="margin-top:16px">
+    <div class="sec-title">서비스 안내 및 유의사항</div>
+    <div style="font-size:12px;line-height:1.8;color:var(--muted)">
+      이 서비스는 회차 데이터와 사용 기록을 바탕으로 <strong style="color:#fff">참고용 번호와 기록 정보</strong>를 보여주는 도구입니다.<br>
+      표시되는 번호, 통계, 판매점 정보는 <strong style="color:#fff">재미·참고 목적</strong>이며 결과를 보장하지 않습니다.<br>
+      구매, 참여, 이용 판단은 사용자 본인의 책임으로 진행해 주세요.
+    </div>
+  </div>
+
+  <footer style="text-align:center;padding:24px 0 8px;font-size:11px;color:#505870">
+    <a href="privacy.html" style="color:#505870;text-decoration:none">개인정보처리방침</a>
+    &nbsp;·&nbsp; <a href="terms.html" style="color:#505870;text-decoration:none">이용약관</a>
+    &nbsp;·&nbsp; <a href="contact.html" style="color:#505870;text-decoration:none">문의하기</a>
+    &nbsp;·&nbsp; <a href="disclaimer.html" style="color:#505870;text-decoration:none">서비스안내</a>
+    &nbsp;·&nbsp; © 2026 로또엔진 (Clyde Park)
+  </footer>
+</div>
+ 
+<!-- 광고 모달 -->
+<div class="modal-overlay" id="ad-modal">
+  <div class="modal">
+    <div class="modal-icon">📺</div>
+    <div class="modal-title">광고 시청 후 계속하기</div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <div class="modal-ad-area">
+      <ins class="adsbygoogle" style="display:block;width:100%;min-height:100px" data-ad-client="ca-pub-9933896132600937" data-ad-slot="auto" data-ad-format="rectangle" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+    </div>
+    <div class="timer-bar-bg"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>
+    <div class="timer-text" id="timer-text">5초 후 활성화...</div>
+    <button class="modal-btn modal-btn-primary" id="modal-confirm-btn" disabled style="margin-top:12px">✅ 광고 시청 완료 — 계속하기</button>
+    <button class="modal-btn modal-btn-secondary" id="modal-cancel-btn">취소</button>
+  </div>
+</div>
+ 
+<!-- 삭제 확인 모달 -->
+<div class="modal-overlay" id="del-modal">
+  <div class="modal">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title" style="color:var(--red)">번호 삭제</div>
+    <div class="modal-desc">정말 삭제하겠습니까?<br><div id="del-modal-nums" style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-top:12px"></div></div>
+    <button class="modal-btn modal-btn-primary" id="del-confirm-btn" style="background:linear-gradient(135deg,var(--red),#c01010)">✅ 삭제</button>
+    <button class="modal-btn modal-btn-secondary" id="del-cancel-btn" style="margin-top:8px">취소</button>
+  </div>
+</div>
+
+<!-- 내 주변 로또명당 TOP10 모달 -->
+<div class="modal-overlay" id="near-top10-modal">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-icon">🏆</div>
+    <div class="modal-title">내 주변 로또명당 TOP10</div>
+    <div class="modal-desc">반경 내 판매점 중 참고점수 기준 TOP10입니다.</div>
+
+    <div id="near-top10-modal-list" class="near-top10-modal-list"></div>
+
+    <button class="modal-btn modal-btn-primary" id="near-top10-close-btn">닫기</button>
+  </div>
+</div>
+ 
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getFirestore, collection, addDoc, getDocs, getDocsFromServer, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, setDoc, getDoc, runTransaction, increment }
+  from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import { getAuth, signInAnonymously, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+ 
+// ── Firebase ──
+const FB = { apiKey:"AIzaSyD7LyDgH-xpKuukSkpMTjq9WypHkWjmH68", authDomain:"lotto-tracker-8cfa6.firebaseapp.com", projectId:"lotto-tracker-8cfa6", storageBucket:"lotto-tracker-8cfa6.firebasestorage.app", messagingSenderId:"13399452873", appId:"1:13399452873:web:80582e30a72f6b676af118" };
+let db, auth;
+try { const app=initializeApp(FB); db=getFirestore(app); auth=getAuth(app); } catch(e){}
+ 
+// ── 내장 데이터 ──
+const BASE_FREQ = {1:123,2:128,3:120,4:125,5:128,6:119,7:133,8:124,9:129,10:122,11:130,12:139,13:137,14:127,15:129,16:127,17:130,18:135,19:121,20:127,21:127,22:123,23:133,24:130,25:130,26:122,27:141,28:128,29:134,30:127,31:127,32:131,33:136,34:142,35:130,36:131,37:126,38:132,39:128,40:127,41:127,42:127,43:128,44:132,45:127};
+const SEED_HISTORY = [
+  {round:1211,nums:[4,8,19,25,36,44],bonus:11},
+  {round:1212,nums:[2,11,23,28,33,41],bonus:15},
+  {round:1213,nums:[6,13,17,29,37,45],bonus:20},
+  {round:1214,nums:[1,9,22,31,38,43],bonus:5},
+  {round:1215,nums:[13,15,19,21,44,45],bonus:39},
+];
+ 
+// ── 전역 상태 ──
+let freqData = {...BASE_FREQ};
+let recentHist = [...SEED_HISTORY];
+let latestRound = 1215;
+let latestWinNums = [13,15,19,21,44,45];
+let latestBonusNum = 39;
+let isReady = false;
+let genCount = 5;
+let currentUid = null;
+let authReady = false;
+let authCallbacks = [];
+let viewRound = 1214;
+let prizeUnlocked = false;
+let unsubPrize = null;
+let unsubHistory = null;
+const MAX_FREE = 5;
+const FREE_KEY = 'lotto_usedFree';
+const FREE_DATE_KEY = 'lotto_freeDate';
+ 
+function getTodayKST(){
+  const kst=new Date(new Date().getTime()+9*3600000);
+  return kst.toISOString().slice(0,10); // YYYY-MM-DD
+}
+function loadUsedFree(){
+  try{
+    const saved=localStorage.getItem(FREE_KEY);
+    const savedDate=localStorage.getItem(FREE_DATE_KEY);
+    const today=getTodayKST();
+    if(savedDate===today && saved!==null) return parseInt(saved)||0;
+    // 날짜 바뀌면 자동 초기화
+    localStorage.setItem(FREE_KEY,'0');
+    localStorage.setItem(FREE_DATE_KEY,today);
+    return 0;
+  }catch(e){return 0;}
+}
+function saveUsedFree(n){
+  try{ localStorage.setItem(FREE_KEY,String(n)); localStorage.setItem(FREE_DATE_KEY,getTodayKST()); }catch(e){}
+}
+let usedFree = loadUsedFree();
+let pendingCount = 0;
+let adTimer = null;
+ 
+// ── 내 번호 상태 ──
+let myDocs = [];       // 현재 로드된 내 번호
+let checkedIds = new Set(); // 체크된 id
+ 
+// ── DOM ──
+const sDot = document.getElementById('s-dot');
+const sText = document.getElementById('s-text');
+const sExtra = document.getElementById('s-extra');
+const genBtn = document.getElementById('gen-btn');
+const resultsEl = document.getElementById('results');
+const adModal = document.getElementById('ad-modal');
+const confirmBtn = document.getElementById('modal-confirm-btn');
+const cancelBtn = document.getElementById('modal-cancel-btn');
+ 
+// ── 유틸 ──
+const pad = n => String(n).padStart(2,'0');
+function setStatus(t,txt,extra=''){sDot.className='s-dot '+t;sText.textContent=txt;sExtra.textContent=extra;}
+function ballCls(n){return n<=9?'b1':n<=19?'b2':n<=29?'b3':n<=39?'b4':'b5';}
+ 
+// ── Auth ──
+function onAuthReady(cb){ if(authReady) cb(); else authCallbacks.push(cb); }
+function resolveAuth(uid){ currentUid=uid; authReady=true; authCallbacks.forEach(cb=>cb()); authCallbacks=[]; }
+function startAuth(){
+  if(!auth){ resolveAuth('g_'+Math.random().toString(36).slice(2)); return; }
+  try{
+    onAuthStateChanged(auth, u=>{
+      if(u){ resolveAuth(u.uid); }
+      else { signInAnonymously(auth).then(r=>resolveAuth(r.user.uid)).catch(()=>resolveAuth('g_'+Math.random().toString(36).slice(2))); }
+    });
+  }catch(e){ resolveAuth('g_'+Math.random().toString(36).slice(2)); }
+}
+ 
+// ── API ──
+const PROXIES = [
+  'https://api.allorigins.win/raw?url=',
+  'https://corsproxy.io/?',
+  'https://api.codetabs.com/v1/proxy?quest=',
+  'https://thingproxy.freeboard.io/fetch/',
+  'https://cors.eu.org/',
+];
+const LOTTO_API = 'https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=';
+ 
+async function fetchRound(r, proxy){
+  const url = LOTTO_API + r;
+  const res = await fetch(proxy + encodeURIComponent(url), {signal:AbortSignal.timeout(3000)});
+  if(!res.ok) throw 0;
+  const d = await res.json();
+  if(!d || d.returnValue !== 'success') throw 0;
+  return {
+    round: r,
+    nums: [1,2,3,4,5,6].map(i=>d['drwtNo'+i]),
+    bonus: d.bnusNo,
+    date: d.drwNoDate
+  };
+}
+ 
+// 동행복권 비공식 JSON API (프록시 불필요)
+async function fetchRoundDirect(r){
+  try{
+    const res = await fetch(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${r}`, {signal:AbortSignal.timeout(3000)});
+    if(!res.ok) throw 0;
+    const d = await res.json();
+    if(!d || d.returnValue !== 'success') throw 0;
+    return {round:r, nums:[1,2,3,4,5,6].map(i=>d['drwtNo'+i]), bonus:d.bnusNo, date:d.drwNoDate};
+  }catch(e){ return null; }
+}
+ 
+async function tryFetch(r){
+  // 직접 호출 먼저 시도
+  const direct = await fetchRoundDirect(r);
+  if(direct) return direct;
+  // 프록시 순차 시도
+  for(const p of PROXIES){
+    try{ return await fetchRound(r, p); }catch(e){}
+  }
+  return null;
+}
+async function fetchNewRounds(){
+  const deadline = Date.now()+8000;
+  let r=latestRound+1, count=0;
+  while(Date.now()<deadline){
+    const d=await tryFetch(r);
+    if(!d) break;
+    d.nums.forEach(n=>{freqData[n]=(freqData[n]||0)+1;});
+    recentHist.push(d); if(recentHist.length>15) recentHist.shift();
+    latestRound=r; latestWinNums=d.nums; latestBonusNum=d.bonus||0;
+    count++; r++;
+  }
+  return count;
+}
+ 
+// ── 초기화 ──
+async function init(){
+  try{
+    // 즉시 준비
+    isReady=true; genBtn.disabled=false; viewRound=latestRound;
+    updateStats(); renderFreqBars(); renderFreqGrid(); updateFreeCounter();
+    renderPrizeHeader(); scheduleAutoUpdate(); startSaturdayChecker();
+    setStatus('ok',`내장 통계 준비 완료 (261~${latestRound}회)`);
+    setPrizeTabUnlocked(false); // 초기 잠금 상태 명시
+    loadTodayLucky(); // 오늘의 숫자 카드 로드
+  // 생년월일 max 동적 설정 (현재 날짜 - 14년)
+  const birthEl=document.getElementById('myinfo-birth');
+  if(birthEl){
+    const maxDate=new Date(new Date().getTime()+9*3600000);
+    maxDate.setFullYear(maxDate.getFullYear()-14);
+    birthEl.max=maxDate.toISOString().slice(0,10);
+  }
+ 
+    updateFortuneDisplay(); // 내정보 운세 표시
+    onAuthReady(()=>initChallenge()); // 챌린지 초기화
+    setTimeout(()=>maybeScoreCurrentChallenge(), 2000); // 채점 체크
+ 
+    // Auth → 내 번호 로드
+    startAuth();
+    onAuthReady(()=>loadMyNums());
+ 
+    // 당첨현황 잠금 확인
+    checkPrizeUnlock();
+ 
+    // 최신 회차 백그라운드 업데이트 (재시도 포함)
+    setTimeout(()=>autoUpdate(), 300);
+  }catch(e){
+    setStatus('err','오류 발생 — 새로고침 해주세요');
+    genBtn.disabled=false; isReady=true;
+  }
+}
+ 
+// ── 자동업데이트 스케줄 ──
+// 자동 업데이트 (재시도 포함)
+async function autoUpdate(retry=0){
+  setStatus('loading','최신 회차 확인 중...');
+  try{
+    const oldRound=latestRound;
+    const added = await fetchNewRounds();
+    if(added > 0){
+      setStatus('ok', `${added}회차 업데이트 완료 — 최신: ${latestRound}회`);
+      updateStats(); renderFreqBars(); renderFreqGrid();
+      renderPrizeHeader(); loadPrizeTab(latestRound);
+      if(currentUid) loadMyNums();
+      if(latestRound!==oldRound){ resetChallengeState(); onAuthReady(()=>initChallenge()); }
+      checkPrizeUnlock(); // 회차 갱신 후 탭 활성화 재평가
+      maybeScoreCurrentChallenge();
+    } else {
+      setStatus('ok', `최신 상태 (261~${latestRound}회)`);
+    }
+  }catch(e){
+    if(retry < 3){
+      // 실패시 5초 후 재시도
+      setStatus('loading', `업데이트 재시도 중... (${retry+1}/3)`);
+      setTimeout(()=>autoUpdate(retry+1), 5000);
+    } else {
+      setStatus('ok', `내장 통계 사용 중 (261~${latestRound}회)`);
+    }
+  }
+}
+ 
+function scheduleAutoUpdate(){
+  try{
+    const now=new Date(), kst=new Date(now.getTime()+9*3600000);
+    const day=kst.getDay();
+    let ahead=day===0&&kst.getHours()<1?0:(7-day)%7||7;
+    const nxt=new Date(kst); nxt.setDate(nxt.getDate()+ahead); nxt.setHours(1,0,0,0);
+    const el=document.getElementById('next-update');
+    if(el){const D=['일','월','화','수','목','금','토'];el.textContent=`${nxt.getFullYear()}.${pad(nxt.getMonth()+1)}.${pad(nxt.getDate())} (${D[nxt.getDay()]}) 새벽 1시`;}
+    const ms=new Date(nxt.getTime()-9*3600000).getTime()-now.getTime();
+    setTimeout(async()=>{ await fetchNewRounds(); updateStats(); renderFreqBars(); renderFreqGrid(); loadMyNums(); scheduleAutoUpdate(); },ms);
+  }catch(e){}
+}
+function startSaturdayChecker(){
+  setInterval(()=>{
+    const kst=new Date(new Date().getTime()+9*3600000);
+    if((kst.getDay()===6&&kst.getHours()>=22)||(kst.getDay()===0&&kst.getHours()<3)) loadMyNums();
+  },60000);
+}
+ 
+// ── 통계 ──
+function updateStats(){
+  document.getElementById('sv-rounds').textContent=latestRound-261+1;
+  document.getElementById('sv-latest').textContent=latestRound+'회';
+  const s=Object.entries(freqData).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('sv-top').textContent=s[0][0]+'번';
+  document.getElementById('sv-cold').textContent=s[s.length-1][0]+'번';
+}
+function updateFreeCounter(){
+  const rem=Math.max(0,MAX_FREE-usedFree);
+  document.getElementById('free-pips').innerHTML=Array.from({length:MAX_FREE},(_,i)=>`<div class="pip${i<usedFree?' used':''}"></div>`).join('');
+  document.getElementById('free-text').innerHTML=rem>0?`무료 <strong>${rem}줄</strong> 남음`:`<span style="color:var(--accent)">무료 소진 — 광고 시청 후 이용</span>`;
+}
+ 
+// ── 빈도 렌더 ──
+function renderFreqBars(){
+  const el=document.getElementById('freq-bars'); el.innerHTML='';
+  const vals=Object.values(freqData); const mx=Math.max(...vals); const mn=Math.min(...vals); const range=mx-mn||1;
+  const sorted=Object.entries(freqData).sort((a,b)=>b[1]-a[1]);
+  const hot=new Set(sorted.slice(0,9).map(e=>e[0])), cold=new Set(sorted.slice(-9).map(e=>e[0]));
+  for(let n=1;n<=45;n++){
+    const c=freqData[n]||0; const h=Math.round(4+((c-mn)/range)*42);
+    const cls=hot.has(String(n))?'fb-hot':cold.has(String(n))?'fb-cold':'fb-mid';
+    const col=document.createElement('div'); col.className='fb-col '+cls;
+    col.innerHTML=`<div class="fb-bar" style="height:${h}px"></div><div class="fb-lbl">${n}</div>`;
+    el.appendChild(col);
+  }
+}
+function renderFreqGrid(){
+  const g=document.getElementById('freq-grid'); g.innerHTML='';
+  const mx=Math.max(...Object.values(freqData));
+  const sorted=Object.entries(freqData).sort((a,b)=>b[1]-a[1]);
+  const rm={};
+  sorted.forEach(([n],i)=>{if(i<5)rm[n]='hot1';else if(i<15)rm[n]='hot2';else if(i<22)rm[n]='hot3';else if(i>=38)rm[n]='cold';});
+  for(let n=1;n<=45;n++){
+    const c=freqData[n]||0, pct=(c/mx*100).toFixed(0);
+    const el=document.createElement('div'); el.className='fi '+(rm[String(n)]||'');
+    el.innerHTML=`<div class="fi-n ${ballCls(n)}">${n}</div><div class="fi-c">${c}회</div><div class="fi-prog" style="width:${pct}%"></div>`;
+    g.appendChild(el);
+  }
+}
+ 
+// ── 광고 모달 ──
+function needsAd(n){ return n>=10||(usedFree+n>MAX_FREE); }
+function showAdModal(n){
+  pendingCount=n;
+  document.getElementById('modal-desc').innerHTML=n>=10?`<strong>10줄</strong>은 광고 시청 후 받을 수 있습니다.`:`무료 사용 횟수(<strong>${MAX_FREE}줄</strong>)를 모두 사용했습니다.`;
+  adModal.classList.add('show'); startAdTimer();
+}
+function hideAdModal(){ adModal.classList.remove('show'); clearInterval(adTimer); confirmBtn.disabled=true; }
+function startAdTimer(){
+  const SEC=5; let e=0; confirmBtn.disabled=true;
+  document.getElementById('timer-bar').style.width='100%';
+  document.getElementById('timer-text').textContent=SEC+'초 후 활성화...';
+  clearInterval(adTimer);
+  adTimer=setInterval(()=>{
+    e++;
+    document.getElementById('timer-bar').style.width=Math.max(0,((SEC-e)/SEC*100))+'%';
+    if(e>=SEC){ clearInterval(adTimer); confirmBtn.disabled=false; document.getElementById('timer-text').textContent='✅ 준비 완료!'; }
+    else document.getElementById('timer-text').textContent=(SEC-e)+'초 후 활성화...';
+  },1000);
+}
+confirmBtn.addEventListener('click',()=>{
+  if(pendingCount==='sim-1000'){ hideAdModal(); runSimulation(1000); return; }
+  if(pendingCount==='sim-10000'){ hideAdModal(); runSimulation(10000); return; }
+  hideAdModal(); if(pendingCount<10){usedFree=0;saveUsedFree(0);updateFreeCounter();} doGenerate(pendingCount);
+});
+cancelBtn.addEventListener('click',hideAdModal);
+adModal.addEventListener('click',e=>{if(e.target===adModal)hideAdModal();});
+ 
+genBtn.addEventListener('click',()=>{ if(!isReady)return; if(needsAd(genCount))showAdModal(genCount); else doGenerate(genCount); });
+ 
+// ── 알고리즘 ──
+function wp(arr,w){const t=w.reduce((a,b)=>a+b,0);let r=Math.random()*t;for(let i=0;i<arr.length;i++){r-=w[i];if(r<=0)return i;}return arr.length-1;}
+const getHL=ns=>({lo:ns.filter(n=>n<=22).length,hi:ns.filter(n=>n>=23).length});
+const getOE=ns=>({odd:ns.filter(n=>n%2).length,even:ns.filter(n=>!(n%2)).length});
+const lds=ns=>ns.reduce((s,n)=>s+n%10,0);
+function hasConsec(ns){const s=[...ns].sort((a,b)=>a-b);for(let i=0;i<s.length-1;i++)if(s[i+1]-s[i]===1)return true;return false;}
+function getAbsent(){const seen=new Set();recentHist.slice(-8).forEach(h=>h.nums.forEach(n=>seen.add(n)));return Array.from({length:45},(_,i)=>i+1).filter(n=>!seen.has(n));}
+const getPrev=()=>recentHist.length?recentHist[recentHist.length-1].nums:[];
+function scoreC(ns){
+  let s=0;
+  const{lo,hi}=getHL(ns); s+=Math.abs(lo-hi)<=2?20:-20;
+  const{odd}=getOE(ns); s+=Math.abs(odd-3)<=1?20:-20;
+  if(hasConsec(ns))s+=15;
+  const l=lds(ns); s+=(l>=20&&l<=35)?20:-10;
+  const ac=ns.filter(n=>getAbsent().includes(n)).length; s+=(ac>=1&&ac<=2)?15:0;
+  const cc=ns.filter(n=>getPrev().includes(n)).length; s+=cc===1?10:0;
+  return s;
+}
+function genCand(){const pool=Array.from({length:45},(_,i)=>i+1),w=pool.map(n=>freqData[n]||1);const rem=[...pool],rw=[...w],ns=[];while(ns.length<6){const i=wp(rem,rw);ns.push(rem[i]);rem.splice(i,1);rw.splice(i,1);}return ns.sort((a,b)=>a-b);}
+function generateSmart(){let b=null,bs=-Infinity;for(let i=0;i<200;i++){const c=genCand(),s=scoreC(c);if(s>bs){b=c;bs=s;}}return b;}
+ 
+function checkPrize(nums,win,bonus){
+  if(!win||win.length<6)return 0;
+  const h=nums.filter(n=>win.includes(n)).length, bh=nums.includes(bonus);
+  if(h===6)return 1; if(h===5&&bh)return 2; if(h===5)return 3; if(h===4)return 4; if(h===3)return 5; return 0;
+}
+const PLABELS=['','🥇 1등','🥈 2등','🥉 3등','4등','5등'];
+const PCLS=['','win1','win2','win3','win4','win5'];
+ 
+function makeTags(nums){
+  const t=[];
+  const{lo,hi}=getHL(nums); t.push({cls:Math.abs(lo-hi)<=2?'ok':'warn',text:`고저 ${lo}:${hi}`});
+  const{odd,even}=getOE(nums); t.push({cls:Math.abs(odd-even)<=2?'ok':'warn',text:`홀짝 ${odd}:${even}`});
+  if(hasConsec(nums))t.push({cls:'info',text:'연번 포함'});
+  t.push({cls:(lds(nums)>=20&&lds(nums)<=35)?'ok':'warn',text:`끝수합 ${lds(nums)}`});
+  const ac=nums.filter(n=>getAbsent().includes(n)).length; if(ac>0)t.push({cls:'info',text:`미출현 ${ac}개`});
+  const cc=nums.filter(n=>getPrev().includes(n)).length; if(cc>0)t.push({cls:'info',text:`이월수 ${cc}개`});
+  if(latestWinNums.length===6){const p=checkPrize(nums,latestWinNums,latestBonusNum);if(p>0)t.push({cls:PCLS[p],text:PLABELS[p]+' 일치 확인'});}
+  return t;
+}
+ 
+function renderResult(nums,idx){
+  const tags=makeTags(nums);
+  const hitSet=new Set(latestWinNums);
+  const div=document.createElement('div');
+  div.className='r-row';
+  div.style.animationDelay=(idx*60)+'ms';
+ 
+  // 상단 행
+  const top=document.createElement('div');
+  top.className='r-top';
+ 
+  const numEl=document.createElement('div');
+  numEl.className='r-num';
+  numEl.textContent=idx+1;
+  top.appendChild(numEl);
+ 
+  const ballsEl=document.createElement('div');
+  ballsEl.className='r-balls';
+  nums.forEach(n=>{
+    const b=document.createElement('div');
+    b.className='ball '+ballCls(n)+(hitSet.has(n)?' hit':'');
+    b.textContent=n;
+    ballsEl.appendChild(b);
+  });
+  top.appendChild(ballsEl);
+ 
+  // 시뮬레이션 선택 버튼 (번호와 체크 사이)
+  const simBtn=document.createElement('button');
+  simBtn.style.cssText='background:rgba(58,184,255,.15);border:1px solid rgba(58,184,255,.3);color:var(--accent3);border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0';
+  simBtn.textContent='🎯 시뮬레이션';
+  simBtn.addEventListener('click',()=>{
+    updateSimTarget(nums);
+    document.getElementById('sim-box').scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+  top.appendChild(simBtn);
+ 
+  const savedEl=document.createElement('div');
+  savedEl.className='r-saved';
+  savedEl.id='rsaved-'+idx;
+  top.appendChild(savedEl);
+ 
+  div.appendChild(top);
+ 
+  // 태그 행
+  const tagsEl=document.createElement('div');
+  tagsEl.className='r-tags';
+  tags.forEach(t=>{
+    const s=document.createElement('span');
+    s.className='tag '+t.cls;
+    s.textContent=t.text;
+    tagsEl.appendChild(s);
+  });
+  div.appendChild(tagsEl);
+ 
+  return div;
+}
+ 
+// ── 번호 생성 ──
+async function doGenerate(count){
+  resultsEl.innerHTML=''; genBtn.disabled=true; genBtn.textContent='⏳ 추첨 중...';
+  const allNums=Array.from({length:count},()=>generateSmart());
+  allNums.forEach((nums,i)=>resultsEl.appendChild(renderResult(nums,i)));
+  if(count<10){usedFree+=count; saveUsedFree(usedFree); updateFreeCounter();}
+  genBtn.disabled=false; genBtn.textContent='🎲 번호 추첨하기';
+  if(allNums.length>0){ updateSimTarget(allNums[0]); updateChallengeGenNums(allNums[0]); }
+  setTimeout(()=>resultsEl.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+  // Firebase 저장 (auth 준비 후)
+  const doSave = async () => {
+    const savedRound = latestRound;
+    const ids = await Promise.all(allNums.map(nums => savePick(nums, savedRound)));
+    ids.forEach((id,i)=>{ if(id){const el=document.getElementById('rsaved-'+i);if(el)el.textContent='✓';} });
+    // 저장 완료 즉시 화면에 추가
+    const newDocs = ids.map((id,i)=>id ? {id, uid:currentUid, round:savedRound, nums:allNums[i], prize:0} : null).filter(Boolean);
+    if(newDocs.length){
+      renderMyNums([...newDocs, ...myDocs]);
+    }
+    // 1.5초 후 서버 동기화
+    setTimeout(()=>loadMyNums(), 1500);
+  };
+  if(authReady && currentUid && db){ doSave(); }
+  else { onAuthReady(()=>doSave()); }
+}
+ 
+// ── Firebase 저장 ──
+async function savePick(nums, round){
+  const r = round || latestRound;
+  if(!currentUid||!db){return null;}
+  try{
+    const d=await addDoc(collection(db,'picks'),{uid:currentUid,round:r,nums,prize:checkPrize(nums,latestWinNums,latestBonusNum),createdAt:serverTimestamp()});
+    return d.id;
+  }catch(e){return null;}
+}
+ 
+// ── 내 번호 로드 ──
+async function loadMyNums(){
+  if(!currentUid||!db) return;
+  try{
+    // 인덱스 없이 전체 컬렉션 가져온 뒤 클라이언트 필터
+    const q2=query(collection(db,'picks'),where('uid','==',currentUid));
+    const snap = await getDocsFromServer(q2);
+    const all = snap.docs
+      .map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    const keep=[latestRound, latestRound-1];
+    const filtered=all.filter(d=>keep.includes(d.round));
+    renderMyNums(filtered);
+    all.filter(d=>!keep.includes(d.round)).forEach(d=>deleteDoc(doc(db,'picks',d.id)).catch(()=>{}));
+  }catch(e){ }
+}
+ 
+// ── 내 번호 렌더 ──
+function updateSelCount(){
+  const n=checkedIds.size;
+  document.getElementById('sel-count').textContent=n>0?n+'개 선택됨':'';
+  document.getElementById('btn-delete-selected').disabled=n===0;
+}
+function recalcCounts(){
+  const cnt={1:0,2:0,3:0,4:0,5:0};
+  myDocs.forEach(d=>{
+    const entry=recentHist.find(h=>h.round===d.round);
+    const wn=entry?entry.nums:(d.round===latestRound?latestWinNums:[]);
+    const bn=entry?entry.bonus:(d.round===latestRound?latestBonusNum:0);
+    const p=checkPrize(d.nums||[],wn,bn);
+    if(p>0)cnt[p]++;
+  });
+  for(let i=1;i<=5;i++){const el=document.getElementById('my-cnt'+i);if(el)el.textContent=cnt[i];}
+}
+ 
+function renderMyNums(docs){
+  myDocs=docs;
+  // 사라진 id 체크 해제
+  const ids=new Set(docs.map(d=>d.id));
+  [...checkedIds].forEach(id=>{if(!ids.has(id))checkedIds.delete(id);});
+  recalcCounts();
+ 
+  const toolbar=document.getElementById('my-toolbar');
+  const container=document.getElementById('my-nums-container');
+  if(!docs.length){
+    toolbar.style.display='none'; container.innerHTML='<div class="empty-state"><div class="empty-icon">⭐</div>아직 생성한 번호가 없습니다.<br>번호 추첨 탭에서 번호를 생성하세요!</div>';
+    checkedIds.clear(); updateSelCount(); return;
+  }
+  toolbar.style.display='flex'; container.innerHTML='';
+ 
+  const kst=new Date(new Date().getTime()+9*3600000);
+  const resultAvailable=(kst.getDay()===6&&kst.getHours()>=22)||(kst.getDay()===0&&kst.getHours()<12)||latestWinNums.length===6;
+ 
+  // 회차별 그룹핑
+  const grouped={};
+  docs.forEach(d=>{if(!grouped[d.round])grouped[d.round]=[];grouped[d.round].push(d);});
+ 
+  // 날짜별 구분용: 회차 섹션 사이에 날짜 divider 삽입
+  let lastDateKey='';
+  Object.keys(grouped).sort((a,b)=>b-a).forEach(round=>{
+    const rn=parseInt(round);
+    const entry=recentHist.find(h=>h.round===rn);
+    const wn=entry?entry.nums:[];
+    const bn=entry?entry.bonus:0;
+    const hitSet=new Set(wn);
+    const isLatest=rn===latestRound;
+    const showResult=wn.length===6&&resultAvailable;
+    const items=grouped[round];
+ 
+    const sec=document.createElement('div'); sec.className='my-round-section';
+ 
+    // 날짜별 divider
+    const firstTs=grouped[round][0]?.createdAt?.seconds;
+    const sectionDate=firstTs?new Date(firstTs*1000+9*3600000).toISOString().slice(0,10):'';
+    if(sectionDate && sectionDate!==lastDateKey){
+      lastDateKey=sectionDate;
+      const divider=document.createElement('div'); divider.className='my-date-divider';
+      divider.innerHTML=`<div class="my-date-divider-line"></div><div class="my-date-divider-text">📅 ${sectionDate}</div><div class="my-date-divider-line"></div>`;
+      container.appendChild(divider);
+    }
+ 
+    // 배너
+    if(showResult){
+      let best=0; items.forEach(d=>{const p=checkPrize(d.nums||[],wn,bn);if(p>0&&(best===0||p<best))best=p;});
+      if(best>0&&best<=2){
+        const b=document.createElement('div'); b.className='win-banner';
+        b.innerHTML=`<div class="win-banner-icon">${best===1?'🥇':'🥈'}</div><div class="win-banner-text">${PLABELS[best]} 일치 확인</div><div class="win-banner-sub">이번 회차에서 높은 일치 결과가 확인됐습니다</div>`;
+        sec.appendChild(b);
+      }
+    }
+ 
+    const title=document.createElement('div'); title.className='my-round-title';
+    title.innerHTML=rn+'회차'+(isLatest?' <span style="background:var(--accent);color:#000;font-size:9px;padding:2px 7px;border-radius:4px">최신</span>':'');
+    sec.appendChild(title);
+ 
+    const sub=document.createElement('div'); sub.className='my-round-sub';
+    // 날짜별 구분을 위해 저장 날짜 추출
+    const firstCreated=items[0]?.createdAt?.seconds;
+    const savedDateStr=firstCreated?new Date(firstCreated*1000+9*3600000).toISOString().slice(0,10):'';
+    sub.textContent=(entry&&entry.date?'추첨일: '+entry.date:'')+' · '+items.length+'줄'+(savedDateStr?' · 저장: '+savedDateStr:'');
+    sec.appendChild(sub);
+ 
+    if(showResult&&wn.length===6){
+      const wr=document.createElement('div'); wr.style.cssText='display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px';
+      wn.forEach(n=>{const b=document.createElement('div');b.className='ball '+ballCls(n);b.style.cssText='width:28px;height:28px;font-size:10px';b.textContent=n;wr.appendChild(b);});
+      const bl=document.createElement('span');bl.style.cssText='font-size:10px;color:var(--muted);align-self:center';bl.textContent='+보너스 '+bn;wr.appendChild(bl);
+      sec.appendChild(wr);
+    }
+ 
+    if(isLatest&&!showResult){
+      const p=document.createElement('div'); p.className='result-pending';
+      p.innerHTML='<div class="result-pending-icon">⏳</div><div class="result-pending-text">이번 회차 결과는<br><span class="result-pending-time">토요일 밤 10시 이후</span><br>자동으로 표시됩니다</div>';
+      sec.appendChild(p);
+    }
+ 
+    const list=document.createElement('div'); list.className='my-nums-list';
+    items.forEach((d,i)=>{
+      const p=showResult?checkPrize(d.nums||[],wn,bn):0;
+      const item=document.createElement('div'); item.className='my-item'; item.dataset.id=d.id;
+      const top=document.createElement('div'); top.className='my-item-top';
+      // 체크박스 - DOM 직접 생성
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.className='my-checkbox';
+      cb.checked=checkedIds.has(d.id);
+      cb.addEventListener('change',()=>{ if(cb.checked)checkedIds.add(d.id); else checkedIds.delete(d.id); updateSelCount(); });
+      top.appendChild(cb);
+      const idx=document.createElement('div'); idx.className='my-item-idx'; idx.textContent=i+1; top.appendChild(idx);
+      const balls=document.createElement('div'); balls.className='my-item-balls';
+      (d.nums||[]).forEach(n=>{const b=document.createElement('div');b.className='ball '+ballCls(n)+(hitSet.has(n)?' hit':'');b.style.cssText='width:30px;height:30px;font-size:11px';b.textContent=n;balls.appendChild(b);});
+      top.appendChild(balls);
+      if(showResult&&p>0){const pr=document.createElement('div');pr.className='my-item-prize';pr.textContent=PLABELS[p];top.appendChild(pr);}
+      // 시뮬레이션 버튼
+      const simB=document.createElement('button'); simB.className='my-item-sim-btn'; simB.textContent='🎯 시뮬레이션';
+      simB.addEventListener('click',()=>{
+        updateSimTarget(d.nums||[]);
+        // 번호추첨 탭으로 이동 + 시뮬레이션 영역 스크롤
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
+        document.querySelector('[data-tab="pick"]').classList.add('on');
+        document.getElementById('tab-pick').classList.add('on');
+        setTimeout(()=>document.getElementById('sim-box')?.scrollIntoView({behavior:'smooth',block:'start'}),100);
+      });
+      top.appendChild(simB);
+      const db2=document.createElement('button'); db2.className='del-btn'; db2.textContent='🗑️';
+      db2.addEventListener('click',()=>showDelModal([d.id],[d.nums||[]]));
+      top.appendChild(db2);
+      item.appendChild(top);
+      if(showResult){
+        const tags=document.createElement('div'); tags.className='my-item-tags';
+        if(p>0)tags.innerHTML+=`<span class="tag ${PCLS[p]}">${PLABELS[p]}</span>`;
+        else tags.innerHTML+='<span class="tag warn">일치 없음</span>';
+        const hc=(d.nums||[]).filter(n=>wn.includes(n)).length;
+        if(hc>0)tags.innerHTML+=`<span class="tag info">${hc}개 일치</span>`;
+        item.appendChild(tags);
+      }
+      list.appendChild(item);
+    });
+    sec.appendChild(list); container.appendChild(sec);
+  });
+  updateSelCount();
+}
+ 
+// ── 삭제 ──
+let pendingDelIds=[];
+function showDelModal(ids,numsArr){
+  pendingDelIds=ids;
+  const el=document.getElementById('del-modal-nums');
+  if(ids.length===1) el.innerHTML=numsArr[0].map(n=>`<div class="ball ${ballCls(n)}" style="width:30px;height:30px;font-size:11px">${n}</div>`).join('');
+  else el.innerHTML=`<span style="font-size:13px;color:var(--accent);font-weight:700">${ids.length}개의 번호</span>`;
+  document.getElementById('del-modal').classList.add('show');
+}
+function hideDelModal(){ document.getElementById('del-modal').classList.remove('show'); pendingDelIds=[]; }
+ 
+document.getElementById('del-confirm-btn').addEventListener('click',async()=>{
+  if(!pendingDelIds.length||!db)return;
+  const ids=[...pendingDelIds]; hideDelModal();
+  // 즉시 DOM에서 제거
+  myDocs=myDocs.filter(d=>!ids.includes(d.id));
+  ids.forEach(id=>{
+    checkedIds.delete(id);
+    const el=document.querySelector('.my-item[data-id="'+id+'"]');
+    if(el)el.remove();
+  });
+  document.querySelectorAll('.my-round-section').forEach(s=>{if(!s.querySelector('.my-item'))s.remove();});
+  if(!myDocs.length){
+    document.getElementById('my-toolbar').style.display='none';
+    document.getElementById('my-nums-container').innerHTML='<div class="empty-state"><div class="empty-icon">⭐</div>아직 생성한 번호가 없습니다.<br>번호 추첨 탭에서 번호를 생성하세요!</div>';
+  }
+  recalcCounts(); updateSelCount();
+  // Firebase 백그라운드 삭제
+  ids.forEach(id=>deleteDoc(doc(db,'picks',id)).catch(()=>{}));
+});
+document.getElementById('del-cancel-btn').addEventListener('click',hideDelModal);
+document.getElementById('del-modal').addEventListener('click',e=>{if(e.target===document.getElementById('del-modal'))hideDelModal();});
+ 
+// 선택/전체 삭제 버튼
+document.getElementById('btn-delete-selected').addEventListener('click',()=>{
+  if(!checkedIds.size)return;
+  const ids=[...checkedIds];
+  showDelModal(ids,ids.map(id=>{const d=myDocs.find(d=>d.id===id);return d?d.nums:[];}));
+});
+document.getElementById('btn-delete-all').addEventListener('click',()=>{
+  if(!myDocs.length)return;
+  showDelModal(myDocs.map(d=>d.id),myDocs.map(d=>d.nums));
+});
+document.getElementById('btn-select-all').addEventListener('click',()=>{
+  document.querySelectorAll('.my-item .my-checkbox').forEach(cb=>{cb.checked=true;checkedIds.add(cb.closest('.my-item').dataset.id);});
+  updateSelCount();
+});
+document.getElementById('btn-deselect-all').addEventListener('click',()=>{
+  document.querySelectorAll('.my-item .my-checkbox').forEach(cb=>{cb.checked=false;});
+  checkedIds.clear(); updateSelCount();
+});
+ 
+// ── 당첨현황 ──
+function renderPrizeHeader(){
+  const last=recentHist.length?recentHist[recentHist.length-1]:null;
+  document.getElementById('ph-round').textContent=(last?last.round:latestRound)+'회차 결과번호';
+  const bEl=document.getElementById('ph-balls'); bEl.innerHTML='';
+  if(last&&last.nums.length===6) last.nums.forEach(n=>{const b=document.createElement('div');b.className='ball '+ballCls(n);b.textContent=n;bEl.appendChild(b);});
+  if(last&&last.bonus)document.getElementById('ph-bonus').textContent='보너스 +'+last.bonus;
+  if(last&&last.date)document.getElementById('ph-date').textContent='추첨일: '+last.date;
+}
+async function loadPrizeTab(round){
+  viewRound=round;
+  if(unsubHistory){unsubHistory();unsubHistory=null;}
+  const we=recentHist.find(h=>h.round===round);
+  const wn=we?we.nums:latestWinNums, bn=we?we.bonus:latestBonusNum;
+  if(!db){renderHistory([],wn,bn);renderRoundChips(round);return;}
+  try{
+    const q=query(collection(db,'picks'),where('round','==',round),orderBy('createdAt','desc'));
+    unsubHistory=onSnapshot(q,snap=>{
+      const docs=snap.docs.map(d=>({id:d.id,...d.data()}));
+      renderHistory(docs,wn,bn); renderPrizeCounts(docs,wn,bn); renderRoundChips(round);
+    });
+  }catch(e){}
+}
+function renderHistory(docs,wn,bn){
+  const list=document.getElementById('history-list'); list.innerHTML='';
+  if(!docs.length){list.innerHTML='<div class="empty-state"><div class="empty-icon">🎯</div>이번 회차 추첨 기록 없음</div>';return;}
+  const hitSet=new Set(wn||[]);
+  docs.forEach(d=>{
+    const nums=d.nums||[], prize=checkPrize(nums,wn,bn);
+    const ts=d.createdAt?.toDate?.(); const t=ts?pad(ts.getHours())+':'+pad(ts.getMinutes()):'';
+    const el=document.createElement('div'); el.className='hist-item';
+    el.innerHTML=`<div class="hist-round">${viewRound}회${d.uid===currentUid?'<br><span style="color:var(--accent);font-size:8px">내번호</span>':''}</div><div class="hist-balls">${nums.map(n=>`<div class="hist-ball ${ballCls(n)}${hitSet.has(n)?' hit':''}">${n}</div>`).join('')}</div>${prize>0?`<span class="tag ${PCLS[prize]}">${PLABELS[prize]}</span>`:'<div style="font-size:10px;color:var(--muted)">—</div>'}<div class="hist-time">${t}</div>`;
+    list.appendChild(el);
+  });
+}
+function renderPrizeCounts(docs,wn,bn){
+  const cnt={1:0,2:0,3:0,4:0,5:0}; const uids=new Set(); let winners=0;
+  docs.forEach(d=>{const p=checkPrize(d.nums||[],wn,bn);if(p>0){cnt[p]++;winners++;}if(d.uid)uids.add(d.uid);});
+  for(let i=1;i<=5;i++)document.getElementById('pc'+i).textContent=cnt[i];
+  document.getElementById('sum-total').textContent=docs.length;
+  document.getElementById('sum-users').textContent=uids.size;
+  document.getElementById('sum-winners').textContent=winners;
+  document.getElementById('sum-rate').textContent=docs.length?(winners/docs.length*100).toFixed(1)+'%':'0%';
+}
+function renderRoundChips(active){
+  const el=document.getElementById('round-chips'); el.innerHTML='';
+  for(let r=latestRound;r>=Math.max(latestRound-4,261);r--){
+    const b=document.createElement('button'); b.className='round-chip'+(r===active?' on':''); b.textContent=r+'회';
+    b.addEventListener('click',()=>{renderPrizeHeader();loadPrizeTab(r);});
+    el.appendChild(b);
+  }
+}
+function setPrizeTabUnlocked(isUnlocked){
+  const tabBtn=document.getElementById('tab-prize-btn');
+  const locked=document.getElementById('prize-locked');
+  const prizeCont=document.getElementById('prize-content');
+  prizeUnlocked=!!isUnlocked;
+  if(isUnlocked){
+    tabBtn.classList.remove('disabled');
+    if(locked) locked.style.display='none';
+    if(prizeCont) prizeCont.style.display='block';
+  } else {
+    tabBtn.classList.add('disabled');
+    if(locked) locked.style.display='block';
+    if(prizeCont) prizeCont.style.display='none';
+  }
+}
+ 
+function checkPrizeUnlock(){
+  if(!db) return;
+  try{
+    // prize 필드 무시 — 실제 결과번호로 재계산
+    const q=query(collection(db,'picks'),where('round','==',latestRound));
+    if(unsubPrize) unsubPrize();
+    unsubPrize=onSnapshot(q, snap=>{
+      const hasTopWinner=snap.docs.some(d=>{
+        const p=checkPrize(d.data().nums||[],latestWinNums,latestBonusNum);
+        return p===1||p===2;
+      });
+      setPrizeTabUnlocked(hasTopWinner);
+    });
+  }catch(e){ console.error('checkPrizeUnlock error:',e); }
+}
+ 
+// ── 탭 전환 ──
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(btn.classList.contains('disabled'))return;
+    const tab=btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('tab-'+tab).classList.add('on');
+    if(tab==='prize'){renderPrizeHeader();loadPrizeTab(latestRound);}
+    if(tab==='mynums'){loadMyNums();}
+    if(tab==='near'){initNearTab();}
+    if(tab==='myinfo'){const i=loadMyInfo();applyMyInfoToForm(i);updateFortuneDisplay();}
+  });
+});
+ 
+// 줄 수 선택
+document.querySelectorAll('.seg-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on'); genCount=parseInt(btn.dataset.n);
+  });
+});
+ 
+// ── 내주변 판매점 ──
+let nearMap = null, nearMarkers = [], nearRadius = 500, myLat = 0, myLng = 0;
+const KAKAO_JS_KEY = '발급필요';
+
+function getNearRadiusLabel(r){
+  return r >= 1000 ? (r / 1000) + 'km' : r + 'm';
+}
+
+function updateNearTop10ButtonText(){
+  const btn = document.getElementById('near-top10-open-btn');
+  if(!btn) return;
+  btn.textContent = `🏆 내 ${getNearRadiusLabel(nearRadius)} 주변 로또명당 TOP10 보기`;
+}
+
+function initNearTab(){
+  if(nearMap){
+    setTimeout(() => nearMap.invalidateSize(), 100);
+  }
+}
+
+function startNearSearch(){
+  const btn = document.getElementById('loc-btn');
+  btn.disabled = true;
+  btn.innerHTML = '📡 위치 확인 중...';
+
+  if(!navigator.geolocation){
+    alert('위치 서비스를 지원하지 않는 브라우저입니다.');
+    btn.disabled = false;
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(pos => {
+    myLat = pos.coords.latitude;
+    myLng = pos.coords.longitude;
+
+    btn.style.display = 'none';
+    document.getElementById('near-filter').style.display = 'flex';
+    document.getElementById('map-loading').style.display = 'none';
+
+    updateNearTop10ButtonText();
+    loadLeaflet();
+  }, err => {
+    btn.disabled = false;
+    btn.innerHTML = '📍 내 위치로 주변 판매점 찾기';
+
+    if(err.code === 1) alert('위치 권한이 거부됐습니다.\n브라우저에서 위치 권한을 허용해주세요.');
+    else if(err.code === 2) alert('위치를 가져올 수 없습니다.');
+    else alert('위치 요청 시간이 초과됐습니다.');
+  }, {
+    enableHighAccuracy: true,
+    timeout: 15000,
+    maximumAge: 0
+  });
+}
+
+function loadLeaflet(){
+  if(window.L){
+    initLeafletMap();
+    return;
+  }
+
+  const lc = document.createElement('link');
+  lc.rel = 'stylesheet';
+  lc.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  document.head.appendChild(lc);
+
+  const ls = document.createElement('script');
+  ls.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  ls.onload = initLeafletMap;
+  document.head.appendChild(ls);
+}
+
+function initLeafletMap(){
+  const el = document.getElementById('map');
+
+  if (nearMap) {
+    nearMap.remove();
+    nearMap = null;
+  }
+
+  nearMap = L.map(el, { zoomControl: true }).setView([myLat, myLng], 15);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(nearMap);
+
+  const myIcon = L.divIcon({
+    html: '<div style="background:#f0c040;width:18px;height:18px;border-radius:50%;border:3px solid #000;box-shadow:0 0 10px rgba(240,192,64,.9)"></div>',
+    iconSize: [18,18],
+    iconAnchor: [9,9],
+    className: ''
+  });
+
+  L.marker([myLat, myLng], { icon: myIcon }).addTo(nearMap)
+    .bindPopup('<b>📍 내 위치</b>')
+    .openPopup();
+
+  searchStores();
+}
+
+function getDistM(lat1,lng1,lat2,lng2){
+  const R = 6371000;
+  const dLat = (lat2-lat1) * Math.PI/180;
+  const dLng = (lng2-lng1) * Math.PI/180;
+  const a =
+    Math.sin(dLat/2) ** 2 +
+    Math.cos(lat1*Math.PI/180) *
+    Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLng/2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function filterDist(el, r){
+  nearRadius = r;
+  document.querySelectorAll('.near-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  updateNearTop10ButtonText();
+
+  if(nearMap && myLat){
+    searchStores();
+  }
+}
+
+async function fetchKakaoStores(){
+  try{
+    const keywords = ['로또판매점','복권판매점','동행복권'];
+    let allStores = [];
+
+    for(const kw of keywords){
+      const url = `https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(kw)}&x=${myLng}&y=${myLat}&radius=${nearRadius}&sort=distance&size=15`;
+      const res = await fetch(url, {
+        headers:{ 'Authorization':'KakaoAK 7dbae8e1490f231590025423e15c5e07' }
+      });
+      if(!res.ok) continue;
+
+      const data = await res.json();
+      const stores = (data.documents || []).map(p => ({
+        name:p.place_name,
+        addr:p.road_address_name || p.address_name,
+        lat:parseFloat(p.y),
+        lng:parseFloat(p.x),
+        dist:parseInt(p.distance) || Math.round(getDistM(myLat,myLng,parseFloat(p.y),parseFloat(p.x))),
+        phone:p.phone || '',
+        url:p.place_url || ''
+      }));
+
+      allStores = [...allStores, ...stores];
+    }
+
+    const seen = new Set();
+    return allStores
+      .filter(s => {
+        const key = s.name + s.addr;
+        if(seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .filter(s => s.dist <= nearRadius)
+      .sort((a,b) => a.dist - b.dist);
+
+  }catch(e){
+    console.warn('카카오 API 오류:', e);
+    return [];
+  }
+}
+
+function getLuckyBadgeHtml(lucky){
+
+  if(!lucky){
+    return `<span class="lucky-badge lucky-badge-none">참고 데이터 확인 전</span>`;
+  }
+
+  const score = lucky.luckyScore || 0;
+
+  const first = (lucky.firstAutoCount || 0) + (lucky.firstManualCount || 0);
+  const second = lucky.secondCount || 0;
+  const recent = lucky.recentWinRound || 0;
+
+  const cls =
+    score >= 80 ? 'lucky-badge-gold' :
+    score >= 50 ? 'lucky-badge-orange' :
+    'lucky-badge-blue';
+
+  const barColor =
+    score >= 80 ? 'var(--accent)' :
+    score >= 50 ? '#e05c20' :
+    'var(--accent3)';
+
+  return `
+    <div class="lucky-badge-wrap">
+
+      <span class="lucky-badge ${cls}">
+        🏆 ${score}점
+        <span class="lucky-score-bar-wrap">
+          <span class="lucky-score-bar-fill"
+            style="width:${score}%;background:${barColor}">
+          </span>
+        </span>
+      </span>
+
+      <div class="lucky-meta">
+        🥇 1등 ${first}회 · 🥈 2등 ${second}회
+        <br>
+        <span class="muted">
+          ${recent ? `최근 기록 ${recent}회` : '최근 기록 데이터 없음'}
+        </span>
+      </div>
+
+    </div>
+  `;
+}
+
+function getMarkerColor(store){
+  if(!store.lucky) return '#888';
+  const s = store.lucky.luckyScore || 0;
+  if(s >= 80) return '#f4c430';
+  if(s >= 50) return '#ff6a00';
+  return '#3ab8ff';
+}
+
+function renderStores(stores){
+  const rLabel = nearRadius >= 1000 ? (nearRadius/1000)+'km' : nearRadius+'m';
+
+  if(!stores.length){
+    document.getElementById('near-top10-open-wrap').style.display = 'none';
+    document.getElementById('near-count').textContent = `반경 ${rLabel} 내 판매점 검색 완료`;
+    document.getElementById('near-list').innerHTML = `
+      <div class="near-empty">
+        <div style="font-size:32px;margin-bottom:12px">🗺️</div>
+        <div style="margin-bottom:8px">지도 데이터에 등록된 판매점이 없습니다.</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.8">
+          👉 <a href="https://m.map.kakao.com/actions/searchView?q=로또판매점" target="_blank" style="color:var(--accent3)">카카오맵에서 검색하기</a><br>
+          👉 <a href="https://naver.me/FcfWN2xw" target="_blank" style="color:var(--accent3)">네이버지도에서 검색하기</a>
+        </div>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('near-count').textContent = `반경 ${rLabel} 내 판매점 ${stores.length}개`;
+
+  stores.slice(0,30).forEach((s,i)=>{
+    const color = getMarkerColor(s) || (i===0 ? '#f0c040' : i<3 ? '#e05c20' : '#3ab8ff');
+    const ic = L.divIcon({
+      html:`<div style="background:${color};color:#000;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;border:2px solid rgba(0,0,0,.4);box-shadow:0 2px 6px rgba(0,0,0,.5)">${i+1}</div>`,
+      iconSize:[24,24],
+      iconAnchor:[12,12],
+      className:''
+    });
+
+    const first = (s.lucky?.firstAutoCount || 0) + (s.lucky?.firstManualCount || 0);
+    const m = L.marker([s.lat,s.lng],{icon:ic}).addTo(nearMap)
+      .bindPopup(`<b>${s.name}</b><br>${s.addr||''}<br><span style="color:#e05c20;font-weight:700">${s.dist}m</span>${s.lucky ? `<br>🏆 참고점수 ${s.lucky.luckyScore}점 · 1등 ${first}회` : ''}`);
+    nearMarkers.push(m);
+  });
+
+  const pts = [[myLat,myLng], ...stores.slice(0,8).map(s=>[s.lat,s.lng])];
+  nearMap.fitBounds(pts, {padding:[30,30]});
+
+  let html = `<div style="overflow-x:auto"><table class="near-table">
+    <thead><tr><th>#</th><th>판매점명 / 주소</th><th>거리</th><th>참고</th></tr></thead><tbody>`;
+
+  stores.forEach((s,i)=>{
+    const rankCls = i===0 ? '' : i===1 ? ' r2' : i===2 ? ' r3' : '';
+    const dist = s.dist < 1000 ? s.dist+'m' : (s.dist/1000).toFixed(1)+'km';
+    const luckyRowCls = s.lucky && s.lucky.luckyScore >= 80 ? ' lucky-row-gold' : s.lucky && s.lucky.luckyScore >= 50 ? ' lucky-row-orange' : '';
+
+    html += `<tr class="${luckyRowCls}">
+      <td><div class="near-rank${rankCls}">${i+1}</div></td>
+      <td>
+        <div class="near-name">${s.url ? `<a href="${s.url}" target="_blank" style="color:var(--text);text-decoration:none">${s.name} 🔗</a>` : s.name}</div>
+        ${s.addr ? `<div class="near-addr">${s.addr}</div>` : ''}
+        ${s.phone ? `<div class="near-tel">📞 ${s.phone}</div>` : ''}
+      </td>
+      <td><div class="near-dist">${dist}</div></td>
+      <td class="near-lucky-cell">${getLuckyBadgeHtml(s.lucky)}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  document.getElementById('near-list').innerHTML = html;
+}
+
+async function searchStores(){
+  document.getElementById('near-count').textContent = '판매점 검색 중...';
+  document.getElementById('near-list').innerHTML = '<div class="near-empty" style="padding:20px">🔍 주변 판매점을 검색하고 있습니다...<div class="near-loading-lucky">🏆 참고점수 정보 로딩 중...</div></div>';
+
+  nearMarkers.forEach(m => nearMap.removeLayer(m));
+  nearMarkers = [];
+
+  try{
+    const [stores, luckyList] = await Promise.all([
+      fetchKakaoStores(),
+      loadLuckyStats()
+    ]);
+
+    const merged = stores.map(s => ({
+      ...s,
+      lucky: findLuckyMatch(s.name, s.addr, luckyList)
+    }));
+
+    window._nearStores = merged;
+    window._nearCurrentSort = 'dist';
+
+    document.getElementById('near-sort-row').style.display = merged.length ? 'flex' : 'none';
+    document.getElementById('near-top10-open-wrap').style.display = merged.length ? 'block' : 'none';
+
+    renderNearSortHelp('dist');
+    renderNearTop10(merged);
+    renderStores(merged);
+
+  }catch(e){
+    console.error('searchStores error:', e);
+    document.getElementById('near-count').textContent = '판매점 검색 실패';
+    document.getElementById('near-list').innerHTML = '<div class="near-empty">오류가 발생했습니다. 다시 시도해주세요.</div>';
+  }
+}
+
+function formatNearTop10List(stores){
+
+  if(!stores || !stores.length){
+    return `
+      <div style="font-size:12px;color:var(--muted);
+      text-align:center;padding:20px 8px">
+
+      표시할 참고점수 데이터가 없습니다.
+
+      </div>`;
+  }
+
+  return stores.map((s,i)=>{
+
+    const first =
+      (s.lucky?.firstAutoCount || 0)
+    + (s.lucky?.firstManualCount || 0);
+
+    const second = s.lucky?.secondCount || 0;
+
+    const recent = s.lucky?.recentWinRound || 0;
+
+    const dist =
+      s.dist < 1000
+      ? `${s.dist}m`
+      : `${(s.dist/1000).toFixed(1)}km`;
+
+    return `
+      <div class="near-top10-item">
+
+        <div class="near-top10-rank">${i+1}</div>
+
+        <div class="near-top10-main">
+
+          <div class="near-top10-name">
+            ${s.name}
+          </div>
+
+          <div class="near-top10-addr">
+            ${s.addr || ''}
+          </div>
+
+          <div class="near-top10-meta">
+
+            🥇 1등 ${first}회 ·
+            🥈 2등 ${second}회
+
+            <br>
+
+            <span class="muted">
+            ${recent ? `최근 기록 ${recent}회`
+            : '최근 기록 데이터 없음'}
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="near-top10-side">
+
+          <div class="near-top10-score">
+            🏆 ${s.lucky?.luckyScore || 0}점
+          </div>
+
+          <div class="near-top10-dist">
+            ${dist}
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join('');
+}
+
+function openNearTop10Modal(){
+  const modal = document.getElementById('near-top10-modal');
+  const listEl = document.getElementById('near-top10-modal-list');
+  const titleEl = modal?.querySelector('.modal-title');
+  const descEl = modal?.querySelector('.modal-desc');
+
+  if(!modal || !listEl) return;
+
+  const label = getNearRadiusLabel(nearRadius);
+
+  if(titleEl) titleEl.textContent = `내 ${label} 주변 로또명당 TOP10`;
+  if(descEl){
+    const hasLucky = (window._nearTop10Stores || []).some(s => s.lucky);
+    descEl.innerHTML = hasLucky
+      ? `현재 반경 <strong style="color:var(--accent)">${label}</strong> 내 판매점 중 <strong style="color:var(--accent)">참고점수 기준 TOP10</strong>입니다.`
+      : `현재 반경 <strong style="color:var(--accent)">${label}</strong> 내 판매점 중 연결된 참고 데이터가 적어 <strong style="color:var(--accent)">거리 기준 TOP10</strong>을 함께 표시합니다.`;
+  }
+
+  listEl.innerHTML = formatNearTop10List(window._nearTop10Stores || []);
+  modal.classList.add('show');
+}
+
+function closeNearTop10Modal(){
+  const modal = document.getElementById('near-top10-modal');
+  if(modal) modal.classList.remove('show');
+}
+
+function renderNearTop10(stores){
+
+  const scored = [...stores]
+    .filter(s => s.lucky)
+    .sort((a,b)=>{
+      const sa = a.lucky?.luckyScore || 0;
+      const sb = b.lucky?.luckyScore || 0;
+      const fa = (a.lucky?.firstAutoCount || 0) + (a.lucky?.firstManualCount || 0);
+      const fb = (b.lucky?.firstAutoCount || 0) + (b.lucky?.firstManualCount || 0);
+      const s2a = a.lucky?.secondCount || 0;
+      const s2b = b.lucky?.secondCount || 0;
+      const ra = a.lucky?.recentWinRound || 0;
+      const rb = b.lucky?.recentWinRound || 0;
+      return sb - sa || fb - fa || s2b - s2a || rb - ra || a.dist - b.dist;
+    });
+
+  const ranked = scored.length ? scored.slice(0,10) : [...stores].sort((a,b)=>a.dist-b.dist).slice(0,10);
+
+  window._nearTop10Stores = ranked;
+
+  const openWrap = document.getElementById('near-top10-open-wrap');
+  if(openWrap){
+    openWrap.style.display = stores.length ? 'block' : 'none';
+  }
+
+  updateNearTop10ButtonText();
+}
+
+document.getElementById('near-top10-open-btn')?.addEventListener('click', openNearTop10Modal);
+document.getElementById('near-top10-close-btn')?.addEventListener('click', closeNearTop10Modal);
+document.getElementById('near-top10-modal')?.addEventListener('click', (e)=>{
+  if(e.target === document.getElementById('near-top10-modal')) closeNearTop10Modal();
+});
+
+window.startNearSearch = startNearSearch;
+window.filterDist = filterDist;
+window.sortAndRender = sortAndRender;
+
+document.getElementById('loc-btn').addEventListener('click', startNearSearch);
+document.querySelectorAll('.near-chip').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const r = parseInt(btn.dataset.r);
+    filterDist(btn, r);
+  });
+});
+// ── 오늘의 숫자 카드 ──
+const LUCKY_COLORS = [
+  {name:'골드',hex:'#f0c040'},
+  {name:'루비',hex:'#ff5050'},
+  {name:'사파이어',hex:'#3ab8ff'},
+  {name:'에메랄드',hex:'#40d080'},
+  {name:'퍼플',hex:'#b060ff'},
+  {name:'로즈',hex:'#ff80b0'},
+];
+const LUCKY_TIMES = [
+  '06:00~08:00','09:00~11:00','12:00~14:00',
+  '15:00~17:00','18:00~20:00','19:00~21:00',
+  '20:00~22:00','21:00~23:00'
+];
+ 
+function getTodayKey(){
+  const kst=new Date(new Date().getTime()+9*3600000);
+  return kst.toISOString().slice(0,10);
+}
+ 
+function generateLuckyNums(seed){
+  function seededRand(s){ const x=Math.sin(s)*10000; return x-Math.floor(x); }
+  let pool=Array.from({length:45},(_,i)=>i+1);
+  const selected=[];
+  let s=seed;
+  const weights={};
+  for(let n=1;n<=45;n++){
+    const freq=freqData[n]||1;
+    const absent=recentHist.slice(-8).every(h=>!h.nums.includes(n));
+    let w=1;
+    w+=absent?1.4:0;
+    w+=Math.max(0,1.2-freq/150);
+    w+=seededRand(seed+n)*0.5;
+    weights[n]=Math.max(w,0.1);
+  }
+  while(selected.length<6&&pool.length>0){
+    const total=pool.reduce((sum,n)=>sum+(weights[n]||1),0);
+    let r=seededRand(s++)*total;
+    let pickedIndex=0;
+    for(let i=0;i<pool.length;i++){
+      r-=(weights[pool[i]]||1);
+      if(r<=0){pickedIndex=i;break;}
+    }
+    selected.push(pool[pickedIndex]);
+    pool.splice(pickedIndex,1);
+  }
+  return selected.sort((a,b)=>a-b);
+}
+ 
+// 공용 기본 오늘의 숫자 카드 생성 (개인화 미포함 - Firestore 저장용)
+function generateLuckyDataBase(dateKey){
+  const seed=dateKey.replace(/-/g,'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const nums=generateLuckyNums(seed);
+  const colorIdx=Math.floor(seed%LUCKY_COLORS.length);
+  const timeIdx=Math.floor((seed*7)%LUCKY_TIMES.length);
+  const score=65+Math.floor((seed*13)%30);
+  return {
+    numbers:[...nums],
+    luckyScore:score,
+    luckyColor:LUCKY_COLORS[colorIdx],
+    luckyTimeRange:LUCKY_TIMES[timeIdx],
+    createdAt:new Date().toISOString()
+  };
+}
+// 개인 행운 숫자 반영 (클라이언트 렌더링 직전에만 적용)
+function applyPersonalLuckyNumber(data){
+  if(!window._personalLuckyNum) return data;
+  const n=window._personalLuckyNum;
+  const result={...data, numbers:[...data.numbers]};
+  if(!result.numbers.includes(n)){
+    const replaceIdx=Math.floor(Math.abs(Math.sin(n))*result.numbers.length)%result.numbers.length;
+    result.numbers[replaceIdx]=n;
+    result.numbers=[...new Set(result.numbers)].sort((a,b)=>a-b);
+    while(result.numbers.length<6){
+      const c=Math.floor(Math.abs(Math.sin(result.numbers.length+n))*45)+1;
+      if(!result.numbers.includes(c)) result.numbers.push(c);
+    }
+    result.numbers.sort((a,b)=>a-b);
+  }
+  return result;
+}
+// 최종 오늘의 숫자 카드 데이터 (개인화 포함)
+function generateLuckyData(dateKey){
+  const base=generateLuckyDataBase(dateKey);
+  return applyPersonalLuckyNumber(base);
+}
+ 
+function renderLuckyCard(data){
+  const {numbers,luckyScore,luckyColor,luckyTimeRange}=data;
+  const container=document.getElementById('lucky-content');
+  if(!container)return;
+  container.innerHTML=`
+    <div class="lucky-balls-row" id="lucky-balls"></div>
+    <div class="lucky-score-bar"><div class="lucky-score-fill" id="lucky-score-fill" style="width:0%"></div></div>
+    <div class="lucky-info-row">
+      <div class="lucky-info">
+        <div class="lucky-info-val" id="lucky-score-val">${luckyScore}%</div>
+        <div class="lucky-info-label">참고지수</div>
+      </div>
+      <div class="lucky-info">
+        <div class="lucky-info-val" style="color:${luckyColor.hex}">${luckyColor.name}</div>
+        <div class="lucky-info-label">추천 컬러</div>
+      </div>
+      <div class="lucky-info">
+        <div class="lucky-info-val" style="font-size:11px">${luckyTimeRange}</div>
+        <div class="lucky-info-label">추천 시간</div>
+      </div>
+    </div>
+    <div class="lucky-btns">
+      <button class="lucky-btn lucky-btn-sim" id="lucky-sim-btn">🎲 이 번호로 시뮬레이션</button>
+      <button class="lucky-btn lucky-btn-challenge" id="lucky-challenge-btn">🏆 챌린지 참여</button>
+    </div>
+    <div class="lucky-challenge-banner" id="lucky-challenge-banner">✅ 참여가 완료되었습니다. 번호가 저장됐습니다.</div>
+  `;
+  // 공 렌더
+  const ballsEl=document.getElementById('lucky-balls');
+  numbers.forEach(n=>{
+    const b=document.createElement('div');
+    b.className='lucky-ball '+ballCls(n);
+    b.textContent=n;
+    ballsEl.appendChild(b);
+  });
+  // 오늘의 숫자 카드를 시뮬레이션 대상으로 자동 설정
+  updateSimTarget(numbers);
+  // 점수바 애니메이션
+  setTimeout(()=>{
+    const fill=document.getElementById('lucky-score-fill');
+    if(fill)fill.style.width=luckyScore+'%';
+  },300);
+  // 버튼 이벤트 - setTimeout으로 DOM 반영 후 등록
+  setTimeout(()=>{
+  document.getElementById('lucky-sim-btn').addEventListener('click',()=>{
+    // 번호추첨 탭으로 이동 후 결과에 행운 번호 표시
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
+    document.querySelector('[data-tab="pick"]').classList.add('on');
+    document.getElementById('tab-pick').classList.add('on');
+    // 결과란에 오늘의 숫자 카드 표시
+    const resultsEl=document.getElementById('results');
+    resultsEl.innerHTML='';
+    const hitSet=new Set(latestWinNums);
+    const row=document.createElement('div');
+    row.className='r-row';
+    row.innerHTML=`<div class="r-top"><div class="r-num">🍀</div><div class="r-balls">${numbers.map(n=>`<div class="ball ${ballCls(n)}${hitSet.has(n)?' hit':''}">${n}</div>`).join('')}</div><div class="r-saved" style="color:var(--accent);font-size:10px">오늘의 숫자 카드</div></div>`;
+    resultsEl.appendChild(row);
+    resultsEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+  // 챌린지 버튼
+  document.getElementById('lucky-challenge-btn').addEventListener('click',async()=>{
+    updateSimTarget(numbers);
+    const luckyBalls=[...numbers];
+    if(luckyBalls.length!==6){alert('오늘의 숫자 카드 번호를 먼저 불러오세요.');return;}
+    await joinChallenge(luckyBalls,'lucky');
+  });
+  }, 0); // setTimeout 닫기
+}
+ 
+async function loadTodayLucky(){
+  const dateKey=getTodayKey();
+  // 1. Firestore에서 공용 데이터 조회/저장 (개인화 미포함)
+  if(db){
+    try{
+      const docRef=doc(db,'daily_lucky',dateKey);
+      const snap=await getDoc(docRef);
+      let baseData;
+      if(snap.exists()){
+        baseData=snap.data();
+      } else {
+        // 공용 데이터만 저장 (개인화 절대 포함 금지)
+        baseData=generateLuckyDataBase(dateKey);
+        await setDoc(docRef,baseData);
+      }
+      // 개인화는 렌더링 직전에만 적용
+      renderLuckyCard(applyPersonalLuckyNumber(baseData));
+      return;
+    }catch(e){ console.warn('Firestore lucky error:',e); }
+  }
+  // Firestore 없으면 로컬 생성 + 개인화 적용
+  renderLuckyCard(applyPersonalLuckyNumber(generateLuckyDataBase(dateKey)));
+}
+ 
+// 새로고침 버튼 (날짜 바뀌면 재로드)
+document.getElementById('lucky-refresh-btn').addEventListener('click',()=>{
+  const container=document.getElementById('lucky-content');
+  container.innerHTML='<div class="lucky-analyzing"><div class="lucky-analyzing-icon">🔮</div><div>오늘의 숫자 카드를 불러오는 중...</div></div>';
+  setTimeout(()=>loadTodayLucky(),600);
+});
+ 
+ 
+// ── 번호 시뮬레이션 ──
+let simNums = []; // 현재 시뮬레이션 대상 번호
+let simRunning = false;
+ 
+function simRandNums(){
+  const pool=Array.from({length:45},(_,i)=>i+1);
+  const nums=[];
+  while(nums.length<6){
+    const i=Math.floor(Math.random()*pool.length);
+    nums.push(pool.splice(i,1)[0]);
+  }
+  nums.sort((a,b)=>a-b);
+  const bonus=pool[Math.floor(Math.random()*pool.length)];
+  return{nums,bonus};
+}
+ 
+function simCheckPrize(userNums,winNums,bonus){
+  const h=userNums.filter(n=>winNums.includes(n)).length;
+  const bh=userNums.includes(bonus);
+  if(h===6)return 1;
+  if(h===5&&bh)return 2;
+  if(h===5)return 3;
+  if(h===4)return 4;
+  if(h===3)return 5;
+  return 0;
+}
+ 
+async function runSimulation(count){
+  if(simRunning||!simNums.length)return;
+  simRunning=true;
+  const btns=['sim-btn-100','sim-btn-1000','sim-btn-10000'];
+  btns.forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});
+  
+  const out=document.getElementById('sim-output');
+  out.innerHTML=`<div class="sim-running"><div class="sim-running-anim">⚙️</div><div>시뮬레이션 실행 중... (0/${count})</div><div class="sim-progress"><div class="sim-progress-bar" id="sim-prog" style="width:0%"></div></div></div>`;
+ 
+  const results={0:0,1:0,2:0,3:0,4:0,5:0};
+  const CHUNK=250;
+  let done=0;
+ 
+  await new Promise(resolve=>{
+    function runChunk(){
+      const end=Math.min(done+CHUNK,count);
+      for(let i=done;i<end;i++){
+        const{nums,bonus}=simRandNums();
+        const prize=simCheckPrize(simNums,nums,bonus);
+        results[prize]++;
+      }
+      done=end;
+      const pct=(done/count*100).toFixed(0);
+      const prog=document.getElementById('sim-prog');
+      if(prog)prog.style.width=pct+'%';
+      const runEl=out.querySelector('.sim-running div:nth-child(2)');
+      if(runEl)runEl.textContent=`시뮬레이션 실행 중... (${done.toLocaleString()}/${count.toLocaleString()})`;
+      if(done<count) requestAnimationFrame(runChunk);
+      else resolve();
+    }
+    requestAnimationFrame(runChunk);
+  });
+ 
+  renderSimResults(results,count);
+  simRunning=false;
+  btns.forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false;});
+}
+ 
+function renderSimResults(results,total){
+  const out=document.getElementById('sim-output');
+  const ranks=[
+    {r:1,label:'🥇 1등',cls:'r1',bar:'sim-bar-r1'},
+    {r:2,label:'🥈 2등',cls:'r2',bar:'sim-bar-r2'},
+    {r:3,label:'🥉 3등',cls:'r3',bar:'sim-bar-r3'},
+    {r:4,label:'4등',cls:'r4',bar:'sim-bar-r4'},
+    {r:5,label:'5등',cls:'r5',bar:'sim-bar-r5'},
+    {r:0,label:'꽝',cls:'r0',bar:'sim-bar-r0'},
+  ];
+  const winners=Object.entries(results).filter(([k])=>k!=='0').reduce((a,[,v])=>a+v,0);
+  const maxCount=Math.max(...Object.values(results));
+ 
+  let tableHtml=`<table class="sim-table"><thead><tr><th>등수</th><th>횟수</th><th>비율</th><th style="min-width:80px">그래프</th></tr></thead><tbody>`;
+  ranks.forEach(({r,label,cls,bar})=>{
+    const c=results[r]||0;
+    const pct=total>0?(c/total*100):0;
+    const barW=maxCount>0?(c/maxCount*100):0;
+    tableHtml+=`<tr>
+      <td><span class="sim-rank ${cls}">${label}</span></td>
+      <td><span class="sim-count">${c.toLocaleString()}</span></td>
+      <td><span class="sim-pct">${pct.toFixed(4)}%</span></td>
+      <td><div class="sim-bar-wrap"><div class="sim-bar-fill ${bar}" style="width:0%" data-w="${barW}"></div></div></td>
+    </tr>`;
+  });
+  tableHtml+=`</tbody></table>`;
+ 
+  const rate=(winners/total*100).toFixed(3);
+  const avg1=results[1]>0?Math.round(total/results[1]):0;
+ 
+  out.innerHTML=`
+    <div class="sim-results">
+      ${tableHtml}
+      <div class="sim-summary">
+        <div><div class="sim-sum-val">${total.toLocaleString()}</div><div class="sim-sum-label">총 시뮬레이션</div></div>
+        <div><div class="sim-sum-val">${winners.toLocaleString()}</div><div class="sim-sum-label">일치 횟수</div></div>
+        <div><div class="sim-sum-val">${rate}%</div><div class="sim-sum-label">일치 비율</div></div>
+      </div>
+      ${results[1]>0?`<div style="text-align:center;margin-top:10px;font-size:11px;color:var(--accent)">🎉 1등 일치 확인 평균 ${avg1.toLocaleString()}회에 1번</div>`:''}
+    </div>`;
+  // 막대 애니메이션
+  setTimeout(()=>{
+    out.querySelectorAll('.sim-bar-fill').forEach(el=>{
+      el.style.width=el.dataset.w+'%';
+    });
+  },100);
+}
+ 
+function updateSimTarget(nums, isCustom=false){
+  simNums=[...nums];
+  const target=document.getElementById('sim-target');
+  if(!target)return;
+  target.innerHTML=nums.map(n=>`<div class="ball ${ballCls(n)}" style="width:30px;height:30px;font-size:11px">${n}</div>`).join('');
+  ['sim-btn-100','sim-btn-1000','sim-btn-10000'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(b){ b.disabled=false; b.style.opacity='1'; }
+  });
+  // 직접 선택 시에만 내 번호에 저장 버튼 표시
+  const saveBtn=document.getElementById('sim-save-to-mynums');
+  if(saveBtn){
+    saveBtn.style.display=isCustom?'block':'none';
+    saveBtn._nums=[...nums];
+  }
+}
+ 
+ 
+// 시뮬레이션 직접 번호 선택
+let simCustomNums = [];
+ 
+function buildSimNumGrid(){
+  const grid = document.getElementById('sim-num-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  simCustomNums = [];
+  for(let n=1; n<=45; n++){
+    const btn = document.createElement('button');
+    btn.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 2px;font-size:11px;font-weight:700;cursor:pointer;text-align:center;color:var(--muted);transition:all .15s';
+    btn.textContent = n;
+    btn.addEventListener('click', ()=>{
+      if(btn.dataset.sel === '1'){
+        btn.dataset.sel = '0';
+        btn.style.background = 'var(--card)';
+        btn.style.color = 'var(--muted)';
+        btn.style.borderColor = 'var(--border)';
+        simCustomNums = simCustomNums.filter(x => x !== n);
+      } else {
+        if(simCustomNums.length >= 6) return;
+        btn.dataset.sel = '1';
+        btn.style.background = 'var(--accent)';
+        btn.style.color = '#000';
+        btn.style.borderColor = 'var(--accent)';
+        simCustomNums.push(n);
+      }
+      const cnt = document.getElementById('sim-custom-count');
+      if(cnt) cnt.textContent = simCustomNums.length + '/6 선택';
+      const apply = document.getElementById('sim-custom-apply');
+      if(apply) apply.disabled = simCustomNums.length !== 6;
+ 
+    });
+    grid.appendChild(btn);
+  }
+}
+ 
+// 직접 선택 토글
+document.getElementById('sim-custom-toggle').addEventListener('click', ()=>{
+  const area = document.getElementById('sim-custom-area');
+  const isOpen = area.style.display !== 'none';
+  area.style.display = isOpen ? 'none' : 'block';
+  if(!isOpen) buildSimNumGrid();
+});
+ 
+// 적용 버튼
+document.getElementById('sim-custom-apply').addEventListener('click', ()=>{
+  if(simCustomNums.length !== 6) return;
+  const sorted = [...simCustomNums].sort((a,b) => a-b);
+  updateSimTarget(sorted, true); // isCustom=true → 저장 버튼 표시
+  document.getElementById('sim-custom-area').style.display = 'none';
+});
+ 
+// 내 번호에 저장 버튼 이벤트
+document.getElementById('sim-save-to-mynums').addEventListener('click', async function(){
+  const nums = this._nums;
+  if(!nums||nums.length!==6){ alert('번호를 먼저 선택해주세요.'); return; }
+  if(!currentUid||!db){ alert('로그인 정보가 없습니다.'); return; }
+  try{
+    await addDoc(collection(db,'picks'),{
+      uid:currentUid, round:latestRound, nums,
+      prize:checkPrize(nums,latestWinNums,latestBonusNum),
+      sourceType:'custom_sim', createdAt:serverTimestamp()
+    });
+    loadMyNums();
+    this.textContent='✅ 저장 완료!';
+    this.style.background='rgba(64,208,128,.3)';
+    setTimeout(()=>{ this.textContent='⭐ 내 번호에 저장'; this.style.background='rgba(64,208,128,.15)'; }, 2000);
+  }catch(e){ console.error(e); alert('저장 중 오류가 발생했습니다.'); }
+});
+ 
+// 시뮬레이션 버튼 이벤트
+document.getElementById('sim-btn-100').addEventListener('click',()=>runSimulation(100));
+document.getElementById('sim-btn-1000').addEventListener('click',()=>{
+  if(simNums.length===0)return;
+  showAdModal('sim-1000');
+});
+document.getElementById('sim-btn-10000').addEventListener('click',()=>{
+  if(simNums.length===0)return;
+  showAdModal('sim-10000');
+});
+ 
+// 시뮬레이션 광고 처리는 confirmBtn 통합 처리됨
+ 
+ 
+// ── 주간 번호 참여 ──
+let challengeGenNums = [];
+let challengeCustomNums = [];
+let challengeMyEntry = null;
+let challengeRoundData = null;
+let challengeUnsubRound = null;
+let challengeUnsubTop10 = null;
+ 
+// 회차 상태 계산 - 서버 문서 기준 우선, 클라이언트 시간은 fallback
+function getChallengeStatus(){
+  // 서버 문서에 status가 있으면 우선 사용
+  if(challengeRoundData?.status==='scored') return 'scored';
+  if(challengeRoundData?.status==='closed') return 'closed';
+  if(challengeRoundData?.scored===true) return 'scored';
+  // 서버 상태 없으면 클라이언트 시간으로 fallback
+  const kst=new Date(new Date().getTime()+9*3600000);
+  if(kst.getDay()===6&&kst.getHours()>=20) return 'closed';
+  return 'open';
+}
+ 
+// 상태 배지 업데이트
+function updateStatusBadge(status){
+  const badge = document.getElementById('challenge-status-badge');
+  const deadline = document.getElementById('challenge-deadline');
+  if(!badge) return;
+  if(status==='open'){
+    badge.className='challenge-status-badge status-open'; badge.textContent='● 참여 중';
+    if(deadline) deadline.textContent='추첨 전';
+  } else if(status==='closed'){
+    badge.className='challenge-status-badge status-closed'; badge.textContent='● 마감';
+    if(deadline) deadline.textContent='채점 대기';
+  } else {
+    badge.className='challenge-status-badge status-scored'; badge.textContent='● 채점 완료';
+    if(deadline) deadline.textContent='결과 공개';
+  }
+}
+ 
+// 회차 변경 시 state reset
+function resetChallengeState(){
+  challengeMyEntry = null;
+  challengeRoundData = null;
+  challengeGenNums = [];
+  challengeCustomNums = [];
+  if(challengeUnsubRound){ challengeUnsubRound(); challengeUnsubRound=null; }
+  if(challengeUnsubTop10){ challengeUnsubTop10(); challengeUnsubTop10=null; }
+  const statusEl=document.getElementById('challenge-my-status');
+  const btnsEl=document.getElementById('challenge-btns');
+  const rankCard=document.getElementById('challenge-my-rank-card');
+  if(statusEl) statusEl.classList.remove('show');
+  if(btnsEl) btnsEl.style.display='flex';
+  if(rankCard) rankCard.classList.remove('show');
+}
+ 
+// 챌린지 초기화
+async function initChallenge(){
+  const roundId = String(latestRound);
+  document.getElementById('challenge-round-badge').textContent = latestRound + '회차';
+  if(!db){ renderChallengeOffline(); return; }
+ 
+  try{
+    // round summary 문서 구독 (entries 전체 대신)
+    const roundRef = doc(db,'challenge_rounds',roundId);
+    if(challengeUnsubRound) challengeUnsubRound();
+    challengeUnsubRound = onSnapshot(roundRef, snap=>{
+      challengeRoundData = snap.exists() ? snap.data() : null;
+      const count = challengeRoundData?.participantCount || 0;
+      document.getElementById('challenge-count').textContent = count.toLocaleString()+'명';
+      const status = getChallengeStatus();
+      updateStatusBadge(status);
+      // 마감/채점 후 참여 버튼 비활성화
+      const btnsEl=document.getElementById('challenge-btns');
+      if(status!=='open'&&btnsEl&&!challengeMyEntry) {
+        btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.disabled=true;b.style.opacity='.4';});
+      }
+      // 채점 완료 시 TOP10 표시
+      if(status==='scored'&&challengeRoundData?.top10Preview){
+        renderTop10(challengeRoundData.top10Preview);
+      }
+    });
+ 
+    // 내 참여 여부 확인
+    onAuthReady(()=>{
+      checkMyEntry(roundId);
+      loadChallengeHistory();
+    });
+  }catch(e){ console.warn('challenge init error:',e); }
+ 
+  buildNumGrid();
+}
+ 
+function renderChallengeOffline(){
+  document.getElementById('challenge-count').textContent='—';
+  document.getElementById('challenge-deadline').textContent='오프라인';
+}
+ 
+// 내 참여 확인
+async function checkMyEntry(roundId){
+  if(!currentUid||!db) return;
+  try{
+    const entryRef=doc(db,'challenge_rounds',roundId,'entries',currentUid);
+    const snap=await getDoc(entryRef);
+    if(snap.exists()){
+      challengeMyEntry={id:currentUid,...snap.data()};
+      renderMyEntry();
+    }
+  }catch(e){ console.warn('checkMyEntry error:',e); }
+}
+ 
+// 내 참여 상태 렌더
+function renderMyEntry(){
+  if(!challengeMyEntry) return;
+  const statusEl=document.getElementById('challenge-my-status');
+  const numsEl=document.getElementById('challenge-my-nums');
+  const btnsEl=document.getElementById('challenge-btns');
+  const rankBadge=document.getElementById('challenge-rank-badge');
+  if(statusEl) statusEl.classList.add('show');
+  if(btnsEl) btnsEl.style.display='none';
+  if(numsEl) numsEl.innerHTML=(challengeMyEntry.numbers||[]).map(n=>
+    `<div class="ball ${ballCls(n)}" style="width:26px;height:26px;font-size:10px">${n}</div>`
+  ).join('');
+  const rank=challengeMyEntry.rank||0;
+  const label=challengeMyEntry.resultLabel||'집계 대기';
+  const cls=rank>0&&rank<=10?'rank-top10':rank>0&&rank<=100?'rank-top100':'rank-done';
+  if(rankBadge){ rankBadge.className='challenge-rank-badge '+cls; rankBadge.textContent=label; }
+  // 순위 카드 (채점 완료 시)
+  if(rank>0){
+    const rankCard=document.getElementById('challenge-my-rank-card');
+    const rankVal=document.getElementById('challenge-my-rank-val');
+    const matchEl=document.getElementById('challenge-my-match');
+    const numsRank=document.getElementById('challenge-my-rank-nums');
+    if(rankCard) rankCard.classList.add('show');
+    if(rankVal) rankVal.textContent=rank+'위';
+    if(matchEl) matchEl.textContent=(challengeMyEntry.matchCount||0)+'개'+(challengeMyEntry.bonusMatch?' + 보너스':'');
+    if(numsRank) numsRank.innerHTML=(challengeMyEntry.numbers||[]).map(n=>
+      `<div class="ball ${ballCls(n)}" style="width:24px;height:24px;font-size:9px">${n}</div>`
+    ).join('');
+  }
+}
+ 
+// TOP10 렌더
+function renderTop10(top10){
+  const el=document.getElementById('challenge-top10');
+  const list=document.getElementById('challenge-top10-list');
+  if(!el||!list) return;
+  el.style.display='block';
+  list.innerHTML=top10.map((e,i)=>{
+    const isMe=e.uid===currentUid;
+    const rankCls=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other';
+    const nums=(e.numbers||[]).map(n=>
+      `<div class="ball ${ballCls(n)}" style="width:22px;height:22px;font-size:9px">${n}</div>`
+    ).join('');
+    return `<div class="challenge-top10-item${isMe?' is-me':''}">
+      <div class="challenge-top10-rank ${rankCls}">${i+1}</div>
+      <div class="challenge-top10-nums">${nums}</div>
+      <div class="challenge-top10-match">${e.matchCount||0}개${e.bonusMatch?'+보너스':''}</div>
+      ${isMe?'<span style="font-size:9px;color:#b060ff">나</span>':''}
+    </div>`;
+  }).join('');
+}
+ 
+// 최근 참여자 UI 제거
+ 
+// 지난 회차 히스토리
+async function loadChallengeHistory(){
+  if(!currentUid||!db) return;
+  const list=document.getElementById('challenge-history-list');
+  if(!list) return;
+  try{
+    // 최근 3회차 히스토리 - 병렬 처리
+    const prevRounds=[latestRound-1,latestRound-2,latestRound-3].filter(r=>r>0);
+    const results=await Promise.all(prevRounds.map(async r=>{
+      const [roundSnap,entrySnap]=await Promise.all([
+        getDoc(doc(db,'challenge_rounds',String(r))),
+        getDoc(doc(db,'challenge_rounds',String(r),'entries',currentUid))
+      ]);
+      if(!roundSnap.exists()||!roundSnap.data().scored) return null;
+      return{round:r,roundData:roundSnap.data(),myEntry:entrySnap.exists()?entrySnap.data():null};
+    }));
+    const items=results.filter(Boolean);
+    if(!items.length){
+      list.innerHTML='<div style="font-size:11px;color:var(--muted);padding:8px">지난 회차 참여 기록이 없습니다.</div>';
+      return;
+    }
+    list.innerHTML=items.map(item=>{
+      const {round,roundData,myEntry}=item;
+      const winNums=roundData.winNums||[];
+      const bonus=roundData.bonusNum||0;
+      const myNums=myEntry?.numbers||[];
+      const myRank=myEntry?.rank||0;
+      const myMatch=myEntry?.matchCount||0;
+      const rankLabel=myRank>0&&myRank<=10?'TOP10':myRank>0&&myRank<=100?'TOP100':myRank>0?`${myRank}위`:'미참여';
+      const rankCls=myRank>0&&myRank<=10?'rank-top10':myRank>0&&myRank<=100?'rank-top100':'rank-done';
+      const winBalls=winNums.map(n=>`<div class="ball ${ballCls(n)}" style="width:22px;height:22px;font-size:9px">${n}</div>`).join('');
+      const myBalls=myNums.map(n=>`<div class="ball ${ballCls(n)}" style="width:22px;height:22px;font-size:9px">${n}</div>`).join('');
+      return `<div class="challenge-hist-item">
+        <div class="challenge-hist-round">${round}회차 · ${roundData.participantCount||0}명 참여</div>
+        <div class="challenge-hist-my" style="font-size:10px;color:var(--muted)">결과번호: <span style="font-size:10px;color:var(--muted)">보너스 ${bonus}</span></div>
+        <div class="challenge-hist-nums">${winBalls}</div>
+        ${myEntry?`
+          <div style="font-size:10px;color:var(--muted);margin-top:6px">내 번호</div>
+          <div class="challenge-hist-nums">${myBalls}</div>
+          <div class="challenge-hist-result">
+            <span class="challenge-hist-rank challenge-rank-badge ${rankCls}" style="display:inline-block">${rankLabel}</span>
+            <span style="font-size:10px;color:var(--muted)">${myMatch}개 일치${myEntry.bonusMatch?' + 보너스':''}</span>
+          </div>
+        `:'<div style="font-size:10px;color:var(--muted);margin-top:6px">미참여</div>'}
+      </div>`;
+    }).join('');
+  }catch(e){ console.warn('loadChallengeHistory error:',e); }
+}
+ 
+// 챌린지 참여 - 검증 강화
+async function joinChallenge(numbers, sourceType){
+  // 검증: 6개, 중복 없음, 1~45 범위
+  if(!numbers||numbers.length!==6){ alert('6개 번호를 선택해주세요.'); return; }
+  if(new Set(numbers).size!==6){ alert('중복된 번호가 있습니다.'); return; }
+  if(numbers.some(n=>n<1||n>45||!Number.isInteger(n))){ alert('번호는 1~45 사이 정수여야 합니다.'); return; }
+  if(!db||!currentUid){ alert('로그인 정보가 없습니다. 잠시 후 시도해주세요.'); return; }
+  // 상태 확인 (마감 후 참여 방지)
+  const status=getChallengeStatus();
+  if(status!=='open'){ alert('이번 회차 참여는 마감됐습니다.'); return; }
+ 
+  const roundId=String(latestRound);
+  const entryRef=doc(db,'challenge_rounds',roundId,'entries',currentUid);
+  try{
+    const snap=await getDoc(entryRef);
+    if(snap.exists()){
+      challengeMyEntry={id:currentUid,...snap.data()}; renderMyEntry();
+      alert('이미 이번 회차에 참여하셨습니다.'); return;
+    }
+    // 원자적 트랜잭션: entry 생성 + participantCount 증가
+    const roundRef=doc(db,'challenge_rounds',roundId);
+    await runTransaction(db, async t=>{
+      const entrySnap=await t.get(entryRef);
+      if(entrySnap.exists()) throw new Error('already_joined');
+      t.set(entryRef,{
+        uid:currentUid, numbers, sourceType, createdAt:serverTimestamp(),
+        matchCount:0, bonusMatch:false, rank:0, resultLabel:'집계 대기'
+      });
+      // participantCount만 증가 (status는 건드리지 않음)
+      t.set(roundRef,{
+        roundId:latestRound,
+        participantCount:increment(1),
+        updatedAt:serverTimestamp()
+      },{merge:true});
+    });
+    challengeMyEntry={id:currentUid,uid:currentUid,numbers,sourceType,rank:0,resultLabel:'집계 대기'};
+    renderMyEntry();
+    alert('✅ 참여가 완료되었습니다!');
+  }catch(e){
+    if(e.message==='already_joined'){ alert('이미 이번 회차에 참여하셨습니다.'); checkMyEntry(roundId); }
+    else { console.error('joinChallenge error:',e); alert('참여 중 오류가 발생했습니다.'); }
+  }
+}
+ 
+// 자동 채점 (클라이언트 fallback - Cloud Functions 미사용 시)
+async function maybeScoreCurrentChallenge(){
+  if(!db||!latestWinNums||latestWinNums.length!==6) return;
+  const roundId=String(latestRound);
+  const roundRef=doc(db,'challenge_rounds',roundId);
+  try{
+    const roundSnap=await getDoc(roundRef);
+    const currentData=roundSnap.exists()?roundSnap.data():{};
+    if(currentData.scored===true) return;
+    await scoreChallenge(roundId,latestWinNums,latestBonusNum);
+    // round 문서에 채점 결과 요약 저장
+    const entriesSnap=await getDocsFromServer(collection(db,'challenge_rounds',roundId,'entries'));
+    const entries=entriesSnap.docs.map(d=>d.data());
+    const top10=entries
+      .filter(e=>e.rank>0&&e.rank<=10)
+      .sort((a,b)=>a.rank-b.rank)
+      .map(e=>({uid:e.uid,numbers:e.numbers,matchCount:e.matchCount,bonusMatch:e.bonusMatch,rank:e.rank}));
+    await setDoc(roundRef,{
+      scored:true, status:'scored', updatedAt:serverTimestamp(),
+      winNums:latestWinNums, bonusNum:latestBonusNum,
+      top10Preview:top10
+    },{merge:true});
+    console.log('챌린지 자동 채점 완료');
+  }catch(e){ console.error('maybeScoreCurrentChallenge error:',e); }
+}
+ 
+// 채점 함수
+async function scoreChallenge(roundId,winNums,bonusNum){
+  if(!db) return;
+  try{
+    const entriesRef=collection(db,'challenge_rounds',roundId,'entries');
+    const snap=await getDocsFromServer(entriesRef);
+    const entries=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const scored=entries.map(e=>{
+      const nums=e.numbers||[];
+      const mc=nums.filter(n=>winNums.includes(n)).length;
+      const bm=nums.includes(bonusNum);
+      return{...e,matchCount:mc,bonusMatch:bm};
+    });
+    scored.sort((a,b)=>{
+      if(b.matchCount!==a.matchCount) return b.matchCount-a.matchCount;
+      if(b.bonusMatch!==a.bonusMatch) return b.bonusMatch?1:-1;
+      return (a.createdAt?.seconds||0)-(b.createdAt?.seconds||0);
+    });
+    for(let i=0;i<scored.length;i++){
+      const e=scored[i];
+      const rank=i+1;
+      const label=rank<=10?'TOP10':rank<=100?'TOP100':'참가완료';
+      await setDoc(doc(db,'challenge_rounds',roundId,'entries',e.id),
+        {matchCount:e.matchCount,bonusMatch:e.bonusMatch,rank,resultLabel:label},{merge:true});
+    }
+    console.log('채점 완료:',scored.length,'명');
+  }catch(e){ console.error('scoreChallenge error:',e); }
+}
+ 
+// 직접 선택 번호 그리드
+function buildNumGrid(){
+  const grid=document.getElementById('challenge-num-grid');
+  if(!grid) return;
+  grid.innerHTML=''; challengeCustomNums=[];
+  for(let n=1;n<=45;n++){
+    const btn=document.createElement('button');
+    btn.className='challenge-num-btn'; btn.textContent=n;
+    btn.addEventListener('click',()=>{
+      if(btn.classList.contains('selected')){
+        btn.classList.remove('selected');
+        challengeCustomNums=challengeCustomNums.filter(x=>x!==n);
+      } else {
+        if(challengeCustomNums.length>=6) return;
+        btn.classList.add('selected'); challengeCustomNums.push(n);
+      }
+      const cnt=document.getElementById('challenge-select-count');
+      if(cnt) cnt.textContent=challengeCustomNums.length+'/6 선택';
+      const sub=document.getElementById('challenge-btn-custom-submit');
+      if(sub) sub.disabled=challengeCustomNums.length!==6;
+    });
+    grid.appendChild(btn);
+  }
+}
+ 
+// 히스토리 토글
+document.getElementById('challenge-history-toggle').addEventListener('click',()=>{
+  const list=document.getElementById('challenge-history-list');
+  const arrow=document.getElementById('challenge-history-arrow');
+  list.classList.toggle('show');
+  if(arrow) arrow.textContent=list.classList.contains('show')?'▼':'▶';
+});
+ 
+// 챌린지 버튼 이벤트
+document.getElementById('challenge-btn-gen').addEventListener('click',()=>{
+  if(!challengeGenNums.length){ alert('먼저 번호를 생성해주세요.'); return; }
+  joinChallenge(challengeGenNums,'generated');
+});
+document.getElementById('challenge-btn-lucky').addEventListener('click',()=>{
+  const luckyBalls=[...document.querySelectorAll('#lucky-balls .lucky-ball')].map(b=>parseInt(b.textContent));
+  if(luckyBalls.length!==6){ alert('오늘의 숫자 카드 번호를 먼저 불러오세요.'); return; }
+  joinChallenge(luckyBalls,'lucky');
+});
+document.getElementById('challenge-btn-custom-toggle').addEventListener('click',()=>{
+  document.getElementById('challenge-custom-input').classList.toggle('show');
+});
+document.getElementById('challenge-btn-custom-submit').addEventListener('click',()=>{
+  if(challengeCustomNums.length!==6){ alert('6개를 선택해주세요.'); return; }
+  joinChallenge([...challengeCustomNums].sort((a,b)=>a-b),'custom');
+});
+ 
+function updateChallengeGenNums(nums){
+  challengeGenNums=[...nums];
+  const btn=document.getElementById('challenge-btn-gen');
+  if(btn&&!challengeMyEntry&&getChallengeStatus()==='open') btn.disabled=false;
+}
+ 
+// ── 내정보 & 오행 운세 ──
+ 
+// 오행 데이터
+const OHAENG_DATA = {
+  목: {
+    colors:['초록','청록','연두'], colorHex:['#40d080','#20b8a0','#80e040'],
+    times:['05:00~07:00','07:00~09:00'],
+    fortune:['새로운 시작을 두려워하지 않는 날입니다. 작은 도전이 좋은 흐름을 만듭니다.',
+      '창의적인 아이디어가 떠오르기 좋은 날입니다. 메모하는 습관이 도움됩니다.',
+      '성장과 발전의 에너지가 강한 날입니다. 배움에 투자하는 것이 좋습니다.',
+      '유연한 사고가 오늘의 열쇠입니다. 고집보다는 수용이 더 좋은 결과를 냅니다.',
+      '활력이 넘치는 날입니다. 몸을 움직이는 활동이 운을 높여줍니다.'],
+    actions:['가벼운 산책이나 스트레칭을 해보세요.','새로운 것을 하나 배워보는 것이 좋습니다.',
+      '창의적인 취미 활동에 시간을 투자해보세요.','식물에 물을 주거나 자연과 가까이하는 것이 좋습니다.',
+      '긍정적인 계획을 세워보는 것이 흐름을 돕습니다.'],
+    deeds:['주변 사람에게 응원의 말 한마디를 건네보세요.','쓰지 않는 물건을 정리해 나눔해보세요.',
+      '오래 연락 못했던 지인에게 먼저 안부를 전해보세요.','좋은 글귀나 정보를 공유해보세요.',
+      '작은 화분 하나를 선물해보세요.'],
+    nums:[1,2,3,11,12,13,21,22,23,31,32,33,41,42,43]
+  },
+  화: {
+    colors:['빨강','오렌지','핑크'], colorHex:['#ff5050','#e05c20','#ff80b0'],
+    times:['09:00~11:00','11:00~13:00'],
+    fortune:['열정이 빛나는 날입니다. 하고 싶었던 일을 과감히 시작해보세요.',
+      '적극적인 표현이 좋은 결과를 만드는 날입니다.',
+      '에너지가 넘치는 하루입니다. 중요한 일을 오전에 처리하면 좋습니다.',
+      '따뜻한 마음이 주변을 밝히는 날입니다. 먼저 웃어보세요.',
+      '자신감 있게 행동하면 좋은 흐름이 따라옵니다.'],
+    actions:['밝고 따뜻한 색상의 옷을 입어보세요.','좋아하는 음악을 들으며 하루를 시작해보세요.',
+      '오늘만큼은 조금 더 적극적으로 표현해보세요.','따뜻한 음료를 마시며 여유를 가져보세요.',
+      '주변을 밝게 만드는 행동 하나를 해보세요.'],
+    deeds:['누군가에게 따뜻한 음료를 사줘보세요.','칭찬이나 감사 메시지를 보내보세요.',
+      '봉사 활동 정보를 찾아보는 것도 좋습니다.','응원이 필요한 사람 곁에 있어주세요.',
+      '밝은 표정으로 먼저 인사해보세요.'],
+    nums:[4,5,6,14,15,16,24,25,26,34,35,36,44,45]
+  },
+  토: {
+    colors:['노랑','골드','베이지'], colorHex:['#f0c040','#c8a000','#d4b896'],
+    times:['13:00~15:00','07:00~09:00'],
+    fortune:['안정적인 흐름이 이어지는 날입니다. 무리하지 않는 것이 좋습니다.',
+      '신중한 판단이 좋은 결과를 만드는 날입니다. 급하게 결정하지 마세요.',
+      '현실적인 계획을 세우기 좋은 날입니다. 기초를 다지는 것이 중요합니다.',
+      '주변의 도움이 빛을 발하는 날입니다. 혼자보다 함께가 좋습니다.',
+      '차분함 속에서 좋은 흐름이 만들어집니다. 서두르지 않아도 됩니다.'],
+    actions:['정리정돈으로 하루를 시작해보세요.','천천히 식사를 즐기며 여유를 가져보세요.',
+      '오늘 할 일을 미리 정리해두면 흐름이 좋습니다.','안정적인 루틴을 지켜보세요.',
+      '과거보다는 현재에 집중하는 것이 좋습니다.'],
+    deeds:['주변을 청소하거나 공간을 정리해보세요.','음식을 나누거나 먹거리로 감사를 표현해보세요.',
+      '진심 어린 경청으로 누군가의 이야기를 들어주세요.','주변의 작은 도움에 감사를 표현해보세요.',
+      '오늘 하루 불평 없이 지내보세요.'],
+    nums:[2,7,12,17,22,27,32,37,42,5,10,15,20,25,30,35,40,45]
+  },
+  금: {
+    colors:['흰색','실버','골드'], colorHex:['#d0d8e8','#a0a8b8','#f0c040'],
+    times:['15:00~17:00','17:00~19:00'],
+    fortune:['결단력이 빛나는 날입니다. 미뤄왔던 결정을 내려보세요.',
+      '원칙을 지키는 것이 신뢰를 높이는 날입니다.',
+      '집중력이 높아지는 날입니다. 중요한 업무나 공부에 집중해보세요.',
+      '불필요한 것을 정리하면 좋은 기운이 들어오는 날입니다.',
+      '명확한 소통이 오해를 줄여주는 날입니다.'],
+    actions:['불필요한 물건이나 습관을 정리해보세요.','명확하게 표현하는 연습을 해보세요.',
+      '집중이 필요한 작업을 오늘 처리해보세요.','깔끔한 환경을 만들어보세요.',
+      '오늘은 약속을 꼭 지켜보세요.'],
+    deeds:['정직하게 행동하는 것 자체가 선행입니다.','분실물을 발견하면 꼭 신고해주세요.',
+      '약자를 위한 배려를 실천해보세요.','작은 약속도 소중히 지켜보세요.',
+      '공정하게 판단하고 행동해보세요.'],
+    nums:[4,9,14,19,24,29,34,39,44,6,11,16,21,26,31,36,41]
+  },
+  수: {
+    colors:['파랑','네이비','블랙'], colorHex:['#3ab8ff','#1a40a0','#2a2a3a'],
+    times:['21:00~23:00','23:00~01:00'],
+    fortune:['직관이 강해지는 날입니다. 느낌을 믿어보세요.',
+      '깊은 생각과 성찰이 빛을 발하는 날입니다.',
+      '흐름을 읽는 능력이 높아지는 날입니다. 서두르지 않아도 됩니다.',
+      '내면의 소리에 귀 기울이면 좋은 방향이 보입니다.',
+      '유연하게 상황에 적응하는 것이 좋은 결과를 만듭니다.'],
+    actions:['명상이나 조용한 시간을 가져보세요.','일기를 쓰거나 생각을 정리해보세요.',
+      '물을 충분히 마시며 몸의 흐름을 돌봐주세요.','좋아하는 책을 읽어보세요.',
+      '직관을 믿고 작은 결정을 내려보세요.'],
+    deeds:['누군가의 고민을 조용히 들어주세요.','물이나 음료를 나눠보세요.',
+      '익명으로 작은 선물이나 도움을 줘보세요.','오늘 하루 SNS 대신 직접 소통해보세요.',
+      '나 자신을 돌보는 것도 선행입니다.'],
+    nums:[1,6,11,16,21,26,31,36,41,3,8,13,18,23,28,33,38,43]
+  }
+};
+ 
+// 천간 오행 (갑을=목, 병정=화, 무기=토, 경신=금, 임계=수)
+const YEAR_OHAENG = [
+  '금','수','목','목','화','화','토','토','금','금' // 0년대 끝자리 기준
+];
+ 
+function getYearOhaeng(year){
+  // 갑자년 기준 60갑자 계산
+  const base = (year - 4) % 10;
+  const idx = ((base % 10) + 10) % 10;
+  return YEAR_OHAENG[idx];
+}
+ 
+function getMonthOhaeng(month){
+  // 월별 오행 (인월=목 2월~)
+  const map = ['수','목','목','목','화','화','토','금','금','금','수','수'];
+  return map[month - 1];
+}
+ 
+function getHourOhaeng(hourIdx){
+  // 12지 시간별 오행
+  const map = ['수','토','목','목','토','화','화','토','금','금','토','수'];
+  return map[hourIdx] || '토';
+}
+ 
+function getTodayOhaeng(){
+  const kst = new Date(new Date().getTime() + 9*3600000);
+  const day = kst.getDay(); // 0=일,1=월...
+  const map = ['토','목','화','토','금','수','수'];
+  return map[day];
+}
+ 
+function getPersonalOhaeng(birth, hourIdx){
+  const d = new Date(birth);
+  const y = getYearOhaeng(d.getFullYear());
+  const m = getMonthOhaeng(d.getMonth() + 1);
+  const h = hourIdx !== '' ? getHourOhaeng(parseInt(hourIdx)) : null;
+  // 연+월 조합, 생시 있으면 추가 가중
+  const ohaengs = [y, m];
+  if(h) ohaengs.push(h);
+  // 빈도 계산
+  const cnt = {};
+  ohaengs.forEach(o => cnt[o] = (cnt[o]||0) + 1);
+  return Object.entries(cnt).sort((a,b) => b[1]-a[1])[0][0];
+}
+ 
+function getRelation(personal, today){
+  // 오행 상생/상극 관계
+  const sungsaeng = {목:'화',화:'토',토:'금',금:'수',수:'목'};
+  const sangguk = {목:'토',화:'금',토:'수',금:'목',수:'화'};
+  if(today === personal) return 'same';
+  if(sungsaeng[personal] === today) return 'good'; // 내가 생해주는
+  if(sungsaeng[today] === personal) return 'support'; // 도움받는
+  if(sangguk[personal] === today) return 'weak';
+  if(sangguk[today] === personal) return 'caution';
+  return 'neutral';
+}
+ 
+function seededPick(arr, seed){
+  const s = Math.abs(Math.sin(seed) * 10000);
+  return arr[Math.floor(s % arr.length)];
+}
+ 
+function generatePersonalFortune(birth, hourIdx, gender){
+  const dateKey = getTodayKey();
+  const dateSeed = dateKey.replace(/-/g,'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const birthSeed = birth.replace(/-/g,'').split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const seed = dateSeed + birthSeed;
+ 
+  const personalOhaeng = getPersonalOhaeng(birth, hourIdx);
+  const todayOhaeng = getTodayOhaeng();
+  const relation = getRelation(personalOhaeng, todayOhaeng);
+  const data = OHAENG_DATA[personalOhaeng];
+  const todayData = OHAENG_DATA[todayOhaeng];
+ 
+  // 운세 문구 선택
+  const fortuneArr = relation === 'support' || relation === 'same'
+    ? data.fortune
+    : [...data.fortune, ...todayData.fortune];
+  const fortuneText = seededPick(fortuneArr, seed);
+  const action = seededPick(data.actions, seed + 1);
+  const deed = seededPick(data.deeds, seed + 2);
+ 
+  // 추천 컬러
+  const colorIdx = Math.floor(Math.abs(Math.sin(seed+3)*100)) % data.colors.length;
+  const luckyColor = data.colors[colorIdx];
+  const luckyColorHex = data.colorHex[colorIdx];
+ 
+  // 추천 시간
+  const luckyTime = seededPick(data.times, seed + 4);
+ 
+  // 행운 숫자 (1~45 중 1개, 오행 가중치)
+  const numPool = [...data.nums, ...todayData.nums];
+  const luckyNum = seededPick([...new Set(numPool)], seed + 5);
+ 
+  return {
+    personalOhaeng, todayOhaeng, relation,
+    fortuneText, action, deed,
+    luckyColor, luckyColorHex, luckyTime,
+    luckyNum
+  };
+}
+ 
+function renderFortune(fortune, containerId){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  const relationMap = {
+    same:'오늘은 내 에너지와 하루의 흐름이 같은 방향입니다.',
+    good:'오늘 내 에너지가 하루의 흐름을 이끌어가는 날입니다.',
+    support:'오늘 하루의 흐름이 나를 도와주는 날입니다.',
+    weak:'오늘은 에너지가 다소 분산될 수 있습니다. 차분히 집중해보세요.',
+    caution:'오늘은 무리하지 않는 것이 좋습니다.',
+    neutral:'평온한 하루입니다. 꾸준함이 좋은 결과를 만듭니다.'
+  };
+  el.innerHTML = `
+    <div class="fortune-today">${fortune.fortuneText}</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:12px;padding:0 2px">${relationMap[fortune.relation]||''} (내 오행: ${fortune.personalOhaeng} · 오늘 오행: ${fortune.todayOhaeng})</div>
+    <div class="fortune-lucky-num">
+      <div class="fortune-lucky-num-val" style="color:${fortune.luckyColorHex}">${fortune.luckyNum}</div>
+      <div class="fortune-lucky-num-label">오늘의 숫자 카드 숫자</div>
+    </div>
+    <div class="fortune-grid">
+      <div class="fortune-item">
+        <div class="fortune-item-label">추천 컬러</div>
+        <div class="fortune-item-val" style="color:${fortune.luckyColorHex}">● ${fortune.luckyColor}</div>
+      </div>
+      <div class="fortune-item">
+        <div class="fortune-item-label">추천 시간</div>
+        <div class="fortune-item-val" style="font-size:12px">${fortune.luckyTime}</div>
+      </div>
+    </div>
+    <div class="fortune-action">
+      <div class="fortune-action-label">⬆️ 운을 올리는 행동</div>
+      <div class="fortune-action-text">${fortune.action}</div>
+    </div>
+    <div class="fortune-action">
+      <div class="fortune-action-label">🌱 오늘의 작은 선행</div>
+      <div class="fortune-action-text">${fortune.deed}</div>
+    </div>
+  `;
+}
+ 
+// localStorage 키
+const MYINFO_KEY = 'lotto_myinfo';
+ 
+function loadMyInfo(){
+  try{
+    const s = localStorage.getItem(MYINFO_KEY);
+    return s ? JSON.parse(s) : null;
+  }catch(e){ return null; }
+}
+ 
+function saveMyInfo(data){
+  try{ localStorage.setItem(MYINFO_KEY, JSON.stringify(data)); }catch(e){}
+}
+ 
+function applyMyInfoToForm(info){
+  if(!info) return;
+  if(info.birth) document.getElementById('myinfo-birth').value = info.birth;
+  if(info.hourIdx !== undefined){
+    document.getElementById('myinfo-hour').value = info.hourIdx;
+  }
+  // 성별
+  document.querySelectorAll('.myinfo-gender-btn').forEach(b => {
+    b.classList.toggle('on', b.dataset.gender === (info.gender||'none'));
+  });
+  document.getElementById('myinfo-lucky-reflect').checked = !!info.luckyReflect;
+}
+ 
+function getCurrentGender(){
+  const on = document.querySelector('.myinfo-gender-btn.on');
+  return on ? on.dataset.gender : 'none';
+}
+ 
+function updateFortuneDisplay(){
+  const info = loadMyInfo();
+  if(!info || !info.birth){
+    document.getElementById('myinfo-fortune-area').innerHTML = `
+      <div class="fortune-card" style="opacity:.6">
+        <div class="fortune-card-title">🔮 내 오늘의 흐름</div>
+        <div class="fortune-empty"><div class="fortune-empty-icon">🔮</div>생년월일을 입력하고 저장하면<br>오늘의 흐름이 표시됩니다.</div>
+      </div>`;
+    return;
+  }
+  const fortune = generatePersonalFortune(info.birth, info.hourIdx||'', info.gender||'none');
+  // 내정보(오늘의 운세) 탭 카드
+  document.getElementById('myinfo-fortune-area').innerHTML = `
+    <div class="fortune-card">
+      <div class="fortune-card-title">🔮 내 오늘의 흐름</div>
+      <div id="myinfo-fortune-content"></div>
+    </div>`;
+  renderFortune(fortune, 'myinfo-fortune-content');
+  // 행운 숫자 오늘의 숫자 카드에 반영
+  if(info.luckyReflect){
+    window._personalLuckyNum = fortune.luckyNum;
+  } else {
+    window._personalLuckyNum = null;
+  }
+}
+ 
+// 오늘의 숫자 카드 번호에 개인 행운 숫자 반영
+// generateLuckyData 3단 분리 완료 (위쪽에 정의)
+ 
+// 성별 버튼 이벤트
+document.querySelectorAll('.myinfo-gender-btn').forEach(btn => {
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.myinfo-gender-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+  });
+});
+ 
+// 저장 버튼
+document.getElementById('myinfo-save-btn').addEventListener('click', ()=>{
+  const birth = document.getElementById('myinfo-birth').value;
+  if(!birth){ alert('생년월일을 입력해주세요.'); return; }
+  const info = {
+    birth,
+    hourIdx: document.getElementById('myinfo-hour').value,
+    gender: getCurrentGender(),
+    luckyReflect: document.getElementById('myinfo-lucky-reflect').checked
+  };
+  saveMyInfo(info);
+  updateFortuneDisplay();
+  // 오늘의 숫자 카드 재로드 (행운 숫자 반영)
+  loadTodayLucky();
+  alert('✅ 저장됐습니다! 오늘의 숫자 카드 번호에 반영됩니다.');
+});
+ 
+// 초기화 버튼
+document.getElementById('myinfo-reset-btn').addEventListener('click', ()=>{
+  if(!confirm('내 정보를 초기화하겠습니까?')) return;
+  localStorage.removeItem(MYINFO_KEY);
+  document.getElementById('myinfo-birth').value = '';
+  document.getElementById('myinfo-hour').value = '';
+  document.querySelectorAll('.myinfo-gender-btn').forEach(b => b.classList.toggle('on', b.dataset.gender==='none'));
+  document.getElementById('myinfo-lucky-reflect').checked = false;
+  window._personalLuckyNum = null;
+  document.getElementById('myinfo-fortune-area').innerHTML = '';
+  loadTodayLucky();
+});
+ 
+// 탭 전환 시 내정보 탭 진입
+ 
+// ── 참고점수 시스템 ──
+let _luckyStatsCache = null;
+let _luckyStatsCacheTime = 0;
+
+
+
+
+
+
+ 
+ function renderNearSortHelp(sortType){
+  const el = document.getElementById('near-sort-help');
+  if(!el) return;
+
+  let html = '';
+
+  if(sortType === 'dist'){
+    html = `
+      <strong>📍 가까운순</strong><br>
+      현재 위치에서 <span class="accent">거리</span>가 가까운 판매점부터 보여줍니다.
+    `;
+  }else if(sortType === 'lucky'){
+    html = `
+      <strong>🏆 참고점수순</strong><br>
+      <span class="accent">명당점수</span>는 <strong>1등 횟수 + 2등 횟수 + 최근 기록 회차</strong>를 함께 반영한 종합 점수입니다.
+    `;
+  }else if(sortType === 'first'){
+    html = `
+      <strong>🥇 1등횟수순</strong><br>
+      <span class="orange">1등 일치 횟수만</span> 기준으로 정렬합니다. 2등 횟수나 최근 기록 여부는 반영하지 않습니다.
+    `;
+  }else if(sortType === 'recent'){
+    html = `
+      <strong>⚡ 최근기록순</strong><br>
+      가장 최근 <span class="blue">기록된 회차 번호</span>가 큰 판매점이 위로 올라옵니다.
+    `;
+  }
+
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+
+
+
+ 
+
+ 
+// 텍스트 정규화 (공백·괄호·하이픈 제거)
+function normText(s=''){
+  return String(s)
+    .trim()
+    .replace(/\s+/g,'')
+    .replace(/[()]/g,'')
+    .replace(/-/g,'')
+    .replace(/[.,]/g,'')
+    .toLowerCase();
+}
+ 
+// Firestore store_stats 로드 - 메모리 + localStorage 캐시 + 정규화
+const STORE_STATS_CACHE_KEY = 'lotto_store_stats_cache_v3';
+const STORE_STATS_CACHE_TIME_KEY = 'lotto_store_stats_cache_time_v3';
+const STORE_STATS_CACHE_TTL = 24 * 60 * 60 * 1000;
+
+function toNum(v){
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function normalizeLuckyStat(raw){
+  if(!raw) return null;
+
+  const firstAutoCount = toNum(
+    raw.firstAutoCount ?? raw.first_auto_count ?? raw.autoFirstCount ?? raw.rank1AutoCount
+  );
+  const firstManualCount = toNum(
+    raw.firstManualCount ?? raw.first_manual_count ?? raw.manualFirstCount ?? raw.rank1ManualCount
+  );
+
+  const secondCount = toNum(
+    raw.secondCount ?? raw.second_count ?? raw.rank2Count ?? raw.twoCount ?? raw.secondPrizeCount
+  );
+
+  const recentWinRound = toNum(
+    raw.recentWinRound ?? raw.recent_round ?? raw.lastWinRound ?? raw.latestWinRound
+  );
+
+  const fallbackScore = (firstAutoCount + firstManualCount) * 35 + secondCount * 12 + (recentWinRound ? 8 : 0);
+  const luckyScore = toNum(raw.luckyScore ?? raw.score ?? raw.lucky_point ?? fallbackScore);
+
+  return {
+    ...raw,
+    _id: raw._id || '',
+    name: raw.name ?? raw.storeName ?? raw.shopName ?? raw.storeNm ?? raw.shop_name ?? '',
+    addr: raw.addr ?? raw.address ?? raw.roadAddr ?? raw.roadAddress ?? raw.road_address ?? '',
+    firstAutoCount,
+    firstManualCount,
+    secondCount,
+    recentWinRound,
+    luckyScore
+  };
+}
+
+function saveLuckyStatsCache(list){
+  try{
+    localStorage.setItem(STORE_STATS_CACHE_KEY, JSON.stringify(list));
+    localStorage.setItem(STORE_STATS_CACHE_TIME_KEY, String(Date.now()));
+  }catch(e){}
+}
+
+function loadLuckyStatsCache(){
+  try{
+    const raw = localStorage.getItem(STORE_STATS_CACHE_KEY);
+    const time = Number(localStorage.getItem(STORE_STATS_CACHE_TIME_KEY) || 0);
+    if(!raw || !time) return null;
+    if(Date.now() - time > STORE_STATS_CACHE_TTL) return null;
+    const parsed = JSON.parse(raw);
+    if(!Array.isArray(parsed)) return null;
+    return parsed;
+  }catch(e){
+    return null;
+  }
+}
+
+async function loadLuckyStats(){
+  const now = Date.now();
+  if(_luckyStatsCache && now - _luckyStatsCacheTime < 600000) return _luckyStatsCache;
+
+  const localCached = loadLuckyStatsCache();
+  if(localCached?.length){
+    _luckyStatsCache = localCached;
+    _luckyStatsCacheTime = now;
+  }
+
+  if(!db){
+    return _luckyStatsCache || [];
+  }
+
+  try{
+    const snap = await getDocs(collection(db,'store_stats'));
+    const list = snap.docs.map(d => normalizeLuckyStat({ _id:d.id, ...d.data() })).filter(Boolean);
+    _luckyStatsCache = list;
+    _luckyStatsCacheTime = now;
+    saveLuckyStatsCache(list);
+    console.log('[loadLuckyStats] loaded:', list.length, list[0]);
+    return list;
+  }catch(e){
+    console.warn('loadLuckyStats error:', e);
+    if(_luckyStatsCache?.length) return _luckyStatsCache;
+    return [];
+  }
+}
+
+// 이름+주소 점수 기반 매칭
+function hasLuckyData(stat){
+  if(!stat) return false;
+  const first = (stat.firstAutoCount || 0) + (stat.firstManualCount || 0);
+  const second = stat.secondCount || 0;
+  const recent = stat.recentWinRound || 0;
+  const score = stat.luckyScore || 0;
+  return first > 0 || second > 0 || recent > 0 || score > 0;
+}
+
+function findLuckyMatch(name, addr, luckyList){
+  if(!Array.isArray(luckyList) || !name) return null;
+
+  const nameN = normText(name);
+  const addrN = normText(addr);
+  let best = null;
+  let bestScore = 0;
+
+  for(const raw of luckyList){
+    const stat = normalizeLuckyStat(raw);
+    if(!stat) continue;
+
+    const statName = normText(stat.name || stat.storeName || stat.shopName || stat.storeNm || stat._id || '');
+    const statAddr = normText(stat.addr || stat.roadAddr || stat.address || stat.roadAddress || '');
+
+    let score = 0;
+
+    if(statName && statName === nameN) score += 85;
+    else if(statName && (statName.includes(nameN) || nameN.includes(statName))) score += 58;
+
+    if(addrN && statAddr){
+      if(statAddr === addrN) score += 55;
+      else if(statAddr.includes(addrN) || addrN.includes(statAddr)) score += 34;
+      else {
+        const ha = addrN.slice(0, 14);
+        const hb = statAddr.slice(0, 14);
+        if(ha && hb && ha === hb) score += 18;
+      }
+    }
+
+    const idN = normText(stat._id || '');
+    if(idN){
+      if(nameN && idN.includes(nameN)) score += 20;
+      if(addrN && idN.includes(addrN.slice(0, 10))) score += 10;
+    }
+
+    if(score > bestScore){
+      bestScore = score;
+      best = stat;
+    }
+  }
+
+  if(bestScore < 45) return null;
+  if(!hasLuckyData(best)) return null;
+  return best;
+}
+
+// 정렬 + 재렌더
+function sortAndRender(sortType, btn){
+  window._nearCurrentSort = sortType;
+
+  document.querySelectorAll('.near-sort-btn').forEach(b => b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+
+  const stores = window._nearStores || [];
+
+  const sorted = [...stores].sort((a,b)=>{
+    if(sortType === 'dist'){
+      return a.dist - b.dist;
+    }
+
+    if(sortType === 'lucky'){
+      const sa = a.lucky?.luckyScore || 0;
+      const sb = b.lucky?.luckyScore || 0;
+      const fa = (a.lucky?.firstAutoCount || 0) + (a.lucky?.firstManualCount || 0);
+      const fb = (b.lucky?.firstAutoCount || 0) + (b.lucky?.firstManualCount || 0);
+      const s2a = a.lucky?.secondCount || 0;
+      const s2b = b.lucky?.secondCount || 0;
+      const ra = a.lucky?.recentWinRound || 0;
+      const rb = b.lucky?.recentWinRound || 0;
+      return sb - sa || fb - fa || s2b - s2a || rb - ra || a.dist - b.dist;
+    }
+
+    if(sortType === 'first'){
+      const fa = (a.lucky?.firstAutoCount || 0) + (a.lucky?.firstManualCount || 0);
+      const fb = (b.lucky?.firstAutoCount || 0) + (b.lucky?.firstManualCount || 0);
+      const s2a = a.lucky?.secondCount || 0;
+      const s2b = b.lucky?.secondCount || 0;
+      return fb - fa || s2b - s2a || a.dist - b.dist;
+    }
+
+    if(sortType === 'recent'){
+      const ra = a.lucky?.recentWinRound || 0;
+      const rb = b.lucky?.recentWinRound || 0;
+      const sa = a.lucky?.luckyScore || 0;
+      const sb = b.lucky?.luckyScore || 0;
+      return rb - ra || sb - sa || a.dist - b.dist;
+    }
+
+    return a.dist - b.dist;
+  });
+
+  renderNearSortHelp(sortType);
+  renderNearTop10(stores);
+
+  nearMarkers.forEach(m => nearMap.removeLayer(m));
+  nearMarkers = [];
+
+  renderStores(sorted);
+}
+
+window.sortAndRender = sortAndRender;
+ 
+init();
+</script>
+ <footer style="padding: 30px 14px; text-align: center; border-top: 1px solid var(--border); margin-top: 20px; margin-bottom: 80px; position: relative; z-index: 10;">
+    <div style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">
+        © 2026 로또엔진. All rights reserved.
+    </div>
+    <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 15px;">
+        <a href="privacy.html" style="color: var(--accent); font-size: 13px; font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--accent);">개인정보 처리방침</a>
+        <a href="app.html" style="color: var(--muted); font-size: 13px; text-decoration: none;">서비스 가이드</a>
+    </div>
+    <p style="font-size: 11px; color: #505870; line-height: 1.6; max-width: 320px; margin: 0 auto;">
+        본 서비스는 참고용 데이터만 제공하며 당첨을 보장하지 않습니다. 과도한 복권 구매는 도박 중독의 위험이 있습니다.
+    </p>
+</footer>
+</body>
+</html>
