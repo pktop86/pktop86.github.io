@@ -1,24 +1,51 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>로또엔진</title>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9933896132600937" crossorigin="anonymous"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#07080f;color:#dde0f0;font-family:sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center}
-.wrap{padding:40px 20px}
-h1{font-size:2rem;color:#f0c040;margin-bottom:16px}
-p{color:#505870;margin-bottom:24px;font-size:14px}
-a{display:inline-block;background:linear-gradient(135deg,#f0c040,#e05c20);color:#000;font-weight:900;padding:14px 32px;border-radius:12px;text-decoration:none;font-size:16px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="로또 회차 정보, 당첨 통계, 세금 계산법 및 이용 가이드를 제공하는 통계 정보 서비스입니다." />
+  <title>로또 통계 정보 센터 | 로또엔진</title>
+  <style>
+    :root { --bg:#0b0d14; --panel:#141825; --gold:#f0c040; --text:#edf1ff; --muted:#a9b1c8; }
+    body { background:var(--bg); color:var(--text); font-family: sans-serif; line-height: 1.6; margin:0; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+    header { text-align: center; margin-bottom: 50px; }
+    h1 { color: var(--gold); font-size: 2rem; }
+    .btn-main { display: inline-block; background: var(--gold); color: #000; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; margin-top: 20px; }
+    section { background: var(--panel); padding: 30px; border-radius: 20px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.05); }
+    h2 { color: var(--gold); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+    p { color: var(--muted); font-size: 15px; }
+    footer { text-align: center; color: #555; font-size: 12px; margin-top: 50px; border-top: 1px solid #222; padding-top: 20px; }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>🎰 로또엔진</h1>
-  <p>번호 생성기</p>
-  <a href="/lotto/">START! →</a>
-</div>
+  <div class="container">
+    <header>
+      <h1>📊 로또 통계 정보 센터</h1>
+      <p>데이터 기반의 회차별 분석과 이용 가이드를 제공합니다.</p>
+      <a href="app.html" class="btn-main">번호 조합 도구 실행하기</a>
+    </header>
+
+    <section>
+      <h2>💡 로또 이용 가이드</h2>
+      <p>대한민국의 로또 6/45는 매주 토요일 오후 8시 35분경 추첨이 진행됩니다. 판매 시간은 매일 오전 6시부터 자정까지이나, 추첨 당일인 토요일은 오후 8시에 판매가 마감되니 주의가 필요합니다.</p>
+    </section>
+
+    <section>
+      <h2>💰 당첨금 세금 계산법</h2>
+      <p>로또 당첨금은 소득세법에 따라 기타소득으로 분류됩니다. 2023년부터 당첨금 200만 원까지는 비과세가 적용되어 세금을 내지 않습니다. 200만 원 초과 ~ 3억 원 이하의 경우 22%, 3억 원을 초과하는 고액 당첨금의 경우 33%의 세율이 적용됩니다.</p>
+    </section>
+
+    <section>
+      <h2>📈 통계 데이터 활용법</h2>
+      <p>본 서비스에서 제공하는 통계 데이터는 역대 당첨 번호의 출현 빈도, 홀짝 비율, 합계수 등을 참고용으로 보여드립니다. 모든 추첨은 독립 시행이므로 과거의 결과가 미래의 당첨을 보장하지는 않지만, 흐름을 파악하는 재미 요소로 활용하실 수 있습니다.</p>
+    </section>
+
+    <footer>
+      <p>© 2026 로또엔진. All rights reserved.</p>
+      <p><a href="privacy.html" style="color:#777;">개인정보 처리방침</a> | 문의: contact@yourdomain.com</p>
+      <p style="margin-top:10px;">본 서비스는 참고용이며 실제 당첨을 보장하지 않습니다. 과도한 복권 구매는 도박 중독의 위험이 있습니다.</p>
+    </footer>
+  </div>
 </body>
 </html>
