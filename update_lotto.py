@@ -1,86 +1,179 @@
 #!/usr/bin/env python3
-import requests, json, re, sys, time
-from bs4 import BeautifulSoup
- 
-def fetch_lotto_naver(drwNo):
-    url = f"https://search.naver.com/search.naver?query={drwNo}회+로또"
+import requests
+import json
+import re
+import sys
+from pathlib import Path
+
+LOTTO_API = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo={}"
+INDEX_FILE = "index.html"
+
+
+def fetch_lotto_api(drw_no: int):
+    url = LOTTO_API.format(drw_no)
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+        "User-Agent": "Mozilla/5.0"
     }
+
     try:
         res = requests.get(url, headers=headers, timeout=10)
-        soup = BeautifulSoup(res.text, 'html.parser')
- 
-        win_ball = soup.select_one('.win_ball')
-        if not win_ball:
-            print(f"  win_ball 없음")
+        res.raise_for_status()
+        data = res.json()
+
+        if not data or data.get("returnValue") != "success":
+            print(f"  {drw_no}회차 데이터 없음")
             return None
- 
-        # 텍스트에서 숫자만 추출
-        numbers = [int(n) for n in win_ball.text.split() if n.isdigit()]
-        print(f"  win_ball 숫자: {numbers}")
- 
-        if len(numbers) < 7:
-            print(f"  숫자 부족: {len(numbers)}개")
+
+        nums = [data.get(f"drwtNo{i}") for i in range(1, 7)]
+        bonus = data.get("bnusNo")
+        date = data.get("drwNoDate", "")
+
+        if any(n is None for n in nums) or bonus is None:
+            print(f"  {drw_no}회차 번호 파싱 실패")
             return None
- 
-        # 검증: 실제 로또 번호 범위(1~45) 확인
-        valid = [n for n in numbers if 1 <= n <= 45]
-        if len(valid) < 7:
-            print(f"  유효 번호 부족: {valid}")
+
+        nums = [int(n) for n in nums]
+        bonus = int(bonus)
+
+        if len(nums) != 6 or not all(1 <= n <= 45 for n in nums) or not (1 <= bonus <= 45):
+            print(f"  {drw_no}회차 번호 검증 실패: nums={nums}, bonus={bonus}")
             return None
- 
-        nums = valid[:6]
-        bonus = valid[6]
- 
-        # 추가 검증: 번호가 실제로 해당 회차 번호인지
-        # 네이버에서 해당 회차 텍스트가 실제로 있는지 확인
-        page_text = soup.get_text()
-        if str(drwNo) + '회' not in page_text and str(drwNo) + ' 회' not in page_text:
-            print(f"  [경고] {drwNo}회 텍스트 없음 - 잘못된 결과일 수 있음")
-            # 그래도 데이터가 있으면 반환 (단 로그 남김)
- 
-        print(f"  ✅ {drwNo}회차 성공: {nums} 보너스:{bonus}")
-        return {'round': drwNo, 'nums': nums, 'bonus': bonus, 'date': ''}
- 
+
+        print(f"  ✅ {drw_no}회차 성공: {nums} 보너스:{bonus}")
+        return {
+            "round": drw_no,
+            "nums": nums,
+            "bonus": bonus,
+            "date": date
+        }
+
     except Exception as e:
         print(f"  [오류] {type(e).__name__}: {e}")
         return None
- 
+
+
+def read_index_file():
+    path = Path(INDEX_FILE)
+    if not path.exists():
+        raise FileNotFoundError(f"{INDEX_FILE} 파일이 없습니다.")
+    return path.read_text(encoding="utf-8")
+
+
+def write_index_file(content: str):
+    Path(INDEX_FILE).write_text(content, encoding="utf-8")
+
+
+def parse_latest_round(content: str) -> int:
+    m = re.search(r'let\s+latestRound\s*=\s*(\d+)', content)
+    if not m:
+        raise RuntimeError("index.html 안에서 'let latestRound = 숫자' 패턴을 찾지 못했습니다.")
+    return int(m.group(1))
+
+
+def parse_seed_history(content: str):
+    sh_match = re.search(r'const\s+SEED_HISTORY\s*=\s*\[(.*?)\];', content, re.DOTALL)
+    if not sh_match:
+        raise RuntimeError("index.html 안에서 SEED_HISTORY 배열을 찾지 못했습니다.")
+
+    block = sh_match.group(1)
+    existing = []
+
+    for m in re.finditer(
+        r'\{round\s*:\s*(\d+)\s*,\s*nums\s*:\s*\[([^\]]+)\]\s*,\s*bonus\s*:\s*(\d+)\s*\}',
+        block
+    ):
+        round_no = int(m.group(1))
+        nums = [int(x.strip()) for x in m.group(2).split(",") if x.strip()]
+        bonus = int(m.group(3))
+        existing.append({
+            "round": round_no,
+            "nums": nums,
+            "bonus": bonus
+        })
+
+    return existing
+
+
+def build_seed_history_block(items):
+    lines = []
+    for e in items:
+        nums_text = ",".join(map(str, e["nums"]))
+        lines.append(f"  {{round:{e['round']},nums:[{nums_text}],bonus:{e['bonus']}}}")
+    return "const SEED_HISTORY = [\n" + ",\n".join(lines) + "\n];"
+
+
+def update_index_content(content: str, lotto_data: dict) -> str:
+    existing = parse_seed_history(content)
+
+    # 중복 회차 제거 후 새 회차 추가
+    existing = [x for x in existing if x["round"] != lotto_data["round"]]
+    existing.append({
+        "round": lotto_data["round"],
+        "nums": lotto_data["nums"],
+        "bonus": lotto_data["bonus"]
+    })
+
+    # 회차순 정렬 후 최근 5개만 유지
+    existing = sorted(existing, key=lambda x: x["round"])[-5:]
+
+    new_sh = build_seed_history_block(existing)
+
+    content = re.sub(
+        r'const\s+SEED_HISTORY\s*=\s*\[.*?\];',
+        new_sh,
+        content,
+        flags=re.DOTALL
+    )
+
+    content = re.sub(
+        r'let\s+latestRound\s*=\s*\d+',
+        f'let latestRound = {lotto_data["round"]}',
+        content
+    )
+
+    content = re.sub(
+        r'let\s+latestWinNums\s*=\s*\[[^\]]*\]',
+        f'let latestWinNums = {json.dumps(lotto_data["nums"], ensure_ascii=False)}',
+        content
+    )
+
+    content = re.sub(
+        r'let\s+latestBonusNum\s*=\s*\d+',
+        f'let latestBonusNum = {lotto_data["bonus"]}',
+        content
+    )
+
+    return content
+
+
 def main():
-    with open('index.html', 'r', encoding='utf-8') as f:
-        content = f.read()
- 
-    m = re.search(r'let latestRound\s*=\s*(\d+)', content)
-    current = int(m.group(1))
+    print("=== update_lotto.py 시작 ===")
+
+    try:
+        content = read_index_file()
+        current = parse_latest_round(content)
+    except Exception as e:
+        print(f"❌ index.html 파싱 실패: {e}")
+        sys.exit(1)
+
     target = current + 1
-    print(f"현재 latestRound: {current}, {target}회차 조회 시도...")
- 
-    # 단일 회차만 조회 (루프 없음 - 제미나이 권고)
-    d = fetch_lotto_naver(target)
- 
-    if not d:
+    print(f"현재 latestRound: {current}, 다음 회차 {target} 조회 시도...")
+
+    lotto_data = fetch_lotto_api(target)
+
+    if not lotto_data:
         print("최신 회차입니다. 업데이트할 내용 없음.")
         return
- 
-    # SEED_HISTORY 업데이트
-    sh_match = re.search(r'const SEED_HISTORY = \[(.*?)\];', content, re.DOTALL)
-    existing = []
-    for m2 in re.finditer(r'\{round:(\d+),nums:\[([^\]]+)\],bonus:(\d+)\}', sh_match.group(1)):
-        existing.append({'round':int(m2.group(1)),'nums':list(map(int,m2.group(2).split(','))),'bonus':int(m2.group(3))})
-    existing.append({'round':d['round'],'nums':d['nums'],'bonus':d['bonus']})
-    existing = sorted(existing, key=lambda x: x['round'])[-5:]
-    lines = [f"  {{round:{e['round']},nums:[{','.join(map(str,e['nums']))}],bonus:{e['bonus']}}}" for e in existing]
-    new_sh = 'const SEED_HISTORY = [\n' + ',\n'.join(lines) + ',\n];'
- 
-    content = re.sub(r'const SEED_HISTORY = \[.*?\];', new_sh, content, flags=re.DOTALL)
-    content = re.sub(r'let latestRound\s*=\s*\d+', f'let latestRound = {d["round"]}', content)
-    content = re.sub(r'let latestWinNums\s*=\s*\[[^\]]*\]', f'let latestWinNums = {json.dumps(d["nums"])}', content)
-    content = re.sub(r'let latestBonusNum\s*=\s*\d+', f'let latestBonusNum = {d["bonus"]}', content)
- 
-    with open('index.html', 'w', encoding='utf-8') as f:
-        f.write(content)
-    print(f"\n✅ 완료! latestRound:{d['round']} nums:{d['nums']} bonus:{d['bonus']}")
- 
+
+    try:
+        new_content = update_index_content(content, lotto_data)
+        write_index_file(new_content)
+    except Exception as e:
+        print(f"❌ index.html 업데이트 실패: {e}")
+        sys.exit(1)
+
+    print(f"\n✅ 완료! latestRound:{lotto_data['round']} nums:{lotto_data['nums']} bonus:{lotto_data['bonus']}")
+
+
 if __name__ == '__main__':
     main()
