@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 LOTTO_API = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo={}"
-INDEX_FILE = "index.html"
+INDEX_FILE = "app.html"
 
 
 def fetch_lotto_api(drw_no: int):
