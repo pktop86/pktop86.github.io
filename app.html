@@ -667,10 +667,6 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
   margin-top:4px;
   font-weight:700;
 }
- .top-ui-shell{
-  position:relative;
-  z-index:30;
-}
 
 .app-header{
   text-align:center;
@@ -707,37 +703,6 @@ h1{
   margin-top:4px;
 }
 
-.tabs-wrap{
-  position:sticky;
-  top:0;
-  z-index:50;
-  padding:8px 0 10px;
-  background:linear-gradient(
-    180deg,
-    rgba(7,8,15,0.96) 0%,
-    rgba(7,8,15,0.90) 78%,
-    rgba(7,8,15,0) 100%
-  );
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-}
-
-.tabs-wrap::after{
-  content:'';
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:8px;
-  height:1px;
-  background:linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255,255,255,0.08) 20%,
-    rgba(255,255,255,0.08) 80%,
-    transparent 100%
-  );
-  pointer-events:none;
-}
 
 .tabs{
   margin:0;
@@ -916,7 +881,8 @@ h1{
   /* ===== 상단 고정 UI 패치 시작 ===== */
 
 /* 광고 + 탭 고정 높이 */
-:root{
+/* 수정---------------------------------------------------------
+  :root{
   --sticky-ad-h:58px;
   --sticky-tabs-h:58px;
 }
@@ -935,24 +901,14 @@ h1{
   padding:8px 0 10px;
 }
 
-/* 앱 전체 폭 유지 */
+// 앱 전체 폭 유지
 .wrap{
   max-width: 640px;
   margin: 0 auto;
   padding: 0 14px 80px;
 }
 
-/* 광고 고정 */
-.top-ad-sticky{
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(7,8,15,0.96);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
+// 광고 고정 
 .top-ad-inner{
   max-width: 640px;
   margin: 0 auto;
@@ -971,28 +927,13 @@ h1{
   overflow: hidden;
 }
 
-/* 타이틀은 스크롤되게 */
+// 타이틀은 스크롤되게 
 .hero-head{
   text-align: center;
   padding: 14px 0 10px;
 }
 
-/* 탭 고정 */
-.tabs-sticky{
-  position: sticky;
-  top: var(--top-ad-height);
-  z-index: 90;
-  padding: 8px 0 10px;
-  background: linear-gradient(
-    180deg,
-    rgba(7,8,15,0.98) 0%,
-    rgba(7,8,15,0.92) 76%,
-    rgba(7,8,15,0) 100%
-  );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
+// 탭 고정 
 .tabs-sticky::after{
   content:'';
   position:absolute;
@@ -1010,12 +951,12 @@ h1{
   pointer-events:none;
 }
 
-/* 기존 탭 UI는 유지하고 여백만 정리 */
+// 기존 탭 UI는 유지하고 여백만 정리 
 .tabs{
   margin: 0;
 }
 
-/* 고정 탭에 가리지 않도록 */
+// 고정 탭에 가리지 않도록 
 #tab-pick,
 #tab-mynums,
 #tab-myinfo,
@@ -1023,27 +964,68 @@ h1{
 #tab-prize{
   scroll-margin-top: calc(var(--top-ad-height) + var(--top-tabs-height) + 12px);
 }
-
-@media (max-width: 480px){
-  :root{
-    --top-ad-height: 56px;
-    --top-tabs-height: 56px;
-  }
-
-  .wrap{
-    padding: 0 12px 76px;
-  }
-
-  .top-ad-inner{
-    padding: 6px 12px;
-  }
-
-  .hero-head{
-    padding: 12px 0 8px;
-  }
+  --------------------------------------------------------------------------------------------------------*/
+:root{
+  --sticky-ad-h:58px;
+  --sticky-tabs-h:58px;
 }
 
-/* ===== 상단 고정 UI 패치 끝 ===== */
+.ad-sticky-shell{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(7,8,15,.96);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.tabs-sticky-shell{
+  position:sticky;
+  top:var(--sticky-ad-h);
+  z-index:90;
+  padding:8px 0 10px;
+  background:linear-gradient(
+    180deg,
+    rgba(7,8,15,.98) 0%,
+    rgba(7,8,15,.92) 76%,
+    rgba(7,8,15,0) 100%
+  );
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+
+.tabs-sticky-shell::after{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:8px;
+  height:1px;
+  background:linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.08) 20%,
+    rgba(255,255,255,.08) 80%,
+    transparent 100%
+  );
+  pointer-events:none;
+}
+
+.tabs{
+  margin:0;
+  background:rgba(15,16,32,.92);
+  box-shadow:0 10px 24px rgba(0,0,0,.22);
+}
+
+#tab-pick,
+#tab-mynums,
+#tab-myinfo,
+#tab-near,
+#tab-prize{
+  scroll-margin-top:calc(var(--sticky-ad-h) + var(--sticky-tabs-h) + 12px);
+}
+  /* ===== 상단 고정 UI 패치 끝 ===== */
 </style>
 </head>
 <body>
@@ -1061,19 +1043,7 @@ h1{
   </div>
 </div>
 <div class="wrap">
-  <div class="ad-banner-top">
-    <ins class="adsbygoogle"
-         style="display:block;width:100%;min-height:60px"
-         data-ad-client="ca-pub-9933896132600937"
-         data-ad-slot="auto"
-         data-ad-format="horizontal"
-         data-full-width-responsive="true"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </div>
-
-  <div class="top-ui-shell">
+ <div class="top-ui-shell">
     <header class="hero-head">
       <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
       <h1>로또번로 생성기<br>AI 자동 추천 로또엔진</h1>
