@@ -833,12 +833,18 @@ h1{
 }
 
 /* 광고 고정 */
-.ad-sticky-shell{
-  position:sticky;
-  top:0;
-  z-index:100;
-  background:rgba(7,8,15,.92);
-  border-bottom:1px solid rgba(255,255,255,.04);
+.ad-sticky-shell {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 101; /* 탭보다 높게 설정 */
+  height: 60px !important; /* 광고 영역 높이 강제 고정 */
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
 }
 
 .top-ad-inner{
@@ -869,17 +875,14 @@ h1{
 }
 
 /* 탭 고정 */
-.tabs-sticky-shell{
-  position:sticky;
-  top:calc(var(--sticky-ad-h) + 2px);
-  z-index:90;
-  padding:2px 0 5px;
-  background:linear-gradient(
-    180deg,
-    rgba(7,8,15,.96) 0%,
-    rgba(7,8,15,.90) 78%,
-    rgba(7,8,15,0) 100%
-  );
+.tabs-sticky-shell {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 60px !important; /* 위에서 설정한 광고 높이(60px)만큼 띄우고 고정 */
+  z-index: 100;
+  background: var(--bg);
+  padding: 5px 0 !important;
+  margin: 0 !important;
 }
 
 .tabs-sticky-shell::after{
@@ -900,8 +903,10 @@ h1{
 }
 
 /* 탭 박스는 기존 디자인 유지, 여백만 정리 */
-.tabs{
-  margin:0;
+.tabs {
+  margin: 0 !important;
+  position: relative !important;
+  top: 0 !important;
 }
 
 /* 탭 버튼 살짝 컴팩트 */
@@ -948,6 +953,17 @@ h1{
   }
 }
 
+  /* 모바일 전용 (화면이 작을 때 광고 높이 조절) */
+@media screen and (max-width: 480px) {
+  .ad-sticky-shell {
+    height: 50px !important;
+  }
+  .tabs-sticky-shell {
+    top: 50px !important;
+  }
+}
+
+  
 /* ===== 상단 고정 최종본 끝 ===== */
   /* ===== 상단 고정 UI 패치 끝 ===== */
 </style>
@@ -976,6 +992,14 @@ h1{
     </header>
 
     <div class="tabs-sticky-shell">
+      <div class="ad-banner-top-fixed">
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:100%;height:60px" 
+         data-ad-client="ca-pub-9933896132600937"
+         data-ad-slot="auto"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+      
       <div class="tabs">
         <button class="tab-btn on" data-tab="pick">🎲 번호추첨</button>
         <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
