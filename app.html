@@ -790,6 +790,129 @@ h1{
     gap:2px;
   }
 }
+  .top-ui-shell{
+  position:relative;
+  z-index:30;
+}
+
+.app-header{
+  text-align:center;
+  padding:14px 0 8px;
+}
+
+.ad-banner-top{
+  margin:10px 0 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  padding-bottom:6px;
+}
+
+.badge{
+  letter-spacing:1.3px;
+  padding:3px 10px;
+  margin-bottom:8px;
+}
+
+h1{
+  font-size:clamp(1.45rem,5.1vw,2.2rem);
+  margin-bottom:2px;
+  line-height:1.07;
+}
+
+.credit{
+  font-size:9px;
+  margin-top:2px;
+  opacity:.58;
+}
+
+.subtitle{
+  font-size:10px;
+  line-height:1.45;
+  margin-top:4px;
+}
+
+.tabs-wrap{
+  position:sticky;
+  top:0;
+  z-index:50;
+  padding:8px 0 10px;
+  background:linear-gradient(
+    180deg,
+    rgba(7,8,15,0.96) 0%,
+    rgba(7,8,15,0.90) 78%,
+    rgba(7,8,15,0) 100%
+  );
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+
+.tabs-wrap::after{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:8px;
+  height:1px;
+  background:linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.08) 20%,
+    rgba(255,255,255,0.08) 80%,
+    transparent 100%
+  );
+  pointer-events:none;
+}
+
+.tabs{
+  margin:0;
+  background:rgba(15,16,32,0.92);
+  box-shadow:0 10px 24px rgba(0,0,0,.22);
+}
+
+.tab-btn{
+  color:#7f89a7;
+  padding:9px 2px;
+}
+
+.tab-btn.on{
+  box-shadow:0 2px 6px rgba(0,0,0,.35);
+}
+
+.tab-content.on{
+  display:block;
+  animation:none;
+}
+
+#tab-pick,
+#tab-mynums,
+#tab-myinfo,
+#tab-near,
+#tab-prize{
+  scroll-margin-top:76px;
+}
+
+@media(max-width:400px){
+  .app-header{
+    padding:12px 0 6px;
+  }
+
+  h1{
+    font-size:clamp(1.35rem,5vw,1.95rem);
+  }
+
+  .subtitle{
+    font-size:9.5px;
+  }
+
+  .tabs-wrap{
+    padding:7px 0 9px;
+  }
+
+  .tab-btn{
+    font-size:9.5px;
+    padding:8px 1px;
+    gap:2px;
+  }
+}
 </style>
 </head>
 <body>
