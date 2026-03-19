@@ -674,11 +674,26 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
 }
 
 .ad-banner-top{
-  margin:10px 0 0;
-  border-bottom:1px solid rgba(255,255,255,0.04);
-  padding-bottom:6px;
+  width:100%;
+  max-width:640px;
+  margin:0 auto;
+  height:44px;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:2px 12px;
+  overflow:hidden;
 }
 
+  .ad-banner-top ins{
+  display:block !important;
+  width:100% !important;
+  min-height:36px !important;
+  max-height:40px !important;
+  overflow:hidden;
+}
+  
 .badge{
   letter-spacing:1.3px;
   padding:3px 10px;
@@ -883,22 +898,29 @@ h1{
 /* 광고 + 탭 고정 높이 */
 /* 수정---------------------------------------------------------
   :root{
-  --sticky-ad-h:58px;
-  --sticky-tabs-h:58px;
+  --sticky-ad-h:44px;
+  --sticky-tabs-h:56px;
 }
 
   .ad-sticky-shell{
   position:sticky;
   top:0;
   z-index:100;
-  background:rgba(7,8,15,.96);
+  background:rgba(7,8,15,.82);
+  border-bottom:1px solid rgba(255,255,255,.04);
 }
 
 .tabs-sticky-shell{
   position:sticky;
   top:var(--sticky-ad-h);
   z-index:90;
-  padding:8px 0 10px;
+  padding:6px 0 8px;
+  background:linear-gradient(
+    180deg,
+    rgba(7,8,15,.96) 0%,
+    rgba(7,8,15,.90) 78%,
+    rgba(7,8,15,0) 100%
+  );
 }
 
 // 앱 전체 폭 유지
