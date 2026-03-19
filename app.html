@@ -672,27 +672,6 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
   text-align:center;
   padding:14px 0 8px;
 }
-
-.ad-banner-top{
-  width:100%;
-  max-width:640px;
-  margin:0 auto;
-  height:44px;
-  min-height:44px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:2px 12px;
-  overflow:hidden;
-}
-
-  .ad-banner-top ins{
-  display:block !important;
-  width:100% !important;
-  min-height:36px !important;
-  max-height:40px !important;
-  overflow:hidden;
-}
   
 .badge{
   letter-spacing:1.3px;
@@ -760,10 +739,6 @@ h1{
     font-size:9.5px;
   }
 
-  .tabs-wrap{
-    padding:7px 0 9px;
-  }
-
   .tab-btn{
     font-size:9.5px;
     padding:8px 1px;
@@ -776,11 +751,6 @@ h1{
   padding:14px 0 8px;
 }
 
-.ad-banner-top{
-  margin:10px 0 0;
-  border-bottom:1px solid rgba(255,255,255,0.04);
-  padding-bottom:6px;
-}
 
 .badge{
   letter-spacing:1.3px;
@@ -804,25 +774,6 @@ h1{
   font-size:10px;
   line-height:1.45;
   margin-top:4px;
-}
-
-
-
-.tabs-wrap::after{
-  content:'';
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:8px;
-  height:1px;
-  background:linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255,255,255,0.08) 20%,
-    rgba(255,255,255,0.08) 80%,
-    transparent 100%
-  );
-  pointer-events:none;
 }
 
 .tabs{
@@ -875,128 +826,37 @@ h1{
   /* ===== 상단 고정 UI 패치 시작 ===== */
 
 /* 광고 + 탭 고정 높이 */
-/* 수정---------------------------------------------------------
-  :root{
-  --sticky-ad-h:44px;
-  --sticky-tabs-h:56px;
-}
-
-  .ad-sticky-shell{
-  position:sticky;
-  top:0;
-  z-index:100;
-  background:rgba(7,8,15,.82);
-  border-bottom:1px solid rgba(255,255,255,.04);
-}
-
-.tabs-sticky-shell{
-  position:sticky;
-  top:var(--sticky-ad-h);
-  z-index:90;
-  padding:6px 0 8px;
-  background:linear-gradient(
-    180deg,
-    rgba(7,8,15,.96) 0%,
-    rgba(7,8,15,.90) 78%,
-    rgba(7,8,15,0) 100%
-  );
-}
-
-// 앱 전체 폭 유지
-.wrap{
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0 14px 80px;
-}
-
-// 광고 고정 
-.top-ad-inner{
-  max-width: 640px;
-  margin: 0 auto;
-  min-height: var(--top-ad-height);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 14px;
-}
-
-.top-ad-inner ins{
-  display: block !important;
-  width: 100% !important;
-  min-height: 50px !important;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-// 타이틀은 스크롤되게 
-.hero-head{
-  text-align: center;
-  padding: 14px 0 10px;
-}
-
-// 탭 고정 
-.tabs-sticky::after{
-  content:'';
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:8px;
-  height:1px;
-  background:linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255,255,255,0.08) 20%,
-    rgba(255,255,255,0.08) 80%,
-    transparent 100%
-  );
-  pointer-events:none;
-}
-
-// 기존 탭 UI는 유지하고 여백만 정리 
-.tabs{
-  margin: 0;
-}
-
-// 고정 탭에 가리지 않도록 
-#tab-pick,
-#tab-mynums,
-#tab-myinfo,
-#tab-near,
-#tab-prize{
-  scroll-margin-top: calc(var(--top-ad-height) + var(--top-tabs-height) + 12px);
-}
-  --------------------------------------------------------------------------------------------------------*/
 :root{
-  --sticky-ad-h:44px;
-  --sticky-tabs-h:56px;
+  --sticky-ad-h:34px;
+  --sticky-tabs-h:54px;
 }
 
 .ad-sticky-shell{
   position:sticky;
   top:0;
   z-index:100;
-  background:rgba(7,8,15,.82);
+  background:rgba(7,8,15,.88);
   border-bottom:1px solid rgba(255,255,255,.04);
 }
 
-.ad-banner-top{
-  width:100%;
+.top-ad-inner{
   max-width:640px;
   margin:0 auto;
-  height:44px;
-  min-height:44px;
+  height:38px;
+  min-height:38px;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:2px 12px;
+  padding:0 12px;
   overflow:hidden;
 }
 
-.ad-banner-top ins{
+.top-ad-inner ins{
   display:block !important;
   width:100% !important;
-  min-height:36px !important;
-  max-height:40px !important;
+  height:28px !important;
+  min-height:28px !important;
+  max-height:28px !important;
   overflow:hidden;
 }
 
@@ -1007,7 +867,7 @@ h1{
 
 .tabs-sticky-shell{
   position:sticky;
-  top:var(--sticky-ad-h);
+  top:calc(var(--sticky-ad-h) + 3px);
   z-index:90;
   padding:6px 0 8px;
   background:linear-gradient(
@@ -1016,6 +876,23 @@ h1{
     rgba(7,8,15,.90) 78%,
     rgba(7,8,15,0) 100%
   );
+}
+
+.tabs-sticky-shell::after{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:8px;
+  height:1px;
+  background:linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.08) 20%,
+    rgba(255,255,255,.08) 80%,
+    transparent 100%
+  );
+  pointer-events:none;
 }
 
 .tabs{
@@ -1027,7 +904,7 @@ h1{
 #tab-myinfo,
 #tab-near,
 #tab-prize{
-  scroll-margin-top:calc(var(--sticky-ad-h) + var(--sticky-tabs-h) + 12px);
+  scroll-margin-top:calc(var(--sticky-ad-h) + var(--sticky-tabs-h) + 16px);
 }
   /* ===== 상단 고정 UI 패치 끝 ===== */
 </style>
@@ -1050,7 +927,7 @@ h1{
  
     <header class="hero-head">
       <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진v1</h1>
+      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진</h1>
       <p class="credit">제작자: Clyde Park (P.K.H)</p>
       <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
     </header>
