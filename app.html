@@ -865,7 +865,7 @@ h1{
 /* 타이틀 */
 .hero-head{
   text-align:center;
-  padding:12px 0 8px;
+  padding:8px 0 4px;
 }
 
 /* 탭 고정 */
@@ -873,7 +873,7 @@ h1{
   position:sticky;
   top:calc(var(--sticky-ad-h) + 2px);
   z-index:90;
-  padding:4px 0 7px;
+  padding:2px 0 5px;
   background:linear-gradient(
     180deg,
     rgba(7,8,15,.96) 0%,
@@ -887,7 +887,7 @@ h1{
   position:absolute;
   left:0;
   right:0;
-  bottom:6px;
+  bottom:4px;
   height:1px;
   background:linear-gradient(
     90deg,
@@ -922,14 +922,14 @@ h1{
 /* PC에서는 광고를 살짝만 키움 */
 @media (min-width:768px){
   :root{
-    --sticky-ad-h:38px;
+    --sticky-ad-h:34px;
     --sticky-tabs-h:54px;
   }
 
   .top-ad-inner{
-    height:38px;
-    min-height:38px;
-    padding:0 12px;
+    height:32px;
+    min-height:32px;
+    padding:0 10px;
   }
 
   .top-ad-inner ins{
@@ -937,9 +937,9 @@ h1{
     min-height:30px !important;
     max-height:30px !important;
   }
-
+/*모바일 탭영역*/
   .tabs-sticky-shell{
-    padding:6px 0 8px;
+    padding:2px 0 5px;
   }
 
   .tab-btn{
