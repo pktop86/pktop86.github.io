@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta name="description" content="로또 회차 데이터를 바탕으로 참고용 번호, 결과 기록, 주변 판매점 정보를 확인할 수 있는 번호도구입니다. 본 서비스는 참고용이며 결과를 보장하지 않습니다.">
-<title>🎰 로또엔진 참고번호도구</title>
+<title>🎰로또번호 생성기 - AI 저동 추천 엔진</title>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9933896132600937" crossorigin="anonymous"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Black+Han+Sans&display=swap');
@@ -917,8 +917,22 @@ h1{
 
 /* 광고 + 탭 고정 높이 */
 :root{
-  --top-ad-height: 60px;
-  --top-tabs-height: 58px;
+  --sticky-ad-h:58px;
+  --sticky-tabs-h:58px;
+}
+
+  .ad-sticky-shell{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(7,8,15,.96);
+}
+
+.tabs-sticky-shell{
+  position:sticky;
+  top:var(--sticky-ad-h);
+  z-index:90;
+  padding:8px 0 10px;
 }
 
 /* 앱 전체 폭 유지 */
@@ -1033,7 +1047,7 @@ h1{
 </style>
 </head>
 <body>
-  <div class="top-ad-sticky">
+  <div class="ad-sticky-shell">
   <div class="top-ad-inner">
     <ins class="adsbygoogle"
          style="display:block"
@@ -1060,14 +1074,14 @@ h1{
   </div>
 
   <div class="top-ui-shell">
-    <header class="hero-header">
+    <header class="hero-head">
       <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-      <h1>로또엔진<br>로또번호 생성기</h1>
+      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진</h1>
       <p class="credit">제작자: Clyde Park (P.K.H)</p>
       <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
     </header>
 
-    <div class="tabs-sticky">
+    <div class="tabs-sticky-shell">
       <div class="tabs">
         <button class="tab-btn on" data-tab="pick">🎲 번호추첨</button>
         <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
