@@ -966,6 +966,255 @@ h1{
   
 /* ===== 상단 고정 최종본 끝 ===== */
   /* ===== 상단 고정 UI 패치 끝 ===== */
+
+/* ===== LB STICKY BAR START ===== */
+:root{
+  --lb-bar-h:36px;
+  --lb-gold-1:#ffe27a;
+  --lb-gold-2:#f0c040;
+  --lb-gold-3:#c8860d;
+}
+
+.tabs-sticky-shell{
+  padding-bottom:6px !important;
+}
+
+.lb-sticky-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:5px;
+  min-height:var(--lb-bar-h);
+  padding:5px 8px;
+  border-radius:11px;
+  background:linear-gradient(
+    135deg,
+    rgba(255,226,122,.12),
+    rgba(240,192,64,.10),
+    rgba(200,134,13,.08)
+  );
+  border:1px solid rgba(240,192,64,.20);
+  box-shadow:
+    0 4px 14px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.04);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+
+.lb-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+
+.lb-orb{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:11px;
+  color:#6a4100;
+  background:
+    radial-gradient(circle at 32% 30%, var(--lb-gold-1) 0%, var(--lb-gold-2) 48%, var(--lb-gold-3) 100%);
+  box-shadow:
+    0 0 10px rgba(240,192,64,.35),
+    inset 0 -2px 4px rgba(80,50,0,.22),
+    inset 0 2px 4px rgba(255,255,255,.28);
+  position:relative;
+}
+.lb-orb::after{
+  content:'';
+  position:absolute;
+  inset:-2px;
+  border-radius:50%;
+  border:1px solid rgba(255,226,122,.24);
+  pointer-events:none;
+}
+
+.lb-balance-wrap{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+}
+
+.lb-balance-label{
+  font-size:9px;
+  color:rgba(255,255,255,.68);
+  font-weight:700;
+  letter-spacing:.3px;
+  white-space:nowrap;
+}
+
+.lb-balance-value{
+  font-family:'Black Han Sans',sans-serif;
+  font-size:1rem;
+  color:var(--accent);
+  line-height:1;
+  white-space:nowrap;
+}
+
+.lb-right{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+}
+
+.lb-mini-btn{
+  height:26px;
+  padding:0 10px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(15,16,32,.82);
+  color:var(--text);
+  font-size:10px;
+  font-weight:800;
+  font-family:inherit;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+  transition:all .18s ease;
+}
+.lb-mini-btn:hover{
+  transform:translateY(-1px);
+}
+.lb-mini-btn.attend{
+  background:rgba(240,192,64,.16);
+  border-color:rgba(240,192,64,.25);
+  color:var(--accent);
+}
+.lb-mini-btn.charge{
+  background:rgba(58,184,255,.12);
+  border-color:rgba(58,184,255,.24);
+  color:var(--accent3);
+}
+
+.lb-streak{
+  min-width:30px;
+  height:26px;
+  padding:0 8px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  line-height:1;
+}
+.lb-streak.star{
+  color:var(--accent);
+  background:rgba(240,192,64,.12);
+  border-color:rgba(240,192,64,.22);
+}
+
+.lb-cost{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  margin-left:6px;
+  padding:2px 6px;
+  border-radius:999px;
+  background:rgba(240,192,64,.12);
+  border:1px solid rgba(240,192,64,.18);
+  color:var(--accent);
+  font-size:9px;
+  font-weight:900;
+  line-height:1;
+  vertical-align:middle;
+}
+
+.lb-cost-sm{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  margin-left:5px;
+  padding:2px 5px;
+  border-radius:999px;
+  background:rgba(240,192,64,.12);
+  border:1px solid rgba(240,192,64,.18);
+  color:var(--accent);
+  font-size:8.5px;
+  font-weight:900;
+  line-height:1;
+}
+
+.lb-modal-desc-strong{
+  color:var(--accent);
+  font-weight:900;
+}
+
+.lb-attend-info{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;
+  padding:11px 12px;
+  margin:12px 0 14px;
+  text-align:left;
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.65;
+}
+
+.lb-attend-day{
+  font-family:'Black Han Sans',sans-serif;
+  font-size:1.5rem;
+  color:var(--accent);
+  line-height:1;
+}
+
+.lb-reward-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:8px;
+}
+
+.lb-reward-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(240,192,64,.14);
+  border:1px solid rgba(240,192,64,.24);
+  color:var(--accent);
+  font-size:11px;
+  font-weight:900;
+}
+
+@media (max-width:480px){
+  .lb-sticky-bar{
+    gap:6px;
+    padding:5px 6px;
+  }
+  .lb-mini-btn{
+    padding:0 8px;
+    font-size:9.5px;
+  }
+  .lb-balance-value{
+    font-size:.95rem;
+  }
+  .lb-streak{
+    min-width:28px;
+    padding:0 6px;
+    font-size:9.5px;
+  }
+}
+/* ===== LB STICKY BAR END ===== */
+
 </style>
 </head>
 <body>
@@ -1006,6 +1255,22 @@ h1{
         <button class="tab-btn" data-tab="myinfo">🔮 오늘의 운세</button>
         <button class="tab-btn" data-tab="near">📍 내주변 판매점</button>
         <button class="tab-btn disabled" data-tab="prize" id="tab-prize-btn">🏆 당첨현황</button>
+      </div>
+
+      <div class="lb-sticky-bar" id="lb-sticky-bar">
+        <div class="lb-left">
+          <div class="lb-orb">7</div>
+          <div class="lb-balance-wrap">
+            <span class="lb-balance-label">럭키볼</span>
+            <span class="lb-balance-value" id="lb-balance-value">30</span>
+          </div>
+        </div>
+
+        <div class="lb-right">
+          <button class="lb-mini-btn attend" id="lb-attend-btn">출석</button>
+          <button class="lb-mini-btn charge" id="lb-charge-btn">충전하기▶</button>
+          <div class="lb-streak" id="lb-streak-badge">0D</div>
+        </div>
       </div>
     </div>
  
@@ -1376,6 +1641,63 @@ h1{
   </div>
 </div>
  
+
+<div class="modal-overlay" id="lb-attend-modal">
+  <div class="modal">
+    <div class="modal-icon">🗓️</div>
+    <div class="modal-title">연속 출석 보상</div>
+    <div class="modal-desc">
+      <div class="lb-attend-day" id="lb-attend-day">1일</div>
+      <div style="margin-top:8px">출석 완료 시 럭키볼을 즉시 받을 수 있습니다.</div>
+    </div>
+
+    <div class="lb-attend-info">
+      <div><strong class="lb-modal-desc-strong">출석 규칙</strong></div>
+      <div>1일 +10LB</div>
+      <div>5~9일 연속 +20LB</div>
+      <div>10일 이상 연속 +30LB</div>
+      <div>하루라도 놓치면 연속 출석 수는 0으로 초기화됩니다.</div>
+    </div>
+
+    <div class="lb-reward-line">
+      <div class="lb-reward-pill" id="lb-attend-reward-pill">+10LB</div>
+      <div style="font-size:11px;color:var(--muted);font-weight:700" id="lb-attend-streak-mini">1D</div>
+    </div>
+
+    <button class="modal-btn modal-btn-primary" id="lb-attend-claim-btn" style="margin-top:14px">10LB 받기!</button>
+    <button class="modal-btn modal-btn-secondary" id="lb-attend-close-btn">닫기</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="lb-charge-modal">
+  <div class="modal">
+    <div class="modal-icon">📺</div>
+    <div class="modal-title">광고 시청 후 충전</div>
+    <div class="modal-desc">
+      광고 시청 완료 후<br>
+      <strong class="lb-modal-desc-strong">럭키볼 25개</strong>가 충전됩니다.
+    </div>
+
+    <div class="modal-ad-area">
+      <ins class="adsbygoogle"
+           style="display:block;width:100%;min-height:100px"
+           data-ad-client="ca-pub-9933896132600937"
+           data-ad-slot="auto"
+           data-ad-format="rectangle"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+    </div>
+
+    <div class="timer-bar-bg">
+      <div class="timer-bar" id="lb-charge-timer-bar" style="width:100%"></div>
+    </div>
+    <div class="timer-text" id="lb-charge-timer-text">5초 후 활성화...</div>
+
+    <button class="modal-btn modal-btn-primary" id="lb-charge-confirm-btn" disabled style="margin-top:12px">25LB 받기!</button>
+    <button class="modal-btn modal-btn-secondary" id="lb-charge-close-btn">취소</button>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import { getFirestore, collection, addDoc, getDocs, getDocsFromServer, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, setDoc, getDoc, runTransaction, increment }
@@ -1439,6 +1761,280 @@ function saveUsedFree(n){
 let usedFree = loadUsedFree();
 let pendingCount = 0;
 let adTimer = null;
+
+// ===== LB SYSTEM START =====
+const LB_STATE_KEY = 'lotto_lb_state_v1';
+const LB_DEFAULT_BALANCE = 30;
+
+const LB_COSTS = {
+  gen5: 5,
+  gen10: 7,
+  sim1000: 10,
+  sim10000: 50,
+  chargeReward: 25
+};
+
+let lbChargeTimer = null;
+let pendingLbCost = 0;
+let pendingLbReason = '';
+
+function getKstDateKey(){
+  const kst = new Date(new Date().getTime() + 9*3600000);
+  return kst.toISOString().slice(0,10);
+}
+
+function getYesterdayKstDateKey(){
+  const kst = new Date(new Date().getTime() + 9*3600000);
+  kst.setDate(kst.getDate() - 1);
+  return kst.toISOString().slice(0,10);
+}
+
+function loadLBState(){
+  try{
+    const raw = localStorage.getItem(LB_STATE_KEY);
+    let state = raw ? JSON.parse(raw) : null;
+
+    if(!state){
+      state = {
+        balance: LB_DEFAULT_BALANCE,
+        streak: 0,
+        lastAttendDate: '',
+        lastSeenDate: getKstDateKey()
+      };
+    }
+
+    const today = getKstDateKey();
+    const yesterday = getYesterdayKstDateKey();
+
+    if(state.lastAttendDate && state.lastAttendDate !== today && state.lastAttendDate !== yesterday){
+      state.streak = 0;
+    }
+
+    state.lastSeenDate = today;
+    if(typeof state.balance !== 'number') state.balance = LB_DEFAULT_BALANCE;
+    if(typeof state.streak !== 'number') state.streak = 0;
+
+    saveLBState(state);
+    return state;
+  }catch(e){
+    const state = {
+      balance: LB_DEFAULT_BALANCE,
+      streak: 0,
+      lastAttendDate: '',
+      lastSeenDate: getKstDateKey()
+    };
+    saveLBState(state);
+    return state;
+  }
+}
+
+function saveLBState(state){
+  try{
+    localStorage.setItem(LB_STATE_KEY, JSON.stringify(state));
+  }catch(e){}
+}
+
+function getLBRewardForStreak(nextStreak){
+  if(nextStreak >= 10) return 30;
+  if(nextStreak >= 5) return 20;
+  return 10;
+}
+
+function getLBStateForView(){
+  return loadLBState();
+}
+
+function renderLBUI(){
+  const state = getLBStateForView();
+  const balanceEl = document.getElementById('lb-balance-value');
+  const streakEl = document.getElementById('lb-streak-badge');
+
+  if(balanceEl) balanceEl.textContent = state.balance;
+
+  if(streakEl){
+    if(state.streak >= 10){
+      streakEl.classList.add('star');
+      streakEl.textContent = '★';
+      streakEl.title = state.streak + '일 연속 출석';
+    }else{
+      streakEl.classList.remove('star');
+      streakEl.textContent = state.streak + 'D';
+      streakEl.title = state.streak + '일 연속 출석';
+    }
+  }
+}
+
+function addLB(amount){
+  const state = loadLBState();
+  state.balance += amount;
+  saveLBState(state);
+  renderLBUI();
+}
+
+function spendLB(amount, reason){
+  const state = loadLBState();
+  if(state.balance < amount){
+    alert(`럭키볼이 부족합니다.\n필요: ${amount}LB\n보유: ${state.balance}LB`);
+    return false;
+  }
+  state.balance -= amount;
+  saveLBState(state);
+  renderLBUI();
+  return true;
+}
+
+function openLBAttendModal(){
+  const state = loadLBState();
+  const today = getKstDateKey();
+  const yesterday = getYesterdayKstDateKey();
+
+  let nextStreak = 1;
+  if(state.lastAttendDate === yesterday){
+    nextStreak = state.streak + 1;
+  }else if(state.lastAttendDate === today){
+    nextStreak = state.streak || 1;
+  }else{
+    nextStreak = 1;
+  }
+
+  const reward = getLBRewardForStreak(nextStreak);
+  const claimedToday = state.lastAttendDate === today;
+
+  const dayEl = document.getElementById('lb-attend-day');
+  const rewardPill = document.getElementById('lb-attend-reward-pill');
+  const streakMini = document.getElementById('lb-attend-streak-mini');
+  const claimBtn = document.getElementById('lb-attend-claim-btn');
+
+  if(dayEl) dayEl.textContent = `${nextStreak}일`;
+  if(rewardPill) rewardPill.textContent = `+${reward}LB`;
+  if(streakMini) streakMini.textContent = nextStreak >= 10 ? '★' : `${nextStreak}D`;
+
+  if(claimBtn){
+    claimBtn.disabled = claimedToday;
+    claimBtn.textContent = claimedToday ? '오늘은 이미 받았어요' : `${reward}LB 받기!`;
+  }
+
+  document.getElementById('lb-attend-modal')?.classList.add('show');
+}
+
+function closeLBAttendModal(){
+  document.getElementById('lb-attend-modal')?.classList.remove('show');
+}
+
+function claimTodayAttendance(){
+  const state = loadLBState();
+  const today = getKstDateKey();
+  const yesterday = getYesterdayKstDateKey();
+
+  if(state.lastAttendDate === today){
+    alert('오늘은 이미 출석 보상을 받았습니다.');
+    return;
+  }
+
+  let nextStreak = 1;
+  if(state.lastAttendDate === yesterday){
+    nextStreak = state.streak + 1;
+  }else{
+    nextStreak = 1;
+  }
+
+  const reward = getLBRewardForStreak(nextStreak);
+  state.streak = nextStreak;
+  state.lastAttendDate = today;
+  state.balance += reward;
+
+  saveLBState(state);
+  renderLBUI();
+  closeLBAttendModal();
+
+  alert(`${nextStreak}일 출석 완료!\n+${reward}LB 지급되었습니다.`);
+}
+
+function openLBChargeModal(){
+  const modal = document.getElementById('lb-charge-modal');
+  const btn = document.getElementById('lb-charge-confirm-btn');
+  const text = document.getElementById('lb-charge-timer-text');
+  const bar = document.getElementById('lb-charge-timer-bar');
+
+  if(!modal || !btn || !text || !bar) return;
+
+  btn.disabled = true;
+  btn.textContent = '25LB 받기!';
+  text.textContent = '5초 후 활성화...';
+  bar.style.width = '100%';
+
+  modal.classList.add('show');
+
+  clearInterval(lbChargeTimer);
+  let sec = 5;
+
+  lbChargeTimer = setInterval(()=>{
+    sec--;
+    bar.style.width = `${Math.max(0, (sec/5)*100)}%`;
+    if(sec <= 0){
+      clearInterval(lbChargeTimer);
+      btn.disabled = false;
+      text.textContent = '✅ 준비 완료!';
+    }else{
+      text.textContent = `${sec}초 후 활성화...`;
+    }
+  },1000);
+}
+
+function closeLBChargeModal(){
+  clearInterval(lbChargeTimer);
+  document.getElementById('lb-charge-modal')?.classList.remove('show');
+}
+
+function claimLBCharge(){
+  addLB(LB_COSTS.chargeReward);
+  closeLBChargeModal();
+  alert(`광고 시청 완료!\n+${LB_COSTS.chargeReward}LB 충전되었습니다.`);
+}
+
+function injectLBCostLabels(){
+  document.querySelectorAll('.seg-btn').forEach(btn=>{
+    const n = Number(btn.dataset.n || 0);
+    const cost = n >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
+    if(!btn.querySelector('.lb-cost-sm')){
+      btn.insertAdjacentHTML('beforeend', `<span class="lb-cost-sm">7 ${cost}LB</span>`);
+    }
+  });
+
+  const sim1000 = document.getElementById('sim-btn-1000');
+  const sim10000 = document.getElementById('sim-btn-10000');
+
+  if(sim1000 && !sim1000.dataset.lbBound){
+    sim1000.innerHTML = `📺 1000회 <span class="lb-cost">7 ${LB_COSTS.sim1000}LB</span>`;
+    sim1000.dataset.lbBound = '1';
+  }
+  if(sim10000 && !sim10000.dataset.lbBound){
+    sim10000.innerHTML = `📺 10000회 <span class="lb-cost">7 ${LB_COSTS.sim10000}LB</span>`;
+    sim10000.dataset.lbBound = '1';
+  }
+}
+
+function initLBSystem(){
+  renderLBUI();
+  injectLBCostLabels();
+
+  document.getElementById('lb-attend-btn')?.addEventListener('click', openLBAttendModal);
+  document.getElementById('lb-charge-btn')?.addEventListener('click', openLBChargeModal);
+
+  document.getElementById('lb-attend-close-btn')?.addEventListener('click', closeLBAttendModal);
+  document.getElementById('lb-attend-claim-btn')?.addEventListener('click', claimTodayAttendance);
+  document.getElementById('lb-attend-modal')?.addEventListener('click', (e)=>{
+    if(e.target === document.getElementById('lb-attend-modal')) closeLBAttendModal();
+  });
+
+  document.getElementById('lb-charge-close-btn')?.addEventListener('click', closeLBChargeModal);
+  document.getElementById('lb-charge-confirm-btn')?.addEventListener('click', claimLBCharge);
+  document.getElementById('lb-charge-modal')?.addEventListener('click', (e)=>{
+    if(e.target === document.getElementById('lb-charge-modal')) closeLBChargeModal();
+  });
+}
+// ===== LB SYSTEM END =====
+
  
 // ── 내 번호 상태 ──
 let myDocs = [];       // 현재 로드된 내 번호
@@ -1541,6 +2137,7 @@ async function init(){
     setStatus('ok',`내장 통계 준비 완료 (261~${latestRound}회)`);
     setPrizeTabUnlocked(false); // 초기 잠금 상태 명시
     loadTodayLucky(); // 오늘의 숫자 카드 로드
+    initLBSystem();
   // 생년월일 max 동적 설정 (현재 날짜 - 14년)
   const birthEl=document.getElementById('myinfo-birth');
   if(birthEl){
@@ -1679,14 +2276,48 @@ function startAdTimer(){
   },1000);
 }
 confirmBtn.addEventListener('click',()=>{
-  if(pendingCount==='sim-1000'){ hideAdModal(); runSimulation(1000); return; }
-  if(pendingCount==='sim-10000'){ hideAdModal(); runSimulation(10000); return; }
-  hideAdModal(); if(pendingCount<10){usedFree=0;saveUsedFree(0);updateFreeCounter();} doGenerate(pendingCount);
+  if(pendingCount === 'sim-1000'){
+    if(!spendLB(LB_COSTS.sim1000, '1000회 시뮬레이션')) return;
+    hideAdModal();
+    runSimulation(1000);
+    return;
+  }
+
+  if(pendingCount === 'sim-10000'){
+    if(!spendLB(LB_COSTS.sim10000, '10000회 시뮬레이션')) return;
+    hideAdModal();
+    runSimulation(10000);
+    return;
+  }
+
+  const drawCost = pendingCount >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
+  if(!spendLB(drawCost, `${pendingCount}줄 생성`)) return;
+
+  hideAdModal();
+  if(pendingCount < 10){
+    usedFree = 0;
+    saveUsedFree(0);
+    updateFreeCounter();
+  }
+  doGenerate(pendingCount);
 });
 cancelBtn.addEventListener('click',hideAdModal);
 adModal.addEventListener('click',e=>{if(e.target===adModal)hideAdModal();});
  
-genBtn.addEventListener('click',()=>{ if(!isReady)return; if(needsAd(genCount))showAdModal(genCount); else doGenerate(genCount); });
+genBtn.addEventListener('click',()=>{
+  if(!isReady) return;
+
+  const drawCost = genCount >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
+
+  if(needsAd(genCount)){
+    pendingLbCost = drawCost;
+    pendingLbReason = `${genCount}줄 생성`;
+    showAdModal(genCount);
+  }else{
+    if(!spendLB(drawCost, `${genCount}줄 생성`)) return;
+    doGenerate(genCount);
+  }
+});
  
 // ── 알고리즘 ──
 function wp(arr,w){const t=w.reduce((a,b)=>a+b,0);let r=Math.random()*t;for(let i=0;i<arr.length;i++){r-=w[i];if(r<=0)return i;}return arr.length-1;}
