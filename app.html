@@ -871,37 +871,40 @@ h1{
 /* 타이틀 */
 .hero-head{
   text-align:center;
-  padding:8px 0 4px;
+  padding:8px 0 0px; /* 하단 패딩을 0으로 줄여 간격을 좁힙니다 *//*padding:8px 0 4px;*/
 }
 
 /* 탭 고정 */
 .tabs-sticky-shell {
   position: -webkit-sticky;
   position: sticky;
-  top: 60px !important; /* 위에서 설정한 광고 높이(60px)만큼 띄우고 고정 */
+  top: 60px !important; 
   z-index: 100;
   background: var(--bg);
   padding: 5px 0 !important;
-  margin: 0 !important;
+  
+  /* [중요] 마이너스 마진으로 타이틀 쪽으로 바짝 끌어올림 */
+  /* 간격을 더 좁히고 싶으면 -20px, -25px 등으로 숫자를 키우세요 */
+  margin-top: -15px !important; 
+  margin-bottom: 0 !important;
 }
-
-.tabs-sticky-shell::after{
-  content:'';
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:4px;
-  height:1px;
-  background:linear-gradient(
+.tabs-sticky-shell::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  height: 1px;
+  background: linear-gradient(
     90deg,
     transparent 0%,
     rgba(255,255,255,.07) 20%,
     rgba(255,255,255,.07) 80%,
     transparent 100%
   );
-  pointer-events:none;
+  pointer-events: none;
 }
-
+  
 /* 탭 박스는 기존 디자인 유지, 여백만 정리 */
 .tabs {
   margin: 0 !important;
@@ -942,11 +945,12 @@ h1{
     min-height:30px !important;
     max-height:30px !important;
   }
-/*모바일 탭영역*/
-  .tabs-sticky-shell{
-    padding:2px 0 5px;
-  }
-
+/* 모바일 탭영역 - 기존 padding은 유지하고 마진만 추가 */
+.tabs-sticky-shell {
+  padding: 2px 0 5px !important; /* 기존 설정 유지 */
+  margin-top: -15px !important;  /* 위로 끌어올려 간격 좁힘 (더 붙이려면 -20px) */
+  margin-bottom: 0 !important;
+}
   .tab-btn{
     font-size:10px;
     padding:9px 2px;
@@ -960,6 +964,9 @@ h1{
   }
   .tabs-sticky-shell {
     top: 50px !important;
+    /* 모바일에서도 적절한 간격 유지 */
+    margin-top: -10px !important;
+    padding: 2px 0 5px !important;
   }
 }
 
@@ -1235,7 +1242,7 @@ h1{
 <div class="wrap">
      <header class="hero-head">
       <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진</h1>
+      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진V2</h1>
       <p class="credit">제작자: Clyde Park (P.K.H)</p>
       <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
     </header>
