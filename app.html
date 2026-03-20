@@ -836,7 +836,7 @@ h1{
 .ad-sticky-shell {
   position: -webkit-sticky;
   position: sticky;
-  top: 0.5;
+  top: 1;
   z-index: 0; /* 탭보다 높게 설정 */
   height: 0px !important; /* 광고 영역 높이 강제 고정 */
   background: var(--bg);
@@ -961,10 +961,10 @@ h1{
   /* 모바일 전용 (화면이 작을 때 광고 높이 조절) */
 @media screen and (max-width: 480px) {
   .ad-sticky-shell {
-    height: 50px !important;
+    height: 34px !important; /*50*/
   }
   .tabs-sticky-shell {
-    top: 50px !important;
+    top: 34px !important;
     /* 모바일에서도 적절한 간격 유지 */
     margin-top: -10px !important;
     padding: 2px 0 5px !important;
