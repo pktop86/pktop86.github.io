@@ -12,7 +12,7 @@
 :root{--bg:#07080f;--panel:#0f1020;--card:#161828;--border:rgba(255,255,255,0.08);--accent:#f0c040;--accent2:#e05c20;--accent3:#3ab8ff;--green:#40d080;--red:#ff5050;--text:#dde0f0;--muted:#505870;--glow:rgba(240,192,64,0.22)}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);background-size:44px 44px}
-.wrap{max-width:640px;margin:0 auto;padding:0 14px 80px;position:relative;z-index:1}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px 80px;position:relative;z-index:1;padding-top:var(--ad-h)!important}
 .ad-banner-top{width:100%;margin:12px 0 0;min-height:60px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .ad-banner-bottom{width:100%;margin:16px 0;min-height:90px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 header{text-align:center;padding:20px 0 16px}
@@ -500,7 +500,8 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
   top: var(--ad-h);
   z-index: 150;
   background: var(--bg);
-  margin: 0 -14px;  /* wrap 패딩 상쇄 */
+  margin-left: -14px;
+  margin-right: -14px;
   padding: 0 14px;
 }
  
@@ -1119,6 +1120,18 @@ async function init(){
     initLBIfNew(); // 럭키볼 신규 지급
     checkDailyLB(); // 일일 출석 체크
     renderLBBar(); // LB 잔액 표시
+    // 광고 실제 높이 기준으로 CSS 변수 동적 설정
+    function syncStickyTop(){
+      const adEl = document.getElementById('sticky-ad-shell');
+      if(adEl){
+        const h = adEl.getBoundingClientRect().height || 52;
+        document.documentElement.style.setProperty('--ad-h', h + 'px');
+      }
+    }
+    syncStickyTop();
+    setTimeout(syncStickyTop, 500);
+    setTimeout(syncStickyTop, 1500);
+    window.addEventListener('resize', syncStickyTop);
     loadTodayLucky(); // 오늘의 행운 로드
   // 생년월일 max 동적 설정 (현재 날짜 - 14년)
   const birthEl=document.getElementById('myinfo-birth');
