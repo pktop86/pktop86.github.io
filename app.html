@@ -838,7 +838,7 @@ h1{
   position: sticky;
   top: 1;
   z-index: 0; /* 탭보다 높게 설정 */
-  height: 0px !important; /* 광고 영역 높이 강제 고정 */
+  height: var(--sticky-ad-h);/*0px !important;*/ /* 광고 영역 높이 강제 고정 */
   background: var(--bg);
   display: flex;
   align-items: center;
@@ -878,7 +878,8 @@ h1{
 .tabs-sticky-shell {
   position: -webkit-sticky;
   position: sticky;
-  top: calc(var(--sticky-ad-h) + 1px);
+  top: var(--sticky-ad-h);
+  /*top: calc(var(--sticky-ad-h) + 1px);*/
   /*top: 60px !important; */
   z-index: 101; /*90*/
   background: var(--bg);
@@ -1222,12 +1223,12 @@ h1{
   }
 }
 /* ===== LB STICKY BAR END ===== */
-.ad-sticky-shell{
+/*.ad-sticky-shell{
   display:none !important;
 }
 .top-ad-inner{
   display:none !important;
-}
+}*/
 </style>
 </head>
 <body>
@@ -1248,7 +1249,7 @@ h1{
 <div class="wrap">
      <header class="hero-head">
       <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진V</h1>
+      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진</h1>
       <p class="credit">제작자: Clyde Park (P.K.H)</p>
       <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
     </header>
