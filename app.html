@@ -455,60 +455,62 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
 .lb-insufficient .lb-balance{color:var(--red)!important;animation:lbShake .4s ease}
  
 /* ── 상단 고정 구조 ── */
-:root{
-  --ad-h: 52px;          /* 광고 fixed 높이 */
-  --tabs-lb-h: 76px;     /* 탭(44px) + LB바(32px) sticky 높이 */
-}
  
-/* 광고: 항상 fixed */
+/* 광고: body 최상단 fixed */
 .sticky-ad-shell{
   position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--ad-h);
-  z-index: 200;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
+}
+.sticky-ad-inner{
+  max-width: 640px;
+  margin: 0 auto;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
-.sticky-ad-inner{
-  width: 100%;
-  max-width: 640px;
-  height: 50px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
+.sticky-ad-inner ins{
+  display: block !important;
+  width: 100% !important;
+  height: 50px !important;
 }
  
-/* wrap: 광고 높이만큼 위 여백 */
+/* wrap: JS가 padding-top을 직접 세팅 */
 .wrap{
-  padding-top: var(--ad-h) !important;
-  padding-bottom: 80px;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 14px 80px;
+  position: relative;
+  z-index: 1;
 }
  
-/* 타이틀: 일반 흐름 (스크롤 시 올라감) */
+/* 앱 타이틀 */
 .app-header{
   text-align: center;
   padding: 14px 0 8px;
 }
  
-/* 탭+LB: sticky (타이틀 지나면 광고 아래 고정) */
+/* 탭+LB: sticky (타이틀 스크롤 후 광고 아래 붙음) */
 .sticky-tabs-shell{
   position: sticky;
-  top: var(--ad-h);
-  z-index: 150;
+  z-index: 200;
   background: var(--bg);
-  margin-left: -14px;
-  margin-right: -14px;
+  margin: 0 -14px;
   padding: 0 14px;
+  /* top은 JS가 동적으로 설정 */
 }
  
 /* 탭 */
 .sticky-tabs-shell .tabs{
   margin: 0 !important;
   position: static !important;
+  top: auto !important;
 }
  
 /* LB 바 */
@@ -522,11 +524,7 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
   border-top: 1px solid rgba(240,192,64,.15);
   border-bottom: 1px solid rgba(240,192,64,.2);
 }
-.lb-left{
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
+.lb-left{ display:flex; align-items:center; gap:5px; }
 .lb-icon{ font-size:13px; line-height:1; }
 .lb-balance{
   font-family:"Black Han Sans",sans-serif;
@@ -549,9 +547,7 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
   cursor:pointer; font-family:inherit;
 }
 .lb-daily-btn:disabled{ opacity:.4; cursor:not-allowed; }
- 
-@media(max-width:480px){
-  :root{ --ad-h: 50px; }
+h: 50px; }
 }
  
 </style>
@@ -575,7 +571,7 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
   <!-- 타이틀: 스크롤 시 사라짐 -->
   <header class="app-header">
     <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-    <h1>로또번호 생성기<br>AI 자동 추천 로또엔진v</h1>
+    <h1>로또번호 생성기<br>AI 자동 추천 로또엔진</h1>
     <p class="credit">제작자: Clyde Park (P.K.H)</p>
     <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
   </header>
@@ -1120,17 +1116,22 @@ async function init(){
     initLBIfNew(); // 럭키볼 신규 지급
     checkDailyLB(); // 일일 출석 체크
     renderLBBar(); // LB 잔액 표시
-    // 광고 실제 높이 기준으로 CSS 변수 동적 설정
+    // 광고 실제 높이 측정 → wrap padding-top + sticky-tabs top 동시 설정
     function syncStickyTop(){
       const adEl = document.getElementById('sticky-ad-shell');
-      if(adEl){
-        const h = adEl.getBoundingClientRect().height || 52;
-        document.documentElement.style.setProperty('--ad-h', h + 'px');
-      }
+      const wrap = document.querySelector('.wrap');
+      const tabsShell = document.querySelector('.sticky-tabs-shell');
+      if(!adEl) return;
+      const h = adEl.getBoundingClientRect().height || 52;
+      // wrap 상단 여백 = 광고 높이
+      if(wrap) wrap.style.paddingTop = h + 'px';
+      // sticky-tabs-shell top = 광고 높이
+      if(tabsShell) tabsShell.style.top = h + 'px';
     }
     syncStickyTop();
-    setTimeout(syncStickyTop, 500);
-    setTimeout(syncStickyTop, 1500);
+    setTimeout(syncStickyTop, 300);
+    setTimeout(syncStickyTop, 800);
+    setTimeout(syncStickyTop, 2000);
     window.addEventListener('resize', syncStickyTop);
     loadTodayLucky(); // 오늘의 행운 로드
   // 생년월일 max 동적 설정 (현재 날짜 - 14년)
