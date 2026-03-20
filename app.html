@@ -12,7 +12,7 @@
 :root{--bg:#07080f;--panel:#0f1020;--card:#161828;--border:rgba(255,255,255,0.08);--accent:#f0c040;--accent2:#e05c20;--accent3:#3ab8ff;--green:#40d080;--red:#ff5050;--text:#dde0f0;--muted:#505870;--glow:rgba(240,192,64,0.22)}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);background-size:44px 44px}
-.wrap{max-width:640px;margin:0 auto;padding:0 14px 80px;position:relative;z-index:1;padding-top:var(--ad-h)!important}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px 80px;position:relative;z-index:1}
 .ad-banner-top{width:100%;margin:12px 0 0;min-height:60px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .ad-banner-bottom{width:100%;margin:16px 0;min-height:90px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 header{text-align:center;padding:20px 0 16px}
@@ -456,61 +456,86 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
  
 /* ── 상단 고정 구조 ── */
  
-/* 광고: body 최상단 fixed */
-.sticky-ad-shell{
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 300;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
+:root{
+  --sticky-ad-h: 34px;
 }
-.sticky-ad-inner{
+ 
+/* ① 광고: sticky top:0 */
+.ad-sticky-shell{
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7,8,15,.92);
+}
+.top-ad-inner{
   max-width: 640px;
   margin: 0 auto;
-  height: 50px;
+  height: 34px;
+  min-height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  padding: 0 10px;
 }
-.sticky-ad-inner ins{
+.top-ad-inner ins{
   display: block !important;
   width: 100% !important;
-  height: 50px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
+  overflow: hidden;
 }
  
-/* wrap: JS가 padding-top을 직접 세팅 */
-.wrap{
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0 14px 80px;
-  position: relative;
-  z-index: 1;
+/* ② 앱 타이틀: 일반 흐름 */
+.hero-head{
+  text-align: center;
+  padding: 10px 0 6px;
 }
- 
-/* 앱 타이틀 */
 .app-header{
   text-align: center;
-  padding: 14px 0 8px;
+  padding: 10px 0 6px;
 }
  
-/* 탭+LB: sticky (타이틀 스크롤 후 광고 아래 붙음) */
-.sticky-tabs-shell{
+/* ③ 탭+LB: sticky, 광고 바로 아래 */
+.tabs-sticky-shell{
+  position: -webkit-sticky;
   position: sticky;
-  z-index: 200;
-  background: var(--bg);
-  margin: 0 -14px;
-  padding: 0 14px;
-  /* top은 JS가 동적으로 설정 */
+  top: calc(var(--sticky-ad-h) + 1px);
+  z-index: 90;
+  background: linear-gradient(
+    180deg,
+    rgba(7,8,15,.96) 0%,
+    rgba(7,8,15,.90) 78%,
+    rgba(7,8,15,0) 100%
+  );
+  padding: 2px 0 0;
+}
+.tabs-sticky-shell::after{
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 4px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.07) 20%,
+    rgba(255,255,255,.07) 80%,
+    transparent 100%
+  );
+  pointer-events: none;
 }
  
 /* 탭 */
-.sticky-tabs-shell .tabs{
+.tabs-sticky-shell .tabs{
   margin: 0 !important;
   position: static !important;
   top: auto !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
 }
  
 /* LB 바 */
@@ -518,17 +543,16 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 32px;
-  padding: 0 4px;
-  background: linear-gradient(135deg,rgba(240,192,64,.1),rgba(224,92,32,.06));
-  border-top: 1px solid rgba(240,192,64,.15);
-  border-bottom: 1px solid rgba(240,192,64,.2);
+  height: 30px;
+  padding: 0 12px;
+  background: linear-gradient(135deg,rgba(240,192,64,.08),rgba(224,92,32,.05));
+  border-bottom: 1px solid rgba(240,192,64,.18);
 }
 .lb-left{ display:flex; align-items:center; gap:5px; }
-.lb-icon{ font-size:13px; line-height:1; }
+.lb-icon{ font-size:12px; line-height:1; }
 .lb-balance{
   font-family:"Black Han Sans",sans-serif;
-  font-size:0.9rem;
+  font-size:0.88rem;
   color:var(--accent);
   line-height:1;
 }
@@ -537,13 +561,13 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
 .lb-charge-btn{
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:#000; border:none; border-radius:6px;
-  padding:4px 10px; font-size:10px; font-weight:900;
+  padding:3px 9px; font-size:10px; font-weight:900;
   cursor:pointer; font-family:inherit;
 }
 .lb-daily-btn{
   background:rgba(64,208,128,.15); color:var(--green);
   border:1px solid rgba(64,208,128,.3); border-radius:6px;
-  padding:4px 8px; font-size:10px; font-weight:700;
+  padding:3px 7px; font-size:10px; font-weight:700;
   cursor:pointer; font-family:inherit;
 }
 .lb-daily-btn:disabled{ opacity:.4; cursor:not-allowed; }
@@ -552,50 +576,50 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
 </head>
 <body>
  
-<!-- ① 광고: sticky (스크롤 시 상단 고정) -->
-<div class="sticky-ad-shell" id="sticky-ad-shell">
-  <div class="sticky-ad-inner">
+<!-- ① 광고: sticky top:0, z-index:100 -->
+<div class="ad-sticky-shell" id="sticky-ad-shell">
+  <div class="top-ad-inner">
     <ins class="adsbygoogle"
-         style="display:block;width:100%;height:50px"
+         style="display:block"
          data-ad-client="ca-pub-9933896132600937"
          data-ad-slot="auto"
          data-ad-format="horizontal"
-         data-full-width-responsive="false"></ins>
+         data-full-width-responsive="true"></ins>
     <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
   </div>
 </div>
  
-<!-- ② 타이틀: 스크롤 시 올라가서 사라짐 -->
-<header class="app-header">
-  <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-  <h1>로또번호 생성기<br>AI 자동 추천 로또엔진V</h1>
-  <p class="credit">제작자: Clyde Park (P.K.H)</p>
-  <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
-</header>
- 
-<!-- ③ 탭+LB: sticky (타이틀 지나면 광고 아래 고정) -->
-<div class="sticky-tabs-shell">
-  <div class="tabs">
-    <button class="tab-btn on" data-tab="pick">🎲 번호추첨</button>
-    <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
-    <button class="tab-btn" data-tab="myinfo">🔮 오늘의 운세</button>
-    <button class="tab-btn" data-tab="near">📍 내주변 판매점</button>
-    <button class="tab-btn disabled" data-tab="prize" id="tab-prize-btn">🏆 당첨현황</button>
-  </div>
-  <div class="lb-bar" id="lb-bar">
-    <div class="lb-left">
-      <div class="lb-icon">🟡</div>
-      <div class="lb-balance" id="lb-balance">0</div>
-      <div class="lb-label">LB</div>
-    </div>
-    <div class="lb-right">
-      <button class="lb-daily-btn" id="lb-daily-btn">📅 출석</button>
-      <button class="lb-charge-btn" id="lb-charge-btn">⚡ 충전</button>
-    </div>
-  </div>
-</div>
- 
 <div class="wrap">
+ 
+  <!-- ② 타이틀: 일반 흐름, 스크롤 시 사라짐 -->
+  <header class="hero-head">
+    <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
+    <h1>로또번호 생성기<br>AI 자동 추천 로또엔진</h1>
+    <p class="credit">제작자: Clyde Park (P.K.H)</p>
+    <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
+  </header>
+ 
+  <!-- ③ 탭+LB: sticky top=광고높이+1px, z-index:90 -->
+  <div class="tabs-sticky-shell">
+    <div class="tabs">
+      <button class="tab-btn on" data-tab="pick">🎲 번호추첨</button>
+      <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
+      <button class="tab-btn" data-tab="myinfo">🔮 오늘의 운세</button>
+      <button class="tab-btn" data-tab="near">📍 내주변 판매점</button>
+      <button class="tab-btn disabled" data-tab="prize" id="tab-prize-btn">🏆 당첨현황</button>
+    </div>
+    <div class="lb-bar" id="lb-bar">
+      <div class="lb-left">
+        <div class="lb-icon">🟡</div>
+        <div class="lb-balance" id="lb-balance">0</div>
+        <div class="lb-label">LB</div>
+      </div>
+      <div class="lb-right">
+        <button class="lb-daily-btn" id="lb-daily-btn">📅 출석</button>
+        <button class="lb-charge-btn" id="lb-charge-btn">⚡ 충전</button>
+      </div>
+    </div>
+  </div>
  
   <!-- 번호추첨 탭 -->
   <div class="tab-content on" id="tab-pick">
