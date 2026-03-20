@@ -976,7 +976,7 @@ h1{
 
 /* ===== LB STICKY BAR START ===== */
 :root{
-  --lb-bar-h:36px;
+  --lb-bar-h:28px;
   --lb-gold-1:#ffe27a;
   --lb-gold-2:#f0c040;
   --lb-gold-3:#c8860d;
@@ -990,23 +990,23 @@ h1{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:8px;
-  margin-top:5px;
+  gap:6px;
+  margin-top:4px;
   min-height:var(--lb-bar-h);
-  padding:5px 8px;
-  border-radius:11px;
+  padding:3px 6px;
+  border-radius:9px;
   background:linear-gradient(
     135deg,
-    rgba(255,226,122,.12),
-    rgba(240,192,64,.10),
-    rgba(200,134,13,.08)
+    rgba(255,226,122,.07),
+    rgba(240,192,64,.05),
+    rgba(200,134,13,.04)
   );
-  border:1px solid rgba(240,192,64,.20);
+  border:1px solid rgba(240,192,64,.12);
   box-shadow:
-    0 4px 14px rgba(0,0,0,.18),
+    0 2px 8px rgba(0,0,0,.12),
     inset 0 1px 0 rgba(255,255,255,.04);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
 }
 
 .lb-left{
@@ -1017,22 +1017,22 @@ h1{
 }
 
 .lb-orb{
-  width:24px;
-  height:24px;
+  width:20px;
+  height:20px;
   border-radius:50%;
   flex-shrink:0;
   display:flex;
   align-items:center;
   justify-content:center;
   font-weight:900;
-  font-size:11px;
+  font-size:9px;
   color:#6a4100;
   background:
     radial-gradient(circle at 32% 30%, var(--lb-gold-1) 0%, var(--lb-gold-2) 48%, var(--lb-gold-3) 100%);
   box-shadow:
-    0 0 10px rgba(240,192,64,.35),
-    inset 0 -2px 4px rgba(80,50,0,.22),
-    inset 0 2px 4px rgba(255,255,255,.28);
+    0 0 6px rgba(240,192,64,.22),
+    inset 0 -1px 3px rgba(80,50,0,.18),
+    inset 0 1px 3px rgba(255,255,255,.22);
   position:relative;
 }
 .lb-orb::after{
@@ -1052,7 +1052,7 @@ h1{
 }
 
 .lb-balance-label{
-  font-size:9px;
+  font-size:8px;
   color:rgba(255,255,255,.68);
   font-weight:700;
   letter-spacing:.3px;
@@ -1061,7 +1061,7 @@ h1{
 
 .lb-balance-value{
   font-family:'Black Han Sans',sans-serif;
-  font-size:1rem;
+  font-size:.82rem;
   color:var(--accent);
   line-height:1;
   white-space:nowrap;
@@ -1075,13 +1075,13 @@ h1{
 }
 
 .lb-mini-btn{
-  height:26px;
-  padding:0 10px;
-  border-radius:8px;
+  height:22px;
+  padding:0 8px;
+  border-radius:7px;
   border:1px solid rgba(255,255,255,.08);
   background:rgba(15,16,32,.82);
   color:var(--text);
-  font-size:10px;
+  font-size:9px;
   font-weight:800;
   font-family:inherit;
   cursor:pointer;
@@ -1106,17 +1106,17 @@ h1{
 }
 
 .lb-streak{
-  min-width:30px;
-  height:26px;
-  padding:0 8px;
-  border-radius:8px;
+  min-width:24px;
+  height:22px;
+  padding:0 6px;
+  border-radius:7px;
   display:flex;
   align-items:center;
   justify-content:center;
   background:rgba(255,255,255,.05);
   border:1px solid rgba(255,255,255,.08);
   color:#fff;
-  font-size:10px;
+  font-size:9px;
   font-weight:900;
   line-height:1;
 }
@@ -1204,20 +1204,20 @@ h1{
 
 @media (max-width:480px){
   .lb-sticky-bar{
-    gap:6px;
-    padding:5px 6px;
+    gap:5px;
+    padding:3px 5px;
   }
   .lb-mini-btn{
-    padding:0 8px;
-    font-size:9.5px;
+    padding:0 7px;
+    font-size:8.5px;
   }
   .lb-balance-value{
-    font-size:.95rem;
+    font-size:.78rem;
   }
   .lb-streak{
-    min-width:28px;
-    padding:0 6px;
-    font-size:9.5px;
+    min-width:22px;
+    padding:0 5px;
+    font-size:8.5px;
   }
 }
 /* ===== LB STICKY BAR END ===== */
