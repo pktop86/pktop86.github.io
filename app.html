@@ -547,14 +547,12 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
   cursor:pointer; font-family:inherit;
 }
 .lb-daily-btn:disabled{ opacity:.4; cursor:not-allowed; }
-h: 50px; }
-}
  
 </style>
 </head>
 <body>
  
-<!-- 광고: 항상 최상단 fixed -->
+<!-- ① 광고: sticky (스크롤 시 상단 고정) -->
 <div class="sticky-ad-shell" id="sticky-ad-shell">
   <div class="sticky-ad-inner">
     <ins class="adsbygoogle"
@@ -567,36 +565,37 @@ h: 50px; }
   </div>
 </div>
  
-<div class="wrap">
-  <!-- 타이틀: 스크롤 시 사라짐 -->
-  <header class="app-header">
-    <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-    <h1>로또번호 생성기<br>AI 자동 추천 로또엔진</h1>
-    <p class="credit">제작자: Clyde Park (P.K.H)</p>
-    <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
-  </header>
+<!-- ② 타이틀: 스크롤 시 올라가서 사라짐 -->
+<header class="app-header">
+  <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
+  <h1>로또번호 생성기<br>AI 자동 추천 로또엔진</h1>
+  <p class="credit">제작자: Clyde Park (P.K.H)</p>
+  <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
+</header>
  
-  <!-- 탭 + 럭키볼: sticky (광고 아래 고정) -->
-  <div class="sticky-tabs-shell">
-    <div class="tabs">
-      <button class="tab-btn on" data-tab="pick">🎲 번호추첨</button>
-      <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
-      <button class="tab-btn" data-tab="myinfo">🔮 오늘의 운세</button>
-      <button class="tab-btn" data-tab="near">📍 내주변 판매점</button>
-      <button class="tab-btn disabled" data-tab="prize" id="tab-prize-btn">🏆 당첨현황</button>
+<!-- ③ 탭+LB: sticky (타이틀 지나면 광고 아래 고정) -->
+<div class="sticky-tabs-shell">
+  <div class="tabs">
+    <button class="tab-btn on" data-tab="pick">🎲 번호추첨</button>
+    <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
+    <button class="tab-btn" data-tab="myinfo">🔮 오늘의 운세</button>
+    <button class="tab-btn" data-tab="near">📍 내주변 판매점</button>
+    <button class="tab-btn disabled" data-tab="prize" id="tab-prize-btn">🏆 당첨현황</button>
+  </div>
+  <div class="lb-bar" id="lb-bar">
+    <div class="lb-left">
+      <div class="lb-icon">🟡</div>
+      <div class="lb-balance" id="lb-balance">0</div>
+      <div class="lb-label">LB</div>
     </div>
-    <div class="lb-bar" id="lb-bar">
-      <div class="lb-left">
-        <div class="lb-icon">🟡</div>
-        <div class="lb-balance" id="lb-balance">0</div>
-        <div class="lb-label">LB</div>
-      </div>
-      <div class="lb-right">
-        <button class="lb-daily-btn" id="lb-daily-btn">📅 출석</button>
-        <button class="lb-charge-btn" id="lb-charge-btn">⚡ 충전</button>
-      </div>
+    <div class="lb-right">
+      <button class="lb-daily-btn" id="lb-daily-btn">📅 출석</button>
+      <button class="lb-charge-btn" id="lb-charge-btn">⚡ 충전</button>
     </div>
   </div>
+</div>
+ 
+<div class="wrap">
  
   <!-- 번호추첨 탭 -->
   <div class="tab-content on" id="tab-pick">
