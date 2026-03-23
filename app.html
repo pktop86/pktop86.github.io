@@ -3072,7 +3072,7 @@ function renderResult(nums,idx){
   ballsEl.className='r-balls';
   nums.forEach(n=>{
     const b=document.createElement('div');
-    b.className='ball '+ballCls(n)+(hitSet.has(n)?' hit':'');
+    b.className='ball '+ballCls(n);
     b.textContent=n;
     ballsEl.appendChild(b);
   });
@@ -3284,7 +3284,7 @@ function renderMyNums(docs){
       top.appendChild(cb);
       const idx=document.createElement('div'); idx.className='my-item-idx'; idx.textContent=i+1; top.appendChild(idx);
       const balls=document.createElement('div'); balls.className='my-item-balls';
-      (d.nums||[]).forEach(n=>{const b=document.createElement('div');b.className='ball '+ballCls(n)+(hitSet.has(n)?' hit':'');b.style.cssText='width:30px;height:30px;font-size:11px';b.textContent=n;balls.appendChild(b);});
+      (d.nums||[]).forEach(n=>{const b=document.createElement('div');b.className='ball '+ballCls(n)+(showResult&&hitSet.has(n)?' hit':'');b.style.cssText='width:30px;height:30px;font-size:11px';b.textContent=n;balls.appendChild(b);});
       top.appendChild(balls);
       if(showResult&&p>0){const pr=document.createElement('div');pr.className='my-item-prize';pr.textContent=PLABELS[p];top.appendChild(pr);}
       // 시뮬레이션 버튼
