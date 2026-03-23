@@ -1640,7 +1640,7 @@ h1{
           <div class="lb-orb">7</div>
           <div class="lb-balance-wrap">
             <span class="lb-balance-label">럭키볼</span>
-            <span class="lb-balance-value" id="lb-balance-value">30</span>
+            <span class="lb-balance-value" id="lb-balance-value">30LB</span>
           </div>
         </div>
 
@@ -2280,7 +2280,7 @@ function renderLBUI(){
   const balanceEl = document.getElementById('lb-balance-value');
   const streakEl = document.getElementById('lb-streak-badge');
 
-  if(balanceEl) balanceEl.textContent = state.balance;
+  if(balanceEl) balanceEl.textContent = state.balance + 'LB';
 
   if(streakEl){
     if(state.streak >= 10){
@@ -2905,7 +2905,18 @@ function renderResult(nums,idx){
   top.appendChild(savedEl);
  
   div.appendChild(top);
- 
+
+  //챌린지 참여 번호 선택
+  const challengeBtn=document.createElement('button');
+challengeBtn.style.cssText='background:rgba(176,96,255,.15);border:1px solid rgba(176,96,255,.3);color:#b060ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0';
+challengeBtn.textContent='🏆 참여';
+challengeBtn.addEventListener('click',()=>{
+  updateChallengeGenNums(nums);
+  document.getElementById('challenge-btn-gen').click();
+});
+top.appendChild(challengeBtn);
+
+  
   // 태그 행
   const tagsEl=document.createElement('div');
   tagsEl.className='r-tags';
@@ -2927,7 +2938,7 @@ async function doGenerate(count){
   allNums.forEach((nums,i)=>resultsEl.appendChild(renderResult(nums,i)));
   if(count<10){usedFree+=count; saveUsedFree(usedFree); updateFreeCounter();}
   genBtn.disabled=false; genBtn.textContent='🎲 번호 추첨하기';
-  if(allNums.length>0){ updateSimTarget(allNums[0]); updateChallengeGenNums(allNums[0]); }
+  if(allNums.length>0){ updateSimTarget(allNums[0]); }
   setTimeout(()=>resultsEl.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
   // Firebase 저장 (auth 준비 후)
   const doSave = async () => {
