@@ -2153,9 +2153,6 @@ const SEED_HISTORY = [
   {round:1215,nums:[13,15,19,21,44,45],bonus:39},
 ];
 
-  window.FULL_DRAW_HISTORY = window.FULL_DRAW_HISTORY || [
-  // 261회 ~ 최신회차 전체
-];
 
   
 // ── 전역 상태 ──
@@ -2163,9 +2160,13 @@ let freqData = {...BASE_FREQ};
 let recentHist = (window.FULL_DRAW_HISTORY && window.FULL_DRAW_HISTORY.length > 0)
   ? [...window.FULL_DRAW_HISTORY]
   : [...SEED_HISTORY];
-let latestRound = 1216;
-let latestWinNums = [13,10,14,15,23,24];
-let latestBonusNum = 25;
+// draw-history-261-latest.js 로드 시 자동으로 최신 회차 반영
+const _lastDraw = (window.FULL_DRAW_HISTORY && window.FULL_DRAW_HISTORY.length > 0)
+  ? window.FULL_DRAW_HISTORY[window.FULL_DRAW_HISTORY.length - 1]
+  : { round: 1216, nums: [13,10,14,15,23,24], bonus: 25 };
+let latestRound    = _lastDraw.round;
+let latestWinNums  = [..._lastDraw.nums];
+let latestBonusNum = _lastDraw.bonus;
 let isReady = false;
 let genCount = 5;
 let currentUid = null;
