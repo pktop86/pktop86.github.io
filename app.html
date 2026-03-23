@@ -875,21 +875,17 @@ h1{
 }
 
 /* 탭 고정 */
-.tabs-sticky-shell {
-  position: -webkit-sticky;
-  position: sticky;
-  top: var(--sticky-ad-h);
-  /*top: calc(var(--sticky-ad-h) + 1px);*/
-  /*top: 60px !important; */
-  z-index: 101; /*90*/
-  background: var(--bg);
-  padding: 5px 0 !important;
-  
-  /* [중요] 마이너스 마진으로 타이틀 쪽으로 바짝 끌어올림 */
-  /* 간격을 더 좁히고 싶으면 -20px, -25px 등으로 숫자를 키우세요 */
-  margin-top: -10px !important; 
-  margin-bottom: 0 !important;
+.tabs-sticky-shell{
+  position:-webkit-sticky;
+  position:sticky;
+  top:var(--sticky-ad-h);
+  z-index:101;
+  background:var(--bg);
+  padding:2px 0 5px;
+  margin-top:0;
+  margin-bottom:0;
 }
+  
 .tabs-sticky-shell::after {
   content: '';
   position: absolute;
@@ -948,28 +944,28 @@ h1{
     max-height:30px !important;
   }
 /* 모바일 탭영역 - 기존 padding은 유지하고 마진만 추가 */
-.tabs-sticky-shell {
-  padding: 2px 0 5px !important; /* 기존 설정 유지 */
-  margin-top: -20px !important;  /* 위로 끌어올려 간격 좁힘 (더 붙이려면 -20px) */
+/*.tabs-sticky-shell {
+  padding: 2px 0 5px !important;  
+  margin-top: -20px !important;  
   margin-bottom: 0 !important;
 }
   .tab-btn{
     font-size:10px;
     padding:9px 2px;
   }
-}
+}*/
 
   /* 모바일 전용 (화면이 작을 때 광고 높이 조절) */
-@media screen and (max-width: 480px) {
-  .ad-sticky-shell {
-    top: 0;
-    height: 34px !important; /*50*/
+@media screen and (max-width:480px){
+  .ad-sticky-shell{
+    height:34px !important;
   }
-  .tabs-sticky-shell {
-    top: 34px !important;
-    /* 모바일에서도 적절한 간격 유지 */
-    margin-top: -10px !important;
-    padding: 2px 0 5px !important;
+
+  .tabs-sticky-shell{
+    top:34px !important;
+    padding:2px 0 5px !important;
+    margin-top:0 !important;
+    margin-bottom:0 !important;
   }
 }
 
@@ -985,9 +981,9 @@ h1{
   --lb-gold-3:#c8860d;
 }
 
-.tabs-sticky-shell{
+/*.tabs-sticky-shell{
   padding-bottom:6px !important;
-} /*원래값 6 : 1675*/
+}*/ /*원래값 6 : 1675*/
 
 .lb-sticky-bar{
   display:flex;
