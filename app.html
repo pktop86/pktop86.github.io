@@ -3747,7 +3747,7 @@ async function loadMyNums(){
     const all = snap.docs
       .map(d=>({id:d.id,...d.data()}))
       .sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-    const keep=[latestRound, latestRound-1];
+    const keep=[latestRound, latestRound+1, latestRound-1];
     const filtered=all.filter(d=>keep.includes(d.round));
     renderMyNums(filtered);
     all.filter(d=>!keep.includes(d.round)).forEach(d=>deleteDoc(doc(db,'picks',d.id)).catch(()=>{}));
