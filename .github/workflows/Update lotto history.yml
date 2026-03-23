@@ -19,7 +19,7 @@ jobs:
           python-version: '3.11'
  
       - name: Run update script
-        run: python update_lotto.py
+        run: python Update lotto.py
  
       - name: Commit and push if changed
         run: |
