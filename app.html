@@ -4165,7 +4165,8 @@ function getChallengeStatus(){
   if(challengeRoundData?.scored===true) return 'scored';
   // 서버 상태 없으면 클라이언트 시간으로 fallback
   const kst=new Date(new Date().getTime()+9*3600000);
-  if(kst.getDay()===6&&kst.getHours()>=20) return 'closed';
+  const d=kst.getDay(), h=kst.getHours(), m=kst.getMinutes();
+  if((d===6&&(h>21||(h===21&&m>=15)))||(d===0&&h<3)) return 'closed';
   return 'open';
 }
  
@@ -4222,6 +4223,11 @@ async function initChallenge(){
       const btnsEl=document.getElementById('challenge-btns');
       if(status!=='open'&&btnsEl&&!challengeMyEntry) {
         btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.disabled=true;b.style.opacity='.4';});
+      }
+      else if(status==='open'&&btnsEl) {
+      btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.disabled=false;b.style.opacity='1';});
+      const genBtn2=document.getElementById('challenge-btn-gen');
+      if(genBtn2) genBtn2.disabled=!challengeGenNums.length;
       }
       // 채점 완료 시 TOP10 표시
       if(status==='scored'&&challengeRoundData?.top10Preview){
@@ -4407,6 +4413,10 @@ async function joinChallenge(numbers, sourceType){
 // 자동 채점 (클라이언트 fallback - Cloud Functions 미사용 시)
 async function maybeScoreCurrentChallenge(){
   if(!db||!latestWinNums||latestWinNums.length!==6) return;
+  const kst=new Date(new Date().getTime()+9*3600000);
+  const day=kst.getDay(), h=kst.getHours(), m=kst.getMinutes();
+  const afterDraw=(day===6&&(h>21||(h===21&&m>=15)))||(day===0&&h<3);
+if(!afterDraw) return;
   const roundId=String(latestRound);
   const roundRef=doc(db,'challenge_rounds',roundId);
   try{
