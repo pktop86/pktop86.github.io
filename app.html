@@ -3161,7 +3161,7 @@ function buildV3Pools(feats){
 function genV3Candidate(pools){
   const used = new Set();
 
-  function pick(당구){
+  function pick(pool){
     const avail = pool.filter(n=>!used.has(n));
     if(!avail.length) return null;
     const n = v3Rand(avail);
