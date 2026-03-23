@@ -2943,6 +2943,12 @@ function v3OddCount(nums){
   return nums.filter(n=>n%2===1).length;
 }
 
+function getActivePickRound(){
+  // latestRound는 "최근 당첨 완료 회차"
+  // 사용자가 지금 새로 저장하는 번호는 다음 회차용
+  return Number(latestRound || 0) + 1;
+}
+
 function v3LowCount(nums){
   return nums.filter(n=>n<=22).length;
 }
@@ -3704,7 +3710,7 @@ async function doGenerate(count){
     setTimeout(()=>resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'}), 80);
 
     const doSave = async () => {
-      const savedRound = latestRound;
+      const savedRound = getActivePickRpund();
       const ids = await Promise.all(allNums.map(nums => savePick(nums, savedRound)));
 
       ids.forEach((id,i)=>{
@@ -3757,8 +3763,8 @@ async function loadMyNums(){
     const all = snap.docs
       .map(d=>({id:d.id,...d.data()}))
       .sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-    const maxRound = Math.max(...all.map(d => d.round || 0), latestRound);
-    const keep = [maxRound, maxRound-1, maxRound+1, latestRound, latestRound+1, latestRound-1];
+    /*const maxRound = Math.max(...all.map(d => d.round || 0), latestRound);*/
+    const keep = [getActivePickRound(), latestRound, latestRound-1];
     const filtered=all.filter(d=>keep.includes(d.round));
     renderMyNums(filtered);
     all.filter(d=>!keep.includes(d.round)).forEach(d=>deleteDoc(doc(db,'picks',d.id)).catch(()=>{}));
