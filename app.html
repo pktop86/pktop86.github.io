@@ -2160,7 +2160,9 @@ const SEED_HISTORY = [
   
 // ── 전역 상태 ──
 let freqData = {...BASE_FREQ};
-let recentHist = [...SEED_HISTORY];
+let recentHist = (window.FULL_DRAW_HISTORY && window.FULL_DRAW_HISTORY.length > 0)
+  ? [...window.FULL_DRAW_HISTORY]
+  : [...SEED_HISTORY];
 let latestRound = 1216;
 let latestWinNums = [13,10,14,15,23,24];
 let latestBonusNum = 25;
