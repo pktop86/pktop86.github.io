@@ -1622,7 +1622,7 @@ h1{
 <div class="wrap">
      <header class="hero-head">
       <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진 V3</h1>
+      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진</h1>
       <p class="credit">제작자: Clyde Park (P.K.H)</p>
       <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
     </header>
@@ -1854,6 +1854,7 @@ h1{
  
   <!-- 내 번호 탭 -->
   <div class="tab-content" id="tab-mynums">
+    <div id="my-summary-round" style="font-size:11px;color:var(--muted);margin-bottom:6px;text-align:right;font-weight:700"></div>
     <div class="my-summary">
       <div class="my-sc rank1"><div class="my-sc-val" id="my-cnt1">0</div><div class="my-sc-label">🥇 1등</div></div>
       <div class="my-sc rank2"><div class="my-sc-val" id="my-cnt2">0</div><div class="my-sc-label">🥈 2등</div></div>
@@ -3175,15 +3176,19 @@ function updateSelCount(){
 }
 function recalcCounts(){
   const cnt={1:0,2:0,3:0,4:0,5:0};
-  // 결과가 확정된 회차만 카운팅
-  // recentHist에 있는 회차 = 실제 당첨번호가 있는 회차만 사용
+  // 결과 확정된 회차 중 가장 최신 회차 찾기
+  let countedRound = 0;
   myDocs.forEach(d=>{
     const entry=recentHist.find(h=>h.round===d.round);
-    if(!entry) return; // 당첨번호 없는 회차(진행중) 제외
+    if(!entry) return;
     const p=checkPrize(d.nums||[],entry.nums,entry.bonus);
     if(p>0)cnt[p]++;
+    if(entry.round > countedRound) countedRound = entry.round;
   });
   for(let i=1;i<=5;i++){const el=document.getElementById('my-cnt'+i);if(el)el.textContent=cnt[i];}
+  // 회차 표시
+  const roundEl=document.getElementById('my-summary-round');
+  if(roundEl) roundEl.textContent = countedRound > 0 ? `📊 ${countedRound}회차 기준` : '';
 }
  
 function renderMyNums(docs){
