@@ -1459,6 +1459,146 @@ h1{
   }
 }
 
+  /* ── 최신 회차 당첨 번호 카드 ── */
+.latest-draw-card{
+  background:var(--panel);
+  border:1px solid rgba(240,192,64,.18);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:14px;
+}
+
+.latest-draw-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.latest-draw-title{
+  font-size:12px;
+  font-weight:900;
+  color:var(--accent);
+}
+
+.latest-draw-round{
+  font-size:11px;
+  font-weight:800;
+  color:var(--text);
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:4px 10px;
+}
+
+.latest-draw-balls-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+
+.latest-draw-balls{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+  flex:1;
+}
+
+.latest-bonus-wrap{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+}
+
+.latest-bonus-label{
+  font-size:10px;
+  color:var(--muted);
+  font-weight:700;
+}
+
+.latest-bonus-ball{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:12px;
+  flex-shrink:0;
+  background:radial-gradient(circle at 38% 35%,#ffe060,#c88000);
+  color:#5a2e00;
+  box-shadow:inset 0 -2px 5px rgba(0,0,0,.3);
+}
+
+.latest-draw-mywins{
+  border-top:1px solid var(--border);
+  padding-top:12px;
+}
+
+.latest-draw-mywins-title{
+  font-size:10px;
+  color:var(--muted);
+  font-weight:700;
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.latest-draw-mywins-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:6px;
+}
+
+.ldw-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:9px 4px;
+  text-align:center;
+}
+
+.ldw-item.rank1{border-color:var(--accent);background:rgba(240,192,64,.07)}
+.ldw-item.rank2{border-color:rgba(58,184,255,.35)}
+.ldw-item.rank3{border-color:rgba(64,208,128,.35)}
+
+.ldw-rank{
+  font-size:9px;
+  color:var(--muted);
+  margin-bottom:3px;
+}
+
+.ldw-val{
+  font-family:'Black Han Sans',sans-serif;
+  font-size:1.05rem;
+  line-height:1;
+  color:var(--text);
+}
+
+.ldw-item.rank1 .ldw-val{color:var(--accent)}
+.ldw-item.rank2 .ldw-val{color:var(--accent3)}
+.ldw-item.rank3 .ldw-val{color:var(--green)}
+
+@media (max-width:480px){
+  .latest-draw-mywins-grid{
+    gap:4px;
+  }
+  .ldw-item{
+    padding:8px 2px;
+  }
+  .ldw-val{
+    font-size:.95rem;
+  }
+  .latest-draw-title{
+    font-size:11px;
+  }
+}
+
 
 </style>
 </head>
@@ -1518,6 +1658,33 @@ h1{
  
   <!-- 번호추첨 탭 -->
   <div class="tab-content on" id="tab-pick">
+    <!-- 최신 회차 당첨 번호 -->
+<div class="latest-draw-card" id="latest-draw-card">
+  <div class="latest-draw-head">
+    <div class="latest-draw-title">🎯 최신 회차 당첨 번호</div>
+    <div class="latest-draw-round" id="latest-draw-round">— 회차</div>
+  </div>
+
+  <div class="latest-draw-balls-row">
+    <div class="latest-draw-balls" id="latest-draw-balls"></div>
+    <div class="latest-bonus-wrap">
+      <div class="latest-bonus-label">보너스</div>
+      <div class="latest-bonus-ball" id="latest-bonus-ball">?</div>
+    </div>
+  </div>
+
+  <div class="latest-draw-mywins">
+    <div class="latest-draw-mywins-title">내 번호 당첨 현황</div>
+    <div class="latest-draw-mywins-grid">
+      <div class="ldw-item rank1"><div class="ldw-rank">1등</div><div class="ldw-val" id="pick-cnt1">0</div></div>
+      <div class="ldw-item rank2"><div class="ldw-rank">2등</div><div class="ldw-val" id="pick-cnt2">0</div></div>
+      <div class="ldw-item rank3"><div class="ldw-rank">3등</div><div class="ldw-val" id="pick-cnt3">0</div></div>
+      <div class="ldw-item rank4"><div class="ldw-rank">4등</div><div class="ldw-val" id="pick-cnt4">0</div></div>
+      <div class="ldw-item rank5"><div class="ldw-rank">5등</div><div class="ldw-val" id="pick-cnt5">0</div></div>
+    </div>
+  </div>
+</div>
+
     <!-- 오늘의 숫자 카드 카드 -->
     <div class="lucky-card" id="lucky-card">
       <div class="lucky-card-header">
@@ -1614,7 +1781,7 @@ h1{
     <div class="schedule-notice">
       <div class="sch-icon">🔄</div>
       <div>
-        <div class="sch-title">매주 일요일 새벽 1시 자동 업데이트</div>
+        <div class="sch-title">매주 토요일 21시 15분 자동 업데이트</div>
         <div class="sch-desc">토요일 밤 추첨 후 최신 결과번호 자동 수집 → 통계·가중치 즉시 반영<br>다음 업데이트: <span id="next-update">계산 중...</span></div>
       </div>
     </div>
@@ -2397,7 +2564,7 @@ async function init(){
     // 즉시 준비
     isReady=true; genBtn.disabled=false; viewRound=latestRound;
     updateStats(); renderFreqBars(); renderFreqGrid(); updateFreeCounter();
-    renderPrizeHeader(); scheduleAutoUpdate(); startSaturdayChecker();
+    renderPrizeHeader(); renderLatestDrawCard(); scheduleAutoUpdate(); startSaturdayChecker();
     setStatus('ok',`내장 통계 준비 완료 (261~${latestRound}회)`);
     setPrizeTabUnlocked(false); // 초기 잠금 상태 명시
     loadTodayLucky(); // 오늘의 숫자 카드 로드
@@ -2420,7 +2587,44 @@ async function init(){
  
     // 당첨현황 잠금 확인
     checkPrizeUnlock();
- 
+
+function getPickRoundWinCounts(round){
+  const cnt = {1:0,2:0,3:0,4:0,5:0};
+
+  myDocs.forEach(d=>{
+    if(d.round !== round) return;
+    const p = checkPrize(d.nums || [], latestWinNums, latestBonusNum);
+    if(p > 0) cnt[p]++;
+  });
+
+  return cnt;
+}
+
+function renderLatestDrawCard(){
+  const roundEl = document.getElementById('latest-draw-round');
+  const ballsEl = document.getElementById('latest-draw-balls');
+  const bonusEl = document.getElementById('latest-bonus-ball');
+
+  if(roundEl) roundEl.textContent = `${latestRound}회`;
+  if(ballsEl){
+    ballsEl.innerHTML = '';
+    latestWinNums.forEach(n=>{
+      const b = document.createElement('div');
+      b.className = 'ball ' + ballCls(n);
+      b.textContent = n;
+      ballsEl.appendChild(b);
+    });
+  }
+  if(bonusEl) bonusEl.textContent = latestBonusNum || '?';
+
+  const cnt = getPickRoundWinCounts(latestRound);
+  for(let i=1;i<=5;i++){
+    const el = document.getElementById('pick-cnt'+i);
+    if(el) el.textContent = cnt[i];
+  }
+}
+
+    
     // 최신 회차 백그라운드 업데이트 (재시도 포함)
     setTimeout(()=>autoUpdate(), 300);
   }catch(e){
@@ -2439,8 +2643,9 @@ async function autoUpdate(retry=0){
     if(added > 0){
       setStatus('ok', `${added}회차 업데이트 완료 — 최신: ${latestRound}회`);
       updateStats(); renderFreqBars(); renderFreqGrid();
-      renderPrizeHeader(); loadPrizeTab(latestRound);
+      renderPrizeHeader(); renderLatestDrawCard(); loadPrizeTab(latestRound);
       if(currentUid) loadMyNums();
+      
       if(latestRound!==oldRound){ resetChallengeState(); onAuthReady(()=>initChallenge()); }
       checkPrizeUnlock(); // 회차 갱신 후 탭 활성화 재평가
       maybeScoreCurrentChallenge();
@@ -2460,22 +2665,56 @@ async function autoUpdate(retry=0){
  
 function scheduleAutoUpdate(){
   try{
-    const now=new Date(), kst=new Date(now.getTime()+9*3600000);
-    const day=kst.getDay();
-    let ahead=day===0&&kst.getHours()<1?0:(7-day)%7||7;
-    const nxt=new Date(kst); nxt.setDate(nxt.getDate()+ahead); nxt.setHours(1,0,0,0);
-    const el=document.getElementById('next-update');
-    if(el){const D=['일','월','화','수','목','금','토'];el.textContent=`${nxt.getFullYear()}.${pad(nxt.getMonth()+1)}.${pad(nxt.getDate())} (${D[nxt.getDay()]}) 새벽 1시`;}
-    const ms=new Date(nxt.getTime()-9*3600000).getTime()-now.getTime();
-    setTimeout(async()=>{ await fetchNewRounds(); updateStats(); renderFreqBars(); renderFreqGrid(); loadMyNums(); scheduleAutoUpdate(); },ms);
+    const now = new Date();
+    const kst = new Date(now.getTime() + 9*3600000);
+
+    const target = new Date(kst);
+    const currentDay = kst.getDay(); // 0=일, 6=토
+    const daysUntilSat = (6 - currentDay + 7) % 7;
+
+    target.setDate(kst.getDate() + daysUntilSat);
+    target.setHours(21, 15, 0, 0);
+
+    // 이미 이번 토요일 21:15 지났으면 다음 주 토요일로
+    if(target.getTime() <= kst.getTime()){
+      target.setDate(target.getDate() + 7);
+    }
+
+    const el = document.getElementById('next-update');
+    if(el){
+      const D = ['일','월','화','수','목','금','토'];
+      el.textContent = `${target.getFullYear()}.${pad(target.getMonth()+1)}.${pad(target.getDate())} (${D[target.getDay()]}) 21:15`;
+    }
+
+    const ms = new Date(target.getTime() - 9*3600000).getTime() - now.getTime();
+
+    setTimeout(async()=>{
+      await fetchNewRounds();
+      updateStats();
+      renderFreqBars();
+      renderFreqGrid();
+      renderLatestDrawCard();
+      loadMyNums();
+      scheduleAutoUpdate();
+    }, ms);
   }catch(e){}
+}
+
 }
 function startSaturdayChecker(){
   setInterval(()=>{
-    const kst=new Date(new Date().getTime()+9*3600000);
-    if((kst.getDay()===6&&kst.getHours()>=22)||(kst.getDay()===0&&kst.getHours()<3)) loadMyNums();
-  },60000);
+    const kst = new Date(new Date().getTime() + 9*3600000);
+    const afterOpen =
+      (kst.getDay() === 6 && (kst.getHours() > 21 || (kst.getHours() === 21 && kst.getMinutes() >= 15))) ||
+      (kst.getDay() === 0 && kst.getHours() < 3);
+
+    if(afterOpen){
+      loadMyNums();
+      renderLatestDrawCard();
+    }
+  }, 60000);
 }
+
  
 // ── 통계 ──
 function updateStats(){
@@ -2758,6 +2997,7 @@ function renderMyNums(docs){
   const ids=new Set(docs.map(d=>d.id));
   [...checkedIds].forEach(id=>{if(!ids.has(id))checkedIds.delete(id);});
   recalcCounts();
+  renderLatestDrawCard();
  
   const toolbar=document.getElementById('my-toolbar');
   const container=document.getElementById('my-nums-container');
