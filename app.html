@@ -2730,9 +2730,6 @@ function updateStats(){
   document.getElementById('sv-cold').textContent=s[s.length-1][0]+'번';
 }
 function updateFreeCounter(){
-  const rem=Math.max(0,MAX_FREE-usedFree);
-  document.getElementById('free-pips').innerHTML=Array.from({length:MAX_FREE},(_,i)=>`<div class="pip${i<usedFree?' used':''}"></div>`).join('');
-  document.getElementById('free-text').innerHTML=rem>0?`무료 <strong>${rem}줄</strong> 남음`:`<span style="color:var(--accent)">무료 소진 — 광고 시청 후 이용</span>`;
 }
  
 // ── 빈도 렌더 ──
