@@ -1797,10 +1797,7 @@ h1{
     </div>
  
     <div class="gen-box">
-      <div class="free-counter" id="free-counter">
-        <div class="free-pips" id="free-pips"></div>
-        <div class="free-text" id="free-text"></div>
-      </div>
+     
       <div class="ctrl-section">
         <span class="ctrl-label">생성 수 선택</span>
         <div class="seg">
@@ -1809,7 +1806,7 @@ h1{
           <button class="seg-btn" data-n="20">20줄</button>
         </div>
       </div>
-      <div class="ad-notice"><span class="icon">💡</span><div><strong>무료 5회</strong> 이후 또는 <strong>10줄</strong> 선택 시 짧은 광고 시청 후 결과가 표시됩니다.</div></div>
+      <div class="ad-notice"><span class="icon">💡</span><div><strong>럭키볼(LB) 소진 시 럭키볼(LB)를 충전 후 </strong>  사용해 주세요.</div></div>
       <button class="gen-btn" id="gen-btn" disabled>🎲 번호 추첨하기</button>
       <div id="results"></div>
  
@@ -2436,7 +2433,7 @@ function injectLBCostLabels(){
     const n = Number(btn.dataset.n || 0);
     const cost = n >= 20 ? LB_COSTS.gen20 : n >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
     if(!btn.querySelector('.lb-cost-sm')){
-      btn.insertAdjacentHTML('beforeend', `<span class="lb-cost-sm">7 ${cost}LB</span>`);
+      btn.insertAdjacentHTML('beforeend', `<span class="lb-cost-sm">${cost}LB</span>`);
     }
   });
 
@@ -3287,7 +3284,9 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 document.querySelectorAll('.seg-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('on'));
-    btn.classList.add('on'); genCount=parseInt(btn.dataset.n);
+    btn.classList.add('on');
+    genCount=parseInt(btn.dataset.n);
+    injectLBCostLabels();
   });
 });
  
