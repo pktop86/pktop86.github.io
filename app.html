@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta name="description" content="로또 회차 데이터를 바탕으로 참고용 번호, 결과 기록, 주변 판매점 정보를 확인할 수 있는 번호도구입니다. 본 서비스는 참고용이며 결과를 보장하지 않습니다.">
 <title>🎰로또번호 생성기 - AI 자동 추천 로또엔진</title>
-<script src="draw-history-261-latest.js"></script>
+
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9933896132600937" crossorigin="anonymous"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Black+Han+Sans&display=swap');
@@ -2564,42 +2564,43 @@ async function tryFetch(r){
   return null;
 }
 async function fetchNewRounds(){
-  const deadline = Date.now()+8000;
-  let r=latestRound+1, count=0;
+  const deadline = Date.now() + 8000;
+  let r = latestRound + 1, count = 0;
 
   window.FULL_DRAW_HISTORY = Array.isArray(window.FULL_DRAW_HISTORY)
     ? [...window.FULL_DRAW_HISTORY]
     : [];
 
-  while(Date.now()<deadline){
-    const d=await tryFetch(r);
+  while(Date.now() < deadline){
+    const d = await tryFetch(r);
     if(!d) break;
 
-    d.nums.forEach(n=>{freqData[n]=(freqData[n]||0)+1;});
+    d.nums.forEach(n => { freqData[n] = (freqData[n] || 0) + 1; });
 
-    // recent buffer
     recentHist.push(d);
-    if(recentHist.length>15) recentHist.shift();
+    if(recentHist.length > 15) recentHist.shift();
 
-    // full history
-    if(!window.FULL_DRAW_HISTORY.some(x=>Number(x.round)===Number(d.round))){
+    if(!window.FULL_DRAW_HISTORY.some(x => Number(x.round) === Number(d.round))){
       window.FULL_DRAW_HISTORY.push({
-        round:d.round,
-        nums:[...d.nums].sort((a,b)=>a-b),
-        bonus:d.bonus||0
+        round: d.round,
+        nums: [...d.nums].sort((a,b)=>a-b),
+        bonus: d.bonus || 0
       });
       window.FULL_DRAW_HISTORY.sort((a,b)=>a.round-b.round);
     }
 
-    latestRound=r;
-    latestWinNums=d.nums;
-    latestBonusNum=d.bonus||0;
+    latestRound = r;
+    latestWinNums = [...d.nums];
+    latestBonusNum = d.bonus || 0;
     count++;
     r++;
   }
 
-  // feature cache 무효화
   _v3FeatureCache = null;
+  _v3LastFeatureRound = null;
+
+  return count;
+}
 
 function getPickRoundWinCounts(round){
   const cnt = {1:0,2:0,3:0,4:0,5:0};
@@ -2772,28 +2773,50 @@ function updateFreeCounter(){
  
 // ── 빈도 렌더 ──
 function renderFreqBars(){
-  const el=document.getElementById('freq-bars'); el.innerHTML='';
-  const vals=Object.values(freqData); const mx=Math.max(...vals); const mn=Math.min(...vals); const range=mx-mn||1;
-  const sorted=Object.entries(freqData).sort((a,b)=>b[1]-a[1]);
-  const hot=new Set(sorted.slice(0,9).map(e=>e[0])), cold=new Set(sorted.slice(-9).map(e=>e[0]));
+  const el = document.getElementById('freq-bars');
+  el.innerHTML = '';
+
+  const vals = Object.values(freqData);
+  const mx = Math.max(...vals);
+  const mn = Math.min(...vals);
+  const range = mx - mn || 1;
+
+  const sorted = Object.entries(freqData).sort((a,b)=>b[1]-a[1]);
+  const hot = new Set(sorted.slice(0,9).map(e=>e[0]));
+  const cold = new Set(sorted.slice(-9).map(e=>e[0]));
+
   for(let n=1;n<=45;n++){
-    const c=freqData[n]||0; const h=Math.round(4+((c-mn)/range)*42);
-    const cls=hot.has(String(n))?'fb-hot':cold.has(String(n))?'fb-cold':'fb-mid';
-    const col=document.createElement('div'); col.className='fb-col '+cls;
-    col.innerHTML=`<div class="fb-bar" style="height:${h}px"></div><div class="fb-lbl">${n}</div>`;
+    const c = freqData[n] || 0;
+    const h = Math.round(4 + ((c-mn)/range)*42);
+    const cls = hot.has(String(n)) ? 'fb-hot' : cold.has(String(n)) ? 'fb-cold' : 'fb-mid';
+    const col = document.createElement('div');
+    col.className = 'fb-col ' + cls;
+    col.innerHTML = `<div class="fb-bar" style="height:${h}px"></div><div class="fb-lbl">${n}</div>`;
     el.appendChild(col);
   }
 }
+
 function renderFreqGrid(){
-  const g=document.getElementById('freq-grid'); g.innerHTML='';
-  const mx=Math.max(...Object.values(freqData));
-  const sorted=Object.entries(freqData).sort((a,b)=>b[1]-a[1]);
-  const rm={};
-  sorted.forEach(([n],i)=>{if(i<5)rm[n]='hot1';else if(i<15)rm[n]='hot2';else if(i<22)rm[n]='hot3';else if(i>=38)rm[n]='cold';});
+  const g = document.getElementById('freq-grid');
+  g.innerHTML = '';
+
+  const mx = Math.max(...Object.values(freqData));
+  const sorted = Object.entries(freqData).sort((a,b)=>b[1]-a[1]);
+  const rm = {};
+
+  sorted.forEach(([n],i)=>{
+    if(i < 5) rm[n] = 'hot1';
+    else if(i < 15) rm[n] = 'hot2';
+    else if(i < 22) rm[n] = 'hot3';
+    else if(i >= 38) rm[n] = 'cold';
+  });
+
   for(let n=1;n<=45;n++){
-    const c=freqData[n]||0, pct=(c/mx*100).toFixed(0);
-    const el=document.createElement('div'); el.className='fi '+(rm[String(n)]||'');
-    el.innerHTML=`<div class="fi-n ${ballCls(n)}">${n}</div><div class="fi-c">${c}회</div><div class="fi-prog" style="width:${pct}%"></div>`;
+    const c = freqData[n] || 0;
+    const pct = (c / mx * 100).toFixed(0);
+    const el = document.createElement('div');
+    el.className = 'fi ' + (rm[String(n)] || '');
+    el.innerHTML = `<div class="fi-n ${ballCls(n)}">${n}</div><div class="fi-c">${c}회</div><div class="fi-prog" style="width:${pct}%"></div>`;
     g.appendChild(el);
   }
 }
@@ -3159,6 +3182,7 @@ function isValidV3Combo(nums) {
 
 function genV3Candidate(pools) {
   const used = new Set();
+
   const pickOne = (당구) => {
     const avail = pool.filter(n => !used.has(n));
     if (!avail.length) return null;
