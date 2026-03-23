@@ -824,32 +824,35 @@ h1{
 }
 /* ===== 상단 광고 + 타이틀 + 탭/LB 고정 최종본 ===== */
 :root{
-  --sticky-ad-h: 56px;
-  --sticky-tabs-offset: 56px;
+  --sticky-ad-h: 52px;
+  --sticky-tabs-offset: 52px;
   --lb-bar-h: 28px;
 }
 
-/* 상단 광고: 항상 화면 최상단 고정 */
+/* 상단 광고 */
 .ad-sticky-shell{
   position:sticky;
   position:-webkit-sticky;
   top:0;
-  z-index:120;
+  z-index:130;
+  height:var(--sticky-ad-h);
+  min-height:var(--sticky-ad-h);
   background:var(--bg);
   border-bottom:1px solid var(--border);
+  overflow:hidden;
 }
 
-/* 광고 실제 프레임 */
+/* 광고 프레임 */
 .top-ad-inner{
   max-width:640px;
-  margin:0 auto;
   width:100%;
-  height:56px;
-  min-height:56px;
+  height:100%;
+  min-height:100%;
+  margin:0 auto;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:3px 14px;
+  padding:1px 12px;
   overflow:hidden;
 }
 
@@ -858,31 +861,29 @@ h1{
 .top-ad-inner iframe{
   display:block !important;
   width:100% !important;
-  max-width:320px !important;
-  height:50px !important;
-  min-height:50px !important;
-  max-height:50px !important;
-  margin:0 auto !important;
+  height:100% !important;
+  min-height:100% !important;
+  max-height:100% !important;
   overflow:hidden !important;
 }
 
-/* 타이틀은 일반 흐름 */
+/* 타이틀 영역 */
 .hero-head{
   text-align:center;
   padding:10px 0 8px;
   margin:0;
 }
 
-/* 탭 + 럭키볼 바 묶음 */
+/* 탭 + 럭키볼 묶음 */
 .tabs-sticky-shell{
   position:sticky;
   position:-webkit-sticky;
   top:var(--sticky-tabs-offset);
-  z-index:110;
+  z-index:120;
   background:linear-gradient(
     180deg,
-    rgba(7,8,15,.96) 0%,
-    rgba(7,8,15,.92) 78%,
+    rgba(7,8,15,.97) 0%,
+    rgba(7,8,15,.93) 78%,
     rgba(7,8,15,0) 100%
   );
   padding:4px 0 6px;
@@ -906,7 +907,6 @@ h1{
   pointer-events:none;
 }
 
-/* 탭 본체 */
 .tabs{
   margin:0 !important;
   background:rgba(15,16,32,0.92);
@@ -966,7 +966,7 @@ h1{
   white-space:nowrap;
 }
 
-/* 스크롤 앵커 보정 */
+/* 스크롤 앵커 */
 #tab-pick,
 #tab-mynums,
 #tab-myinfo,
@@ -978,26 +978,21 @@ h1{
 /* PC */
 @media (min-width:768px){
   :root{
-    --sticky-ad-h: 68px;
-    --sticky-tabs-offset: 68px;
+    --sticky-ad-h: 60px;
+    --sticky-tabs-offset: 60px;
+  }
+
+  .ad-sticky-shell{
+    height:60px;
+    min-height:60px;
   }
 
   .top-ad-inner{
-    height:68px;
-    min-height:68px;
-    padding:4px 14px;
-  }
-
-  .top-ad-inner ins,
-  .top-ad-inner iframe{
-    max-width:468px !important;
-    height:60px !important;
-    min-height:60px !important;
-    max-height:60px !important;
+    padding:2px 14px;
   }
 
   .tabs-sticky-shell{
-    top:var(--sticky-tabs-offset);
+    top:60px;
     padding:5px 0 7px;
   }
 
@@ -1010,22 +1005,17 @@ h1{
 /* 모바일 */
 @media (max-width:480px){
   :root{
-    --sticky-ad-h: 56px;
-    --sticky-tabs-offset: 56px;
+    --sticky-ad-h: 52px;
+    --sticky-tabs-offset: 52px;
+  }
+
+  .ad-sticky-shell{
+    height:52px;
+    min-height:52px;
   }
 
   .top-ad-inner{
-    height:56px;
-    min-height:56px;
-    padding:3px 10px;
-  }
-
-  .top-ad-inner ins,
-  .top-ad-inner iframe{
-    max-width:320px !important;
-    height:50px !important;
-    min-height:50px !important;
-    max-height:50px !important;
+    padding:1px 10px;
   }
 
   .hero-head{
@@ -1033,7 +1023,7 @@ h1{
   }
 
   .tabs-sticky-shell{
-    top:56px;
+    top:52px;
     padding:4px 0 6px;
   }
 
@@ -1041,40 +1031,6 @@ h1{
     font-size:9.5px;
     padding:8px 1px;
     gap:2px;
-  }
-
-  .lb-sticky-bar{
-    gap:5px;
-    padding:3px 5px;
-  }
-
-  .lb-left{
-    gap:6px;
-  }
-
-  .lb-right{
-    gap:4px;
-  }
-
-  .lb-mini-btn{
-    height:22px;
-    padding:0 7px;
-    font-size:8.5px;
-  }
-
-  .lb-balance-label{
-    font-size:8px;
-  }
-
-  .lb-balance-value{
-    font-size:.78rem;
-  }
-
-  .lb-streak{
-    min-width:22px;
-    height:22px;
-    padding:0 5px;
-    font-size:8.5px;
   }
 }
 /* ===== 상단 광고 + 타이틀 + 탭/LB 고정 최종본 끝 ===== */
@@ -1378,11 +1334,11 @@ h1{
   <div class="ad-sticky-shell">
   <div class="top-ad-inner">
     <ins class="adsbygoogle"
-         style="display:inline-block;width:320px;height:50px"
+         style="display:block;width:100%;height:100%"
          data-ad-client="ca-pub-9933896132600937"
          data-ad-slot="auto"
          data-ad-format="horizontal"
-         data-full-width-responsive="true"></ins>
+         data-full-width-responsive="false"></ins>
     <script>
       (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
@@ -1392,7 +1348,7 @@ h1{
 <div class="wrap">
      <header class="hero-head">
       <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진</h1>
+      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진V7</h1>
       <p class="credit">제작자: Clyde Park (P.K.H)</p>
       <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
     </header>
