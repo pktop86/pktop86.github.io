@@ -826,6 +826,7 @@ h1{
 :root{
   --sticky-ad-h:52px;
   --sticky-tabs-wrap-h:86px;
+  --sticky-tabs-push:44px;
 }
 
 /* 광고: 최상단 고정 */
@@ -875,7 +876,7 @@ h1{
 .tabs-sticky-shell{
   position:sticky;
   position:-webkit-sticky;
-  top:var(--sticky-ad-h);
+  top:calc(var(--sticky-ad-h) + var(--sticky-tabs-push));
   z-index:120;
   margin:0;
   padding:4px 0 6px;
@@ -951,6 +952,7 @@ h1{
   :root{
     --sticky-ad-h:60px;
     --sticky-tabs-wrap-h:92px;
+    --sticky-tabs-push:46px;
   }
 
   .ad-sticky-shell{
@@ -963,7 +965,7 @@ h1{
   }
 
   .tabs-sticky-shell{
-    top:60px;
+    top:calc(var(--sticky-ad-h) + var(--sticky-tabs-push));
     padding:5px 0 7px;
   }
 
@@ -978,6 +980,7 @@ h1{
   :root{
     --sticky-ad-h:52px;
     --sticky-tabs-wrap-h:84px;
+    --sticky-tabs-push:44px;
   }
 
   .ad-sticky-shell{
@@ -994,7 +997,7 @@ h1{
   }
 
   .tabs-sticky-shell{
-    top:52px;
+    top:calc(var(--sticky-ad-h) + var(--sticky-tabs-push));
     padding:4px 0 6px;
   }
 
@@ -1319,7 +1322,7 @@ h1{
 <div class="wrap">
      <header class="hero-head">
       <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진V8</h1>
+      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진</h1>
       <p class="credit">제작자: Clyde Park (P.K.H)</p>
       <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
     </header>
