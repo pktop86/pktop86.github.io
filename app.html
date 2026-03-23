@@ -2029,7 +2029,7 @@ h1{
     &nbsp;·&nbsp; <a href="disclaimer.html" style="color:#505870;text-decoration:none">서비스안내</a>
     &nbsp;·&nbsp; © 2026 로또엔진 (Clyde Park)
   </footer>
-</div> /*warp 닫기*/
+</div> <!-- warp 닫기 -->
  
 <!-- 광고 모달 -->
 <div class="modal-overlay" id="ad-modal">
@@ -2154,7 +2154,7 @@ const SEED_HISTORY = [
 // ── 전역 상태 ──
 let freqData = {...BASE_FREQ};
 let recentHist = [...SEED_HISTORY];
-let latestRound = 1216.;
+let latestRound = 1216;
 let latestWinNums = [13,10,14,15,23,24];
 let latestBonusNum = 25;
 let isReady = false;
@@ -2557,36 +2557,6 @@ async function fetchNewRounds(){
   }
   return count;
 }
- 
-// ── 초기화 ──
-async function init(){
-  try{
-    // 즉시 준비
-    isReady=true; genBtn.disabled=false; viewRound=latestRound;
-    updateStats(); renderFreqBars(); renderFreqGrid(); updateFreeCounter();
-    renderPrizeHeader(); renderLatestDrawCard(); scheduleAutoUpdate(); startSaturdayChecker();
-    setStatus('ok',`내장 통계 준비 완료 (261~${latestRound}회)`);
-    setPrizeTabUnlocked(false); // 초기 잠금 상태 명시
-    loadTodayLucky(); // 오늘의 숫자 카드 로드
-    initLBSystem();
-  // 생년월일 max 동적 설정 (현재 날짜 - 14년)
-  const birthEl=document.getElementById('myinfo-birth');
-  if(birthEl){
-    const maxDate=new Date(new Date().getTime()+9*3600000);
-    maxDate.setFullYear(maxDate.getFullYear()-14);
-    birthEl.max=maxDate.toISOString().slice(0,10);
-  }
-    initFortuneBlog(); // 블로그 표시
-    updateFortuneDisplay(); // 내정보 운세 표시
-    onAuthReady(()=>initChallenge()); // 챌린지 초기화
-    setTimeout(()=>maybeScoreCurrentChallenge(), 2000); // 채점 체크
- 
-    // Auth → 내 번호 로드
-    startAuth();
-    onAuthReady(()=>loadMyNums());
- 
-    // 당첨현황 잠금 확인
-    checkPrizeUnlock();
 
 function getPickRoundWinCounts(round){
   const cnt = {1:0,2:0,3:0,4:0,5:0};
@@ -2623,6 +2593,36 @@ function renderLatestDrawCard(){
     if(el) el.textContent = cnt[i];
   }
 }
+  
+// ── 초기화 ──
+async function init(){
+  try{
+    // 즉시 준비
+    isReady=true; genBtn.disabled=false; viewRound=latestRound;
+    updateStats(); renderFreqBars(); renderFreqGrid(); updateFreeCounter();
+    renderPrizeHeader(); renderLatestDrawCard(); scheduleAutoUpdate(); startSaturdayChecker();
+    setStatus('ok',`내장 통계 준비 완료 (261~${latestRound}회)`);
+    setPrizeTabUnlocked(false); // 초기 잠금 상태 명시
+    loadTodayLucky(); // 오늘의 숫자 카드 로드
+    initLBSystem();
+  // 생년월일 max 동적 설정 (현재 날짜 - 14년)
+  const birthEl=document.getElementById('myinfo-birth');
+  if(birthEl){
+    const maxDate=new Date(new Date().getTime()+9*3600000);
+    maxDate.setFullYear(maxDate.getFullYear()-14);
+    birthEl.max=maxDate.toISOString().slice(0,10);
+  }
+    initFortuneBlog(); // 블로그 표시
+    updateFortuneDisplay(); // 내정보 운세 표시
+    onAuthReady(()=>initChallenge()); // 챌린지 초기화
+    setTimeout(()=>maybeScoreCurrentChallenge(), 2000); // 채점 체크
+ 
+    // Auth → 내 번호 로드
+    startAuth();
+    onAuthReady(()=>loadMyNums());
+ 
+    // 당첨현황 잠금 확인
+    checkPrizeUnlock();
 
     
     // 최신 회차 백그라운드 업데이트 (재시도 포함)
