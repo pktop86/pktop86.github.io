@@ -3427,7 +3427,7 @@ function mutateV3NearHit(anchor, pools, feats) {
   return scored;
 }
 
-function diversifyV3Tickets(scoredTickets, targetCount, maxOverlap = 3) {
+function diversifyV3Tickets(scoredTickets, targetCount, maxOverlap = 4) {
   const final = [];
   const usedClusters = new Map();
 
@@ -3505,25 +3505,66 @@ function generateV3Tickets(targetCount = 5) {
     .filter(x => x && x.combo && x.combo.length === 6)
     .sort((a, b) => b.finalScore - a.finalScore);
 
-  let final = diversifyV3Tickets(rescored, targetCount, 3);
+  let final = diversifyV3Tickets(rescored, targetCount, targetCount >= 20 ? 4 : 3);
 
   if (final.length < targetCount) {
     final = diversifyV3Tickets(
       [...final, ...compressed].sort((a, b) => b.finalScore - a.finalScore),
       targetCount,
-      3
+      targetCount >= 20 ? 4 : 3
     );
   }
 
-  while (final.length < targetCount) {
+  // 안전장치 추가
+  let guard = 0;
+  const guardLimit = targetCount >= 20 ? 5000 : 2500;
+
+  while (final.length < targetCount && guard < guardLimit) {
+    guard++;
+
     const nums = genV3Candidate(pools);
     if (!isValidV3Combo(nums)) continue;
 
     const cand = scoreV3Combo(nums, feats);
-    const tooSimilar = final.some(p => v3Overlap(p.combo, cand.combo) >= 4);
+
+    // 20줄은 조건 살짝 완화
+    const overlapLimit = targetCount >= 20 ? 4 : 3;
+    const tooSimilar = final.some(p => v3Overlap(p.combo, cand.combo) > overlapLimit);
     if (tooSimilar) continue;
 
     final.push(cand);
+  }
+
+  // 그래도 부족하면 최종 완화 채움
+  if (final.length < targetCount) {
+    const fallbackPool = [...compressed].sort((a, b) => b.finalScore - a.finalScore);
+
+    for (const cand of fallbackPool) {
+      if (final.length >= targetCount) break;
+
+      const already = final.some(p => p.combo.join(',') === cand.combo.join(','));
+      if (already) continue;
+
+      // 마지막은 더 느슨하게
+      const tooSimilar = final.some(p => v3Overlap(p.combo, cand.combo) >= 5);
+      if (tooSimilar) continue;
+
+      final.push(cand);
+    }
+  }
+
+  // 그래도 부족하면 그냥 남은 점수 상위 채움
+  if (final.length < targetCount) {
+    const fallbackPool = [...scored].sort((a, b) => b.finalScore - a.finalScore);
+
+    for (const cand of fallbackPool) {
+      if (final.length >= targetCount) break;
+
+      const already = final.some(p => p.combo.join(',') === cand.combo.join(','));
+      if (already) continue;
+
+      final.push(cand);
+    }
   }
 
   return final.slice(0, targetCount).map(v => v.combo);
@@ -3621,53 +3662,63 @@ top.appendChild(challengeBtn);
  
 // ── 번호 생성 ──
 async function doGenerate(count){
-  resultsEl.innerHTML='';
-  genBtn.disabled=true;
-  genBtn.textContent='⏳ 추첨 중...';
+  resultsEl.innerHTML = '';
+  genBtn.disabled = true;
+  genBtn.textContent = '⏳ 추첨 중...';
 
-  prepareV3Batch(count);
-  const allNums = generateV3Tickets(count);
+  try {
+    prepareV3Batch(count);
+    const allNums = generateV3Tickets(count);
 
-  allNums.forEach((nums,i)=>resultsEl.appendChild(renderResult(nums,i)));
+    allNums.forEach((nums, i) => resultsEl.appendChild(renderResult(nums, i)));
 
-  if(count<10){
-    usedFree+=count;
-    saveUsedFree(usedFree);
-    updateFreeCounter();
-  }
-
-  genBtn.disabled=false;
-  genBtn.textContent='🎲 번호 추첨하기';
-
-  if(allNums.length>0){
-    updateSimTarget(allNums[0]);
-  }
-
-  setTimeout(()=>resultsEl.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
-
-  const doSave = async () => {
-    const savedRound = latestRound;
-    const ids = await Promise.all(allNums.map(nums => savePick(nums, savedRound)));
-    ids.forEach((id,i)=>{
-      if(id){
-        const el=document.getElementById('rsaved-'+i);
-        if(el) el.textContent='✓';
-      }
-    });
-
-    const newDocs = ids
-      .map((id,i)=>id ? {id, uid:currentUid, round:savedRound, nums:allNums[i], prize:0} : null)
-      .filter(Boolean);
-
-    if(newDocs.length){
-      renderMyNums([...newDocs, ...myDocs]);
+    if(count < 10){
+      usedFree += count;
+      saveUsedFree(usedFree);
+      updateFreeCounter();
     }
 
-    setTimeout(()=>loadMyNums(), 1500);
-  };
+    if(allNums.length > 0){
+      updateSimTarget(allNums[0]);
+      if (typeof updateChallengeGenNums === 'function') {
+        updateChallengeGenNums(allNums[0]);
+      }
+    }
 
-  if(authReady && currentUid && db){ doSave(); }
-  else { onAuthReady(()=>doSave()); }
+    setTimeout(()=>resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'}), 80);
+
+    const doSave = async () => {
+      const savedRound = latestRound;
+      const ids = await Promise.all(allNums.map(nums => savePick(nums, savedRound)));
+
+      ids.forEach((id, i) => {
+        if(id){
+          const el = document.getElementById('rsaved-' + i);
+          if(el) el.textContent = '✓';
+        }
+      });
+
+      const newDocs = ids
+        .map((id, i) => id ? { id, uid: currentUid, round: savedRound, nums: allNums[i], prize: 0 } : null)
+        .filter(Boolean);
+
+      if(newDocs.length){
+        renderMyNums([...newDocs, ...myDocs]);
+      }
+
+      setTimeout(()=>loadMyNums(), 1500);
+    };
+
+    if(authReady && currentUid && db) await doSave();
+    else onAuthReady(()=>doSave());
+
+  } catch (e) {
+    console.error('번호 생성 오류:', e);
+    alert('번호 생성 중 오류가 발생했습니다.\\n잠시 후 다시 시도해주세요.');
+  } finally {
+    genBtn.disabled = false;
+    genBtn.textContent = '🎲 번호 추첨하기';
+  }
 }
  
 // ── Firebase 저장 ──
