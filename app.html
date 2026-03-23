@@ -1302,6 +1302,68 @@ h1{
     font-size:8.5px;
   }
 }
+  /* ── 오늘의 운세 탭 블로그 ── */
+.fortune-blog-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.fortune-blog-item{
+  width:100%;
+  background:var(--card);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:10px;
+  padding:13px 14px;
+  font-size:13px;
+  font-weight:800;
+  text-align:left;
+  cursor:pointer;
+  font-family:inherit;
+  transition:all .18s ease;
+}
+
+.fortune-blog-item:hover{
+  border-color:rgba(240,192,64,.35);
+  color:var(--accent);
+  transform:translateY(-1px);
+}
+
+.fortune-blog-back-btn{
+  background:var(--card);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+  font-family:inherit;
+  margin-bottom:10px;
+}
+
+.fortune-blog-post-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px 14px;
+}
+
+.fortune-blog-post-title{
+  font-size:16px;
+  font-weight:900;
+  color:var(--accent);
+  margin-bottom:10px;
+}
+
+.fortune-blog-post-body{
+  font-size:13px;
+  line-height:1.8;
+  color:var(--text);
+  white-space:pre-line;
+}
+
 </style>
 </head>
 <body>
@@ -1469,10 +1531,7 @@ h1{
         <div class="rule-card"><div class="rule-title">④ 이월수 전략</div><div class="rule-desc">직전 회차 번호 흐름을 참고해 포함 여부를 조정합니다.</div></div>
       </div>
     </div>
-    <div class="section-box">
-      <div class="sec-title">번호별 출현 빈도 (1~45)</div>
-      <div class="freq-bars" id="freq-bars"></div>
-    </div>
+ 
     <div class="gen-box">
       <div class="free-counter" id="free-counter">
         <div class="free-pips" id="free-pips"></div>
@@ -1514,6 +1573,10 @@ h1{
       </div>
       <div id="sim-output"></div>
     </div>
+    </div>
+    <div class="section-box">
+      <div class="sec-title">번호별 출현 빈도 (1~45)</div>
+      <div class="freq-bars" id="freq-bars"></div>
     </div>
     <div class="section-box">
       <div class="sec-title">번호별 상세 통계</div>
@@ -1625,6 +1688,30 @@ h1{
     </div>
     <!-- 운세 카드 -->
     <div id="myinfo-fortune-area"></div>
+    <!-- 블로그 목록 / 글 보기 -->
+<div class="myinfo-section" id="fortune-blog-section">
+  <div class="myinfo-section-title">📝 블로그</div>
+
+  <div id="fortune-blog-list-view">
+    <div class="fortune-blog-list">
+      <button class="fortune-blog-item" data-post="01">01</button>
+      <button class="fortune-blog-item" data-post="02">02</button>
+      <button class="fortune-blog-item" data-post="03">03</button>
+      <button class="fortune-blog-item" data-post="04">04</button>
+      <button class="fortune-blog-item" data-post="05">05</button>
+    </div>
+  </div>
+
+  <div id="fortune-blog-post-view" style="display:none">
+    <button class="fortune-blog-back-btn" id="fortune-blog-back-btn">← 돌아가기</button>
+    <div class="fortune-blog-post-card">
+      <div class="fortune-blog-post-title" id="fortune-blog-post-title">01</div>
+      <div class="fortune-blog-post-body" id="fortune-blog-post-body">
+        01
+      </div>
+    </div>
+  </div>
+</div>
   </div>
  
   <!-- 내주변 판매점 탭 -->
@@ -2226,7 +2313,7 @@ async function init(){
     maxDate.setFullYear(maxDate.getFullYear()-14);
     birthEl.max=maxDate.toISOString().slice(0,10);
   }
- 
+    initFortuneBlog(); // 블로그 표시
     updateFortuneDisplay(); // 내정보 운세 표시
     onAuthReady(()=>initChallenge()); // 챌린지 초기화
     setTimeout(()=>maybeScoreCurrentChallenge(), 2000); // 채점 체크
@@ -4685,7 +4772,197 @@ function sortAndRender(sortType, btn){
 }
 
 window.sortAndRender = sortAndRender;
- 
+// -- 블로그 --
+  const FORTUNE_BLOG_POSTS = {
+
+  '01': {
+    title:'로또번호 그냥 찍으세요? 데이터로 분석하는 스마트한 방법',
+    body:`로또 번호 생성, 통계와 확률로 접근하면 결과가 달라질까?
+
+많은 사람이 생일이나 기념일로 번호를 선택합니다.
+하지만 로또는 814만 분의 1 확률의 게임입니다.
+
+그럼에도 불구하고,
+1,000회 이상의 데이터를 보면
+특정 패턴과 편차가 존재합니다.
+
+[핵심 필터 3가지]
+
+1️⃣ 홀짝 비율
+→ 가장 많이 나오는 구조는 3:3, 2:4
+→ 극단적인 조합은 확률적으로 불리
+
+2️⃣ 총합 구간
+→ 당첨 번호 합은 대부분 121~160
+→ 극단값은 제외
+
+3️⃣ 연번 & 이월수
+→ 전 회차 번호 재등장 빈도 높음
+→ 연속 숫자도 자주 등장
+
+👉 결론
+이런 계산을 매번 직접 하는 건 어렵습니다.
+
+그래서 로또엔진은
+이 모든 필터를 자동으로 적용합니다.
+
+데이터 기반 선택,
+이제는 선택이 아니라 전략입니다.`
+  },
+
+  '02': {
+    title:'AI 로또 알고리즘이 로또 번호를 분석한다? 로또엔진의 비밀',
+    body:`“번호를 찍는 게 아니라, 설계합니다”
+
+v3 엔진은 단순 랜덤이 아닙니다.
+
+[핵심 구조]
+
+1️⃣ 단일 번호가 아닌 세트 설계
+→ 여러 조합을 하나의 전략으로 구성
+
+2️⃣ 균형 + 분산 동시 고려
+→ 홀짝 / 구간 / 분포 / 중복 최소화
+
+3️⃣ 유사 구조 조합 생성
+→ 완전히 다른 조합이 아닌
+→ 일부만 다른 전략적 구성
+
+4️⃣ 중복 제거
+→ 비효율적인 반복 조합 제거
+
+[결과]
+
+✔ 더 다양한 조합
+✔ 더 효율적인 구조
+✔ 비교 가능한 선택
+
+이 앱은 당첨을 보장하지 않습니다.
+하지만 더 나은 선택을 제공합니다.`
+  },
+
+  '03': {
+    title:'매달 내는 번호 추천 비용이 아깝다면? 럭키볼로 해결!',
+    body:`매달 돈 내고 번호 추천 받으셨나요?
+
+이제는 필요 없습니다.
+
+[럭키볼 시스템]
+
+럭키볼 = 앱 내 분석 자원
+
+✔ 출석 체크
+✔ 광고 시청
+→ 무료 획득 가능
+
+[사용처]
+
+- 번호 생성
+- 시뮬레이션 실행
+
+[핵심 장점]
+
+✔ 유료 결제 없음
+✔ 누구나 공평
+✔ 사행성 제한 구조
+
+👉 결론
+
+돈이 아니라 시스템으로 접근하세요.
+
+로또는 비용이 아니라
+전략입니다.`
+  },
+
+  '04': {
+    title:'로또엔진 사용해보니 확실히 달라요',
+    body:`수많은 로또 앱을 써봤다면
+이 차이를 바로 느낍니다.
+
+[사용자가 느끼는 3가지]
+
+1️⃣ 압도적인 연출
+→ 단순 숫자가 아닌 경험
+
+2️⃣ 시뮬레이션 기능
+→ 과거 데이터 검증 가능
+
+3️⃣ 빠르고 직관적인 UI
+→ 누구나 쉽게 사용 가능
+
+👉 핵심
+
+단순 생성기가 아니라
+“분석 도구”입니다.
+
+한 번 써보면
+다른 앱으로 못 돌아갑니다.`
+  },
+
+  '05': {
+    title:'이번주 랭킹 1위는 누구? 챌린지에 도전하세요!',
+    body:`혼자 하는 로또는 끝났습니다.
+
+이제는 경쟁입니다.
+
+[챌린지 모드]
+
+✔ 번호 등록
+✔ 자동 채점
+✔ 실시간 랭킹
+
+[보상]
+
+🥇 1등 → 대량 럭키볼
+🥈 2등 → 고보상
+🥉 3등 → 중보상
+
+참여만 해도 보상 있음
+
+👉 핵심
+
+단순 추첨이 아니라
+“게임화된 로또”
+
+지금 도전하세요.`
+  }
+
+};
+
+function openFortuneBlogPost(postId){
+  const post = FORTUNE_BLOG_POSTS[postId];
+  if(!post) return;
+
+  const listView = document.getElementById('fortune-blog-list-view');
+  const postView = document.getElementById('fortune-blog-post-view');
+  const titleEl = document.getElementById('fortune-blog-post-title');
+  const bodyEl = document.getElementById('fortune-blog-post-body');
+
+  if(listView) listView.style.display = 'none';
+  if(postView) postView.style.display = 'block';
+  if(titleEl) titleEl.textContent = post.title;
+  if(bodyEl) bodyEl.textContent = post.body;
+}
+
+function closeFortuneBlogPost(){
+  const listView = document.getElementById('fortune-blog-list-view');
+  const postView = document.getElementById('fortune-blog-post-view');
+
+  if(listView) listView.style.display = 'block';
+  if(postView) postView.style.display = 'none';
+}
+
+function initFortuneBlog(){
+  document.querySelectorAll('.fortune-blog-item').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      openFortuneBlogPost(btn.dataset.post);
+    });
+  });
+
+  document.getElementById('fortune-blog-back-btn')?.addEventListener('click', closeFortuneBlogPost);
+}
+
+  
 init();
 </script>
  <footer style="padding: 30px 14px; text-align: center; border-top: 1px solid var(--border); margin-top: 20px; margin-bottom: 80px; position: relative; z-index: 10;">
