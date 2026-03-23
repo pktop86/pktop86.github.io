@@ -2944,9 +2944,12 @@ function v3OddCount(nums){
 }
 
 function getActivePickRound(){
-  // latestRound는 "최근 당첨 완료 회차"
-  // 사용자가 지금 새로 저장하는 번호는 다음 회차용
-  return Number(latestRound || 0) + 1;
+  // draw-history에 있는 마지막 회차 = 당첨 완료
+  // 그 다음 회차가 현재 진행 중
+  const historyLastRound = (window.FULL_DRAW_HISTORY && window.FULL_DRAW_HISTORY.length > 0)
+    ? window.FULL_DRAW_HISTORY[window.FULL_DRAW_HISTORY.length - 1].round
+    : _lastDraw.round;
+  return historyLastRound + 1;
 }
 
 function v3LowCount(nums){
