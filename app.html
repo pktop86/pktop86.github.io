@@ -822,14 +822,13 @@ h1{
     gap:2px;
   }
 }
-/* ===== 상단 광고 + 타이틀 + 탭/LB 고정 최종 수정본 ===== */
+/* ===== 상단 광고 + 타이틀 + 탭/LB 고정 최종본 ===== */
 :root{
-  --sticky-ad-h: 52px;
-  --sticky-tabs-h: 50px;
-  --sticky-lb-h: 34px;
+  --sticky-ad-h:52px;
+  --sticky-tabs-wrap-h:86px;
 }
 
-/* 광고는 계속 최상단 고정 */
+/* 광고: 최상단 고정 */
 .ad-sticky-shell{
   position:sticky;
   position:-webkit-sticky;
@@ -872,60 +871,62 @@ h1{
   margin:0;
 }
 
-/* 부모 박스는 sticky 해제 */
+/* 탭 + 럭키볼 바 전체를 한 묶음으로 광고 아래 고정 */
 .tabs-sticky-shell{
-  position:relative;
-  z-index:120;
-  margin:0;
-  padding:0;
-  background:transparent;
-}
-
-/* 탭만 광고 아래에 고정 */
-.tabs{
   position:sticky;
   position:-webkit-sticky;
   top:var(--sticky-ad-h);
-  z-index:125;
+  z-index:120;
+  margin:0;
+  padding:4px 0 6px;
+  background:linear-gradient(
+    180deg,
+    rgba(7,8,15,.97) 0%,
+    rgba(7,8,15,.93) 78%,
+    rgba(7,8,15,0) 100%
+  );
+}
+
+.tabs-sticky-shell::after{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:4px;
+  height:1px;
+  background:linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.07) 20%,
+    rgba(255,255,255,.07) 80%,
+    transparent 100%
+  );
+  pointer-events:none;
+}
+
+/* tabs는 sticky 아님 */
+.tabs{
+  position:relative !important;
+  top:auto !important;
+  margin:0 !important;
   display:flex;
   background:rgba(15,16,32,0.96);
   border:1px solid var(--border);
   border-radius:12px;
   padding:3px;
-  margin:0;
   gap:3px;
   box-shadow:0 10px 24px rgba(0,0,0,.22);
 }
 
-/* 럭키볼 바는 탭 바로 아래에 고정 */
+/* 럭키볼 바도 sticky 아님 */
 .lb-sticky-bar{
-  position:sticky;
-  position:-webkit-sticky;
-  top:calc(var(--sticky-ad-h) + var(--sticky-tabs-h));
-  z-index:124;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:6px;
+  position:relative !important;
+  top:auto !important;
+  z-index:auto !important;
   margin-top:4px;
-  min-height:var(--sticky-lb-h);
-  padding:3px 6px;
-  border-radius:9px;
-  background:linear-gradient(
-    135deg,
-    rgba(255,226,122,.07),
-    rgba(240,192,64,.05),
-    rgba(200,134,13,.04)
-  );
-  border:1px solid rgba(240,192,64,.12);
-  box-shadow:
-    0 2px 8px rgba(0,0,0,.12),
-    inset 0 1px 0 rgba(255,255,255,.04);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
 }
 
-/* 탭 기본 */
+/* 탭 버튼 */
 .tab-btn{
   color:#7f89a7;
   padding:8px 2px;
@@ -936,52 +937,20 @@ h1{
   box-shadow:0 2px 6px rgba(0,0,0,.35);
 }
 
-/* 럭키볼 내부 */
-.lb-left{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  min-width:0;
-  overflow:hidden;
-}
-
-.lb-right{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  flex-shrink:0;
-  margin-left:auto;
-}
-
-.lb-balance-wrap{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  min-width:0;
-}
-
-.lb-balance-label,
-.lb-balance-value,
-.lb-mini-btn,
-.lb-streak{
-  white-space:nowrap;
-}
-
-/* 탭/LB에 본문이 안 가려지도록 */
+/* 본문이 안 가려지도록 */
 #tab-pick,
 #tab-mynums,
 #tab-myinfo,
 #tab-near,
 #tab-prize{
-  scroll-margin-top:calc(var(--sticky-ad-h) + var(--sticky-tabs-h) + var(--sticky-lb-h) + 12px);
+  scroll-margin-top:calc(var(--sticky-ad-h) + var(--sticky-tabs-wrap-h) + 12px);
 }
 
 /* PC */
 @media (min-width:768px){
   :root{
-    --sticky-ad-h: 60px;
-    --sticky-tabs-h: 52px;
-    --sticky-lb-h: 34px;
+    --sticky-ad-h:60px;
+    --sticky-tabs-wrap-h:92px;
   }
 
   .ad-sticky-shell{
@@ -993,12 +962,9 @@ h1{
     padding:2px 14px;
   }
 
-  .tabs{
+  .tabs-sticky-shell{
     top:60px;
-  }
-
-  .lb-sticky-bar{
-    top:calc(60px + 52px);
+    padding:5px 0 7px;
   }
 
   .tab-btn{
@@ -1010,9 +976,8 @@ h1{
 /* 모바일 */
 @media (max-width:480px){
   :root{
-    --sticky-ad-h: 52px;
-    --sticky-tabs-h: 48px;
-    --sticky-lb-h: 32px;
+    --sticky-ad-h:52px;
+    --sticky-tabs-wrap-h:84px;
   }
 
   .ad-sticky-shell{
@@ -1028,14 +993,9 @@ h1{
     padding:10px 0 8px;
   }
 
-  .tabs{
+  .tabs-sticky-shell{
     top:52px;
-  }
-
-  .lb-sticky-bar{
-    top:calc(52px + 48px);
-    gap:5px;
-    padding:3px 5px;
+    padding:4px 0 6px;
   }
 
   .tab-btn{
@@ -1043,29 +1003,8 @@ h1{
     padding:8px 1px;
     gap:2px;
   }
-
-  .lb-mini-btn{
-    height:22px;
-    padding:0 7px;
-    font-size:8.5px;
-  }
-
-  .lb-balance-label{
-    font-size:8px;
-  }
-
-  .lb-balance-value{
-    font-size:.78rem;
-  }
-
-  .lb-streak{
-    min-width:22px;
-    height:22px;
-    padding:0 5px;
-    font-size:8.5px;
-  }
 }
-/* ===== 상단 광고 + 타이틀 + 탭/LB 고정 최종 수정본 끝 ===== */
+/* ===== 상단 광고 + 타이틀 + 탭/LB 고정 최종본 끝 ===== */
   /* ===== 상단 고정 UI 패치 끝 ===== */
 
 /* ===== LB STICKY BAR START ===== */
