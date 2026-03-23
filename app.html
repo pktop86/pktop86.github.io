@@ -3031,6 +3031,13 @@ function checkPrize(nums,win,bonus){
 }
 const PLABELS=['','🥇 1등','🥈 2등','🥉 3등','4등','5등'];
 const PCLS=['','win1','win2','win3','win4','win5'];
+
+const getHL = ns => ({ lo: ns.filter(n=>n<=22).length, hi: ns.filter(n=>n>=23).length });
+const getOE = ns => ({ odd: ns.filter(n=>n%2).length, even: ns.filter(n=>!(n%2)).length });
+const lds   = ns => ns.reduce((s,n)=>s+n%10, 0);
+function hasConsec(ns){ const s=[...ns].sort((a,b)=>a-b); for(let i=0;i<s.length-1;i++) if(s[i+1]-s[i]===1) return true; return false; }
+function getAbsent(){ const seen=new Set(); recentHist.slice(-8).forEach(h=>h.nums.forEach(n=>seen.add(n))); return Array.from({length:45},(_,i)=>i+1).filter(n=>!seen.has(n)); }
+const getPrev = () => recentHist.length ? recentHist[recentHist.length-1].nums : [];
  
 function makeTags(nums){
   const t=[];
