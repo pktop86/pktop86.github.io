@@ -4551,7 +4551,7 @@ document.getElementById('challenge-history-toggle').addEventListener('click',()=
 // 챌린지 버튼 이벤트
 document.getElementById('challenge-btn-gen').addEventListener('click',()=>{
   if(!challengeGenNums.length){ alert('먼저 번호를 생성해주세요.'); return; }
-  joinChallenge(challengeGenNums,'generated');
+  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
 });
 document.getElementById('challenge-btn-lucky').addEventListener('click',()=>{
   const luckyBalls=[...document.querySelectorAll('#lucky-balls .lucky-ball')].map(b=>parseInt(b.textContent));
