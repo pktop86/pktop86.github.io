@@ -1924,7 +1924,7 @@ function getLBRewardForStreak(nextStreak){
 function getLBStateForView(){
   return loadLBState();
 }
-
+/*777888*/
 function renderLBUI(){
   const state = getLBStateForView();
   const balanceEl = document.getElementById('lb-balance-value');
@@ -1939,7 +1939,7 @@ function renderLBUI(){
       streakEl.title = state.streak + '일 연속 출석';
     }else{
       streakEl.classList.remove('star');
-      streakEl.textContent = state.streak + 'D';
+      streakEl.textContent = '연속' + state.streak + 'D';
       streakEl.title = state.streak + '일 연속 출석';
     }
   }
