@@ -947,32 +947,53 @@ h1{
     min-height:30px !important;
     max-height:30px !important;
   }
-/* 모바일 탭영역 - 기존 padding은 유지하고 마진만 추가 */
-/*.tabs-sticky-shell {
-  padding: 2px 0 5px !important;  
-  margin-top: -20px !important;  
-  margin-bottom: 0 !important;
-}
+
+  .tabs-sticky-shell{
+    top:var(--sticky-ad-h);
+    padding:2px 0 5px;
+    margin:0;
+  }
+
   .tab-btn{
     font-size:10px;
     padding:9px 2px;
   }
-}*/
+}
 
-  /* 모바일 전용 (화면이 작을 때 광고 높이 조절) */
 @media screen and (max-width:480px){
+  :root{
+    --sticky-ad-h:34px;
+    --sticky-tabs-h:54px;
+  }
+
   .ad-sticky-shell{
     height:34px !important;
+  }
+
+  .top-ad-inner{
+    height:34px;
+    min-height:34px;
+    padding:0 10px;
+  }
+
+  .top-ad-inner ins{
+    height:28px !important;
+    min-height:28px !important;
+    max-height:28px !important;
   }
 
   .tabs-sticky-shell{
     top:34px !important;
     padding:2px 0 5px !important;
-    margin-top:0 !important;
-    margin-bottom:0 !important;
+    margin:0 !important;
+  }
+
+  .tab-btn{
+    font-size:9.5px;
+    padding:8px 1px;
+    gap:2px;
   }
 }
-
   
 /* ===== 상단 고정 최종본 끝 ===== */
   /* ===== 상단 고정 UI 패치 끝 ===== */
@@ -1223,32 +1244,52 @@ h1{
 }
   
   
-/*
 @media (max-width:480px){
   .lb-sticky-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
     gap:5px;
     padding:3px 5px;
+    margin-top:4px;
+    min-height:28px;
   }
+
+  .lb-left{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    min-width:0;
+  }
+
+  .lb-right{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    flex-shrink:0;
+  }
+
   .lb-mini-btn{
+    height:22px;
     padding:0 7px;
     font-size:8.5px;
   }
+
+  .lb-balance-label{
+    font-size:8px;
+  }
+
   .lb-balance-value{
     font-size:.78rem;
   }
+
   .lb-streak{
     min-width:22px;
+    height:22px;
     padding:0 5px;
     font-size:8.5px;
   }
-}*/
-/* ===== LB STICKY BAR END ===== */
-/*.ad-sticky-shell{
-  display:none !important;
 }
-.top-ad-inner{
-  display:none !important;
-}*/
 </style>
 </head>
 <body>
@@ -1269,7 +1310,7 @@ h1{
 <div class="wrap">
      <header class="hero-head">
       <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진</h1>
+      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진V7</h1>
       <p class="credit">제작자: Clyde Park (P.K.H)</p>
       <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
     </header>
