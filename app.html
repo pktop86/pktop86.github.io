@@ -826,30 +826,35 @@ h1{
 
 /* 광고 + 탭 고정 높이 */
 /* ===== 모바일 우선 상단 고정 최종본 ===== */
-
 :root{
+  --sticky-ad-h: 34px;
+  --sticky-tabs-h: 54px;
+  --lb-bar-h: 28px;
+}
+/*:root{
   --sticky-ad-h:34px;
   /*--sticky-tabs-h:52px;*/
-}
+}*/
 
 /* 광고 고정 */
-.ad-sticky-shell {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  z-index: 101; /* 탭보다 높게 설정 */
-  height: var(--sticky-ad-h);/*0px !important;*/ /* 광고 영역 높이 강제 고정 */
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border-bottom: 1px solid var(--border);
+.ad-sticky-shell{
+  position:-webkit-sticky;
+  position:sticky;
+  top:0;
+  z-index:110;
+  height:var(--sticky-ad-h);
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border-bottom:1px solid var(--border);
 }
 
 .top-ad-inner{
   max-width:640px;
   margin:0 auto;
+  width:100%;
   height:34px;
   min-height:34px;
   display:flex;
@@ -882,8 +887,7 @@ h1{
   z-index:101;
   background:var(--bg);
   padding:2px 0 5px;
-  margin-top:0;
-  margin-bottom:0;
+  margin:0;
 }
   
 .tabs-sticky-shell::after {
@@ -1201,6 +1205,25 @@ h1{
   font-weight:900;
 }
 
+  .tabs-sticky-shell::after{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:4px;
+  height:1px;
+  background:linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.07) 20%,
+    rgba(255,255,255,.07) 80%,
+    transparent 100%
+  );
+  pointer-events:none;
+}
+  
+  
+/*
 @media (max-width:480px){
   .lb-sticky-bar{
     gap:5px;
@@ -1218,7 +1241,7 @@ h1{
     padding:0 5px;
     font-size:8.5px;
   }
-}
+}*/
 /* ===== LB STICKY BAR END ===== */
 /*.ad-sticky-shell{
   display:none !important;
@@ -1252,14 +1275,7 @@ h1{
     </header>
 
     <div class="tabs-sticky-shell">
-      <div class="ad-banner-top-fixed">
-    <ins class="adsbygoogle"
-         style="display:inline-block;width:100%;height:60px" 
-         data-ad-client="ca-pub-9933896132600937"
-         data-ad-slot="auto"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
-      
+          
       <div class="tabs">
         <button class="tab-btn on" data-tab="pick">🎲 번호추첨</button>
         <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
