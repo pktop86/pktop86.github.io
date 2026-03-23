@@ -822,102 +822,148 @@ h1{
     gap:2px;
   }
 }
-  /* ===== 상단 고정 UI 패치 시작 ===== */
-
-/* 광고 + 탭 고정 높이 */
-/* ===== 모바일 우선 상단 고정 최종본 ===== */
+/* ===== 상단 광고 + 타이틀 + 탭/LB 고정 최종본 ===== */
 :root{
-  --sticky-ad-h: 34px;
-  --sticky-tabs-h: 54px;
+  --sticky-ad-h: 56px;
+  --sticky-tabs-offset: 56px;
   --lb-bar-h: 28px;
 }
-/*:root{
-  --sticky-ad-h:34px;
-  /*--sticky-tabs-h:52px;*/
-}*/
 
-/* 광고 고정 */
+/* 상단 광고: 항상 화면 최상단 고정 */
 .ad-sticky-shell{
-  position:-webkit-sticky;
   position:sticky;
+  position:-webkit-sticky;
   top:0;
-  z-index:110;
-  height:var(--sticky-ad-h);
+  z-index:120;
   background:var(--bg);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
   border-bottom:1px solid var(--border);
 }
 
+/* 광고 실제 프레임 */
 .top-ad-inner{
   max-width:640px;
   margin:0 auto;
   width:100%;
-  height:34px;
-  min-height:34px;
+  height:56px;
+  min-height:56px;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:0 10px;
+  padding:3px 14px;
   overflow:hidden;
 }
 
-.top-ad-inner ins{
+/* 광고가 부모보다 커지지 못하게 강제 */
+.top-ad-inner ins,
+.top-ad-inner iframe{
   display:block !important;
   width:100% !important;
-  height:28px !important;
-  min-height:28px !important;
-  max-height:28px !important;
-  overflow:hidden;
+  max-width:320px !important;
+  height:50px !important;
+  min-height:50px !important;
+  max-height:50px !important;
+  margin:0 auto !important;
+  overflow:hidden !important;
 }
 
-/* 타이틀 */
+/* 타이틀은 일반 흐름 */
 .hero-head{
   text-align:center;
-  padding:8px 0 4px; /* 하단 패딩을 0으로 줄여 간격을 좁힙니다 *//*padding:8px 0 4px;*/
-}
-
-/* 탭 고정 */
-.tabs-sticky-shell{
-  position:-webkit-sticky;
-  position:sticky;
-  top:var(--sticky-ad-h);
-  z-index:101;
-  background:var(--bg);
-  padding:2px 0 5px;
+  padding:10px 0 8px;
   margin:0;
 }
-  
-.tabs-sticky-shell::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 4px;
-  height: 1px;
-  background: linear-gradient(
+
+/* 탭 + 럭키볼 바 묶음 */
+.tabs-sticky-shell{
+  position:sticky;
+  position:-webkit-sticky;
+  top:var(--sticky-tabs-offset);
+  z-index:110;
+  background:linear-gradient(
+    180deg,
+    rgba(7,8,15,.96) 0%,
+    rgba(7,8,15,.92) 78%,
+    rgba(7,8,15,0) 100%
+  );
+  padding:4px 0 6px;
+  margin:0;
+}
+
+.tabs-sticky-shell::after{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:4px;
+  height:1px;
+  background:linear-gradient(
     90deg,
     transparent 0%,
     rgba(255,255,255,.07) 20%,
     rgba(255,255,255,.07) 80%,
     transparent 100%
   );
-  pointer-events: none;
-}
-  
-/* 탭 박스는 기존 디자인 유지, 여백만 정리 */
-.tabs {
-  margin: 0 !important;
-  position: relative !important;
-  top: 0 !important;
+  pointer-events:none;
 }
 
-/* 탭 버튼 살짝 컴팩트 */
+/* 탭 본체 */
+.tabs{
+  margin:0 !important;
+  background:rgba(15,16,32,0.92);
+  box-shadow:0 10px 24px rgba(0,0,0,.22);
+}
+
 .tab-btn{
+  color:#7f89a7;
   padding:8px 2px;
   font-size:9.5px;
+}
+
+.tab-btn.on{
+  box-shadow:0 2px 6px rgba(0,0,0,.35);
+}
+
+/* 탭 아래 럭키볼 바 */
+.lb-sticky-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:nowrap;
+  gap:6px;
+  margin-top:4px;
+  min-height:var(--lb-bar-h);
+  padding:3px 6px;
+  overflow:hidden;
+}
+
+.lb-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+  overflow:hidden;
+}
+
+.lb-right{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+  margin-left:auto;
+}
+
+.lb-balance-wrap{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+}
+
+.lb-balance-label,
+.lb-balance-value,
+.lb-mini-btn,
+.lb-streak{
+  white-space:nowrap;
 }
 
 /* 스크롤 앵커 보정 */
@@ -926,32 +972,33 @@ h1{
 #tab-myinfo,
 #tab-near,
 #tab-prize{
-  scroll-margin-top:calc(var(--sticky-ad-h) + var(--sticky-tabs-h) + 10px);
+  scroll-margin-top:calc(var(--sticky-ad-h) + 74px);
 }
 
-/* PC에서는 광고를 살짝만 키움 */
+/* PC */
 @media (min-width:768px){
   :root{
-    --sticky-ad-h:34px;
-    --sticky-tabs-h:54px;
+    --sticky-ad-h: 68px;
+    --sticky-tabs-offset: 68px;
   }
 
   .top-ad-inner{
-    height:32px;
-    min-height:32px;
-    padding:0 10px;
+    height:68px;
+    min-height:68px;
+    padding:4px 14px;
   }
 
-  .top-ad-inner ins{
-    height:30px !important;
-    min-height:30px !important;
-    max-height:30px !important;
+  .top-ad-inner ins,
+  .top-ad-inner iframe{
+    max-width:468px !important;
+    height:60px !important;
+    min-height:60px !important;
+    max-height:60px !important;
   }
 
   .tabs-sticky-shell{
-    top:var(--sticky-ad-h);
-    padding:2px 0 5px;
-    margin:0;
+    top:var(--sticky-tabs-offset);
+    padding:5px 0 7px;
   }
 
   .tab-btn{
@@ -960,32 +1007,34 @@ h1{
   }
 }
 
-@media screen and (max-width:480px){
+/* 모바일 */
+@media (max-width:480px){
   :root{
-    --sticky-ad-h:34px;
-    --sticky-tabs-h:54px;
-  }
-
-  .ad-sticky-shell{
-    height:34px !important;
+    --sticky-ad-h: 56px;
+    --sticky-tabs-offset: 56px;
   }
 
   .top-ad-inner{
-    height:34px;
-    min-height:34px;
-    padding:0 10px;
+    height:56px;
+    min-height:56px;
+    padding:3px 10px;
   }
 
-  .top-ad-inner ins{
-    height:28px !important;
-    min-height:28px !important;
-    max-height:28px !important;
+  .top-ad-inner ins,
+  .top-ad-inner iframe{
+    max-width:320px !important;
+    height:50px !important;
+    min-height:50px !important;
+    max-height:50px !important;
+  }
+
+  .hero-head{
+    padding:10px 0 8px;
   }
 
   .tabs-sticky-shell{
-    top:34px !important;
-    padding:2px 0 5px !important;
-    margin:0 !important;
+    top:56px;
+    padding:4px 0 6px;
   }
 
   .tab-btn{
@@ -993,9 +1042,42 @@ h1{
     padding:8px 1px;
     gap:2px;
   }
+
+  .lb-sticky-bar{
+    gap:5px;
+    padding:3px 5px;
+  }
+
+  .lb-left{
+    gap:6px;
+  }
+
+  .lb-right{
+    gap:4px;
+  }
+
+  .lb-mini-btn{
+    height:22px;
+    padding:0 7px;
+    font-size:8.5px;
+  }
+
+  .lb-balance-label{
+    font-size:8px;
+  }
+
+  .lb-balance-value{
+    font-size:.78rem;
+  }
+
+  .lb-streak{
+    min-width:22px;
+    height:22px;
+    padding:0 5px;
+    font-size:8.5px;
+  }
 }
-  
-/* ===== 상단 고정 최종본 끝 ===== */
+/* ===== 상단 광고 + 타이틀 + 탭/LB 고정 최종본 끝 ===== */
   /* ===== 상단 고정 UI 패치 끝 ===== */
 
 /* ===== LB STICKY BAR START ===== */
@@ -1296,7 +1378,7 @@ h1{
   <div class="ad-sticky-shell">
   <div class="top-ad-inner">
     <ins class="adsbygoogle"
-         style="display:block"
+         style="display:inline-block;width:320px;height:50px"
          data-ad-client="ca-pub-9933896132600937"
          data-ad-slot="auto"
          data-ad-format="horizontal"
