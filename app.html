@@ -1741,6 +1741,7 @@ h1{
           <span class="challenge-rank-badge rank-done" id="challenge-rank-badge">집계 대기</span>
         </div>
         <div class="challenge-my-nums" id="challenge-my-nums"></div>
+        <button id="challenge-cancel-btn" style="display:none;margin-top:8px;width:100%;background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.3);color:var(--red);border-radius:8px;padding:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">🚫 참여 취소</button>
       </div>
       <!-- 참여 버튼 -->
       <div class="challenge-btns" id="challenge-btns">
@@ -4212,6 +4213,8 @@ function resetChallengeState(){
   if(statusEl) statusEl.classList.remove('show');
   if(btnsEl) btnsEl.style.display='flex';
   if(rankCard) rankCard.classList.remove('show');
+  const cancelBtn=document.getElementById('challenge-cancel-btn');
+  if(cancelBtn) cancelBtn.style.display='none';
 }
  
 // 챌린지 초기화
@@ -4283,6 +4286,8 @@ function renderMyEntry(){
   const rankBadge=document.getElementById('challenge-rank-badge');
   if(statusEl) statusEl.classList.add('show');
   if(btnsEl) btnsEl.style.display='none';
+  const cancelBtn=document.getElementById('challenge-cancel-btn');
+  if(cancelBtn) cancelBtn.style.display='block';
   if(numsEl) numsEl.innerHTML=(challengeMyEntry.numbers||[]).map(n=>
     `<div class="ball ${ballCls(n)}" style="width:26px;height:26px;font-size:10px">${n}</div>`
   ).join('');
@@ -4420,7 +4425,34 @@ async function joinChallenge(numbers, sourceType){
     else { console.error('joinChallenge error:',e); alert('참여 중 오류가 발생했습니다.'); }
   }
 }
- 
+// 챌린지 취소
+  async function cancelChallenge(){
+  if(!confirm('챌린지 참여를 취소 하시겠습니까?')) return;
+  if(!db||!currentUid) return;
+  const roundId=String(latestRound);
+  try{
+    const entryRef=doc(db,'challenge_rounds',roundId,'entries',currentUid);
+    const roundRef=doc(db,'challenge_rounds',roundId);
+    await runTransaction(db, async t=>{
+      const snap=await t.get(entryRef);
+      if(!snap.exists()) throw new Error('no_entry');
+      t.delete(entryRef);
+      t.set(roundRef,{participantCount:increment(-1),updatedAt:serverTimestamp()},{merge:true});
+    });
+    challengeMyEntry=null;
+    document.getElementById('challenge-my-status').classList.remove('show');
+    document.getElementById('challenge-cancel-btn').style.display='none';
+    document.getElementById('challenge-btns').style.display='flex';
+    // 버튼 재활성화
+    document.getElementById('challenge-btns').querySelectorAll('.challenge-btn').forEach(b=>{b.disabled=false;b.style.opacity='1';});
+    const genBtn2=document.getElementById('challenge-btn-gen');
+    if(genBtn2) genBtn2.disabled=!challengeGenNums.length;
+    alert('참여가 취소됐습니다.');
+  }catch(e){
+    if(e.message==='no_entry') alert('취소할 참여 내역이 없습니다.');
+    else { console.error(e); alert('취소 중 오류가 발생했습니다.'); }
+  }
+}
 // 자동 채점 (클라이언트 fallback - Cloud Functions 미사용 시)
 async function maybeScoreCurrentChallenge(){
   if(!db||!latestWinNums||latestWinNums.length!==6) return;
@@ -4530,6 +4562,7 @@ document.getElementById('challenge-btn-custom-submit').addEventListener('click',
   if(challengeCustomNums.length!==6){ alert('6개를 선택해주세요.'); return; }
   joinChallenge([...challengeCustomNums].sort((a,b)=>a-b),'custom');
 });
+  document.getElementById('challenge-cancel-btn').addEventListener('click', cancelChallenge);
  
 function updateChallengeGenNums(nums){
   challengeGenNums=[...nums];
