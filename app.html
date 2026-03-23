@@ -2168,7 +2168,15 @@ let recentHist = (window.FULL_DRAW_HISTORY && window.FULL_DRAW_HISTORY.length > 
 const _lastDraw = (window.FULL_DRAW_HISTORY && window.FULL_DRAW_HISTORY.length > 0)
   ? window.FULL_DRAW_HISTORY[window.FULL_DRAW_HISTORY.length - 1]
   : { round: 1216, nums: [13,10,14,15,23,24], bonus: 25 };
-let latestRound    = _lastDraw.round;
+function calcCurrentRound(){
+  // 1회: 2002년 12월 7일 기준
+  const base = new Date('2002-12-07T21:00:00+09:00');
+  const now = new Date();
+  const weeks = Math.floor((now - base) / (7 * 24 * 60 * 60 * 1000));
+  return weeks + 1;
+}
+
+let latestRound = Math.max(_lastDraw.round, calcCurrentRound());
 let latestWinNums  = [..._lastDraw.nums];
 let latestBonusNum = _lastDraw.bonus;
 let isReady = false;
