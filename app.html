@@ -1302,7 +1302,7 @@ h1{
     font-size:8.5px;
   }
 }
-  /* ── 오늘의 운세 탭 블로그 ── */
+  /* ── 럭키 인사이트(오늘의 운세) 탭 블로그 ── */
 .fortune-blog-list{
   display:flex;
   flex-direction:column;
@@ -1394,7 +1394,7 @@ h1{
       <div class="tabs">
         <button class="tab-btn on" data-tab="pick">🎲 번호추첨</button>
         <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
-        <button class="tab-btn" data-tab="myinfo">🔮 오늘의 운세</button>
+        <button class="tab-btn" data-tab="myinfo">🔮 럭키 인사이트</button>
         <button class="tab-btn" data-tab="near">📍 내주변 판매점</button>
         <button class="tab-btn disabled" data-tab="prize" id="tab-prize-btn">🏆 당첨현황</button>
       </div>
@@ -4450,7 +4450,7 @@ function updateFortuneDisplay(){
     return;
   }
   const fortune = generatePersonalFortune(info.birth, info.hourIdx||'', info.gender||'none');
-  // 내정보(오늘의 운세) 탭 카드
+  // 내정보(럭키 인사이트) 탭 카드
   document.getElementById('myinfo-fortune-area').innerHTML = `
     <div class="fortune-card">
       <div class="fortune-card-title">🔮 내 오늘의 흐름</div>
