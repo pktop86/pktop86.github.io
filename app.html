@@ -3175,11 +3175,12 @@ function updateSelCount(){
 }
 function recalcCounts(){
   const cnt={1:0,2:0,3:0,4:0,5:0};
+  // 결과가 확정된 회차만 카운팅
+  // recentHist에 있는 회차 = 실제 당첨번호가 있는 회차만 사용
   myDocs.forEach(d=>{
     const entry=recentHist.find(h=>h.round===d.round);
-    const wn=entry?entry.nums:(d.round===latestRound?latestWinNums:[]);
-    const bn=entry?entry.bonus:(d.round===latestRound?latestBonusNum:0);
-    const p=checkPrize(d.nums||[],wn,bn);
+    if(!entry) return; // 당첨번호 없는 회차(진행중) 제외
+    const p=checkPrize(d.nums||[],entry.nums,entry.bonus);
     if(p>0)cnt[p]++;
   });
   for(let i=1;i<=5;i++){const el=document.getElementById('my-cnt'+i);if(el)el.textContent=cnt[i];}
