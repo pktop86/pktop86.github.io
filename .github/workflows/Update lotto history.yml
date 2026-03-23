@@ -1,4 +1,7 @@
 name: Update Lotto Draw History
+
+permissions:
+ contents: write
  
 on:
   schedule:
