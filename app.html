@@ -3710,7 +3710,7 @@ async function doGenerate(count){
     setTimeout(()=>resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'}), 80);
 
     const doSave = async () => {
-      const savedRound = getActivePickRpund();
+      const savedRound = getActivePickRound();
       const ids = await Promise.all(allNums.map(nums => savePick(nums, savedRound)));
 
       ids.forEach((id,i)=>{
