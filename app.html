@@ -1364,6 +1364,102 @@ h1{
   white-space:pre-line;
 }
 
+  /* ── 블로그 전환 애니메이션 ── */
+.fortune-blog-stage{
+  position:relative;
+  overflow:hidden;
+  min-height:220px;
+}
+
+.fortune-blog-view{
+  opacity:1;
+  transform:translateX(0);
+  transition:
+    opacity .26s ease,
+    transform .26s ease;
+  will-change:opacity, transform;
+}
+
+.fortune-blog-view.is-hidden{
+  display:none !important;
+}
+
+.fortune-blog-view.enter-from-right{
+  opacity:0;
+  transform:translateX(22px);
+}
+
+.fortune-blog-view.enter-from-left{
+  opacity:0;
+  transform:translateX(-22px);
+}
+
+.fortune-blog-view.leaving-to-left{
+  opacity:0;
+  transform:translateX(-18px);
+}
+
+.fortune-blog-view.leaving-to-right{
+  opacity:0;
+  transform:translateX(18px);
+}
+
+.fortune-blog-post-card{
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.03) 0%,
+    rgba(255,255,255,.015) 100%
+  );
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px 14px;
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+}
+
+.fortune-blog-back-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  transition:
+    transform .16s ease,
+    border-color .16s ease,
+    color .16s ease;
+}
+
+.fortune-blog-back-btn:hover{
+  transform:translateX(-2px);
+  border-color:rgba(240,192,64,.28);
+  color:var(--accent);
+}
+
+.fortune-blog-item{
+  position:relative;
+  overflow:hidden;
+}
+
+.fortune-blog-item::after{
+  content:'›';
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  opacity:.45;
+  font-size:16px;
+  font-weight:900;
+}
+
+.fortune-blog-item:hover::after{
+  opacity:.9;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .fortune-blog-view,
+  .fortune-blog-back-btn{
+    transition:none !important;
+  }
+}
+
+
 </style>
 </head>
 <body>
@@ -1692,9 +1788,10 @@ h1{
 <div class="myinfo-section" id="fortune-blog-section">
   <div class="myinfo-section-title">📝 블로그</div>
 
-  <div id="fortune-blog-list-view">
+  <div class="fortune-blog-stage">
+  <div id="fortune-blog-list-view" class="fortune-blog-view">
     <div class="fortune-blog-list">
-      <button class="fortune-blog-item" data-post="01">로또번호 그냥 찍으세요? 데이터로 분석하는 스마트한 방법</button>
+     <button class="fortune-blog-item" data-post="01">로또번호 그냥 찍으세요? 데이터로 분석하는 스마트한 방법</button>
       <button class="fortune-blog-item" data-post="02">AI 알고리즘이 로또 번호를 분석한다? 로또엔진의 비밀</button>
       <button class="fortune-blog-item" data-post="03">매달 내는 번호 추천 비용이 아깝다면? 럭키볼로 해</button>
       <button class="fortune-blog-item" data-post="04">로또엔진 사용해보니 확실히 달라요</button>
@@ -1702,16 +1799,15 @@ h1{
     </div>
   </div>
 
-  <div id="fortune-blog-post-view" style="display:none">
+  <div id="fortune-blog-post-view" class="fortune-blog-view is-hidden">
     <button class="fortune-blog-back-btn" id="fortune-blog-back-btn">← 돌아가기</button>
     <div class="fortune-blog-post-card">
       <div class="fortune-blog-post-title" id="fortune-blog-post-title">01</div>
-      <div class="fortune-blog-post-body" id="fortune-blog-post-body">
-        01
-      </div>
+      <div class="fortune-blog-post-body" id="fortune-blog-post-body">01</div>
     </div>
   </div>
 </div>
+
   </div>
  
   <!-- 내주변 판매점 탭 -->
@@ -4929,6 +5025,29 @@ v3 엔진은 단순 랜덤이 아닙니다.
 
 };
 
+function animateBlogSwap(hideEl, showEl, showClass, hideClass){
+  if(!hideEl || !showEl) return;
+
+  hideEl.classList.remove('enter-from-right', 'enter-from-left', 'leaving-to-left', 'leaving-to-right', 'is-hidden');
+  showEl.classList.remove('enter-from-right', 'enter-from-left', 'leaving-to-left', 'leaving-to-right', 'is-hidden');
+
+  hideEl.classList.add(hideClass);
+
+  setTimeout(()=>{
+    hideEl.classList.add('is-hidden');
+    hideEl.classList.remove(hideClass);
+
+    showEl.classList.remove('is-hidden');
+    showEl.classList.add(showClass);
+
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        showEl.classList.remove(showClass);
+      });
+    });
+  }, 220);
+}
+
 function openFortuneBlogPost(postId){
   const post = FORTUNE_BLOG_POSTS[postId];
   if(!post) return;
@@ -4938,19 +5057,19 @@ function openFortuneBlogPost(postId){
   const titleEl = document.getElementById('fortune-blog-post-title');
   const bodyEl = document.getElementById('fortune-blog-post-body');
 
-  if(listView) listView.style.display = 'none';
-  if(postView) postView.style.display = 'block';
   if(titleEl) titleEl.textContent = post.title;
   if(bodyEl) bodyEl.textContent = post.body;
+
+  animateBlogSwap(listView, postView, 'enter-from-right', 'leaving-to-left');
 }
 
 function closeFortuneBlogPost(){
   const listView = document.getElementById('fortune-blog-list-view');
   const postView = document.getElementById('fortune-blog-post-view');
 
-  if(listView) listView.style.display = 'block';
-  if(postView) postView.style.display = 'none';
+  animateBlogSwap(postView, listView, 'enter-from-left', 'leaving-to-right');
 }
+
 
 function initFortuneBlog(){
   document.querySelectorAll('.fortune-blog-item').forEach(btn=>{
