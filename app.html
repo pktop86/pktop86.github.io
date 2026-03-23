@@ -1788,12 +1788,12 @@ h1{
       </div>
     </div>
     <div class="algo-panel">
-      <div class="sec-title">번호 구성 기준 4가지</div>
+      <div class="sec-title">v3 엔진 작동 방식</div>
       <div class="algo-rules">
-        <div class="rule-card"><div class="rule-title">① 고저·홀짝 균형</div><div class="rule-desc">1~22(저):23~45(고) 균형. 홀짝 균형. 자주 보이는 분포 예시를 참고합니다.</div></div>
-        <div class="rule-card"><div class="rule-title">② 연번·끝수 분석</div><div class="rule-desc">연속번호 1쌍 이상 포함. 끝자리 분포를 참고해 균형 있게 구성합니다.</div></div>
-        <div class="rule-card"><div class="rule-title">③ 미출현수 포함</div><div class="rule-desc">최근 8회차 미출현 번호 1~2개 포함. 최근 미출현 번호 흐름을 참고합니다.</div></div>
-        <div class="rule-card"><div class="rule-title">④ 이월수 전략</div><div class="rule-desc">직전 회차 번호 흐름을 참고해 포함 여부를 조정합니다.</div></div>
+        <div class="rule-card"><div class="rule-title">① 압축필터 알고리즘</div><div class="rule-desc">1~22(저):백만 조합을 다단계 필터링으로 압축 후 확률 기반 상위 후보만 선별합니다.</div></div>
+        <div class="rule-card"><div class="rule-title">② 패턴 + 통계 결합</div><div class="rule-desc"> 단순 랜덤이 아닌 출현 패턴, 분포, 연번 흐름까지 반영하여 구성합니다.</div></div>
+        <div class="rule-card"><div class="rule-title">③ 가중치 점수화</div><div class="rule-desc">각 조합에 점수를 부여하고 상위 점수 조합만 최종 선택합니다.</div></div>
+        <div class="rule-card"><div class="rule-title">④ 지속 학습 업데이트</div><div class="rule-desc">매주 최신 결과를 반영하여 엔진 정확도를 지속적으로 개선합니다</div></div>
       </div>
     </div>
  
