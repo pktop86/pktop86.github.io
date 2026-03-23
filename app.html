@@ -1806,6 +1806,7 @@ h1{
         <div class="seg">
           <button class="seg-btn on" data-n="5">5줄</button>
           <button class="seg-btn" data-n="10">10줄</button>
+          <button class="seg-btn" data-n="20">20줄</button>
         </div>
       </div>
       <div class="ad-notice"><span class="icon">💡</span><div><strong>무료 5회</strong> 이후 또는 <strong>10줄</strong> 선택 시 짧은 광고 시청 후 결과가 표시됩니다.</div></div>
@@ -2201,12 +2202,14 @@ const LB_DEFAULT_BALANCE = 30;
 const LB_COSTS = {
   gen5: 5,
   gen10: 7,
+  gen20: 10,
   sim1000: 10,
   sim10000: 50,
   chargeReward: 25
 };
 
 let lbChargeTimer = null;
+let _lbChargeCallback = null;
 let pendingLbCost = 0;
 let pendingLbReason = '';
 
@@ -2303,10 +2306,10 @@ function addLB(amount){
   renderLBUI();
 }
 
-function spendLB(amount, reason){
+function spendLB(amount, reason, onCharged){
   const state = loadLBState();
   if(state.balance < amount){
-    alert(`럭키볼이 부족합니다.\n필요: ${amount}LB\n보유: ${state.balance}LB`);
+    askAndCharge(onCharged);
     return false;
   }
   state.balance -= amount;
@@ -2381,8 +2384,11 @@ function claimTodayAttendance(){
 
   alert(`${nextStreak}일 출석 완료!\n+${reward}LB 지급되었습니다.`);
 }
-
-function openLBChargeModal(){
+function askAndCharge(callback){
+  if(!confirm('광고를 시청하시고 25LB를 충전 하시겠습니까?')) return;
+  openLBChargeModal(callback);
+}
+function openLBChargeModal(onCharged){
   const modal = document.getElementById('lb-charge-modal');
   const btn = document.getElementById('lb-charge-confirm-btn');
   const text = document.getElementById('lb-charge-timer-text');
@@ -2422,12 +2428,13 @@ function claimLBCharge(){
   addLB(LB_COSTS.chargeReward);
   closeLBChargeModal();
   alert(`광고 시청 완료!\n+${LB_COSTS.chargeReward}LB 충전되었습니다.`);
+  if(_lbChargeCallback){ _lbChargeCallback(); _lbChargeCallback=null; }
 }
 
 function injectLBCostLabels(){
   document.querySelectorAll('.seg-btn').forEach(btn=>{
     const n = Number(btn.dataset.n || 0);
-    const cost = n >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
+    const cost = n >= 20 ? LB_COSTS.gen20 : n >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
     if(!btn.querySelector('.lb-cost-sm')){
       btn.insertAdjacentHTML('beforeend', `<span class="lb-cost-sm">7 ${cost}LB</span>`);
     }
@@ -2451,7 +2458,7 @@ function initLBSystem(){
   injectLBCostLabels();
 
   document.getElementById('lb-attend-btn')?.addEventListener('click', openLBAttendModal);
-  document.getElementById('lb-charge-btn')?.addEventListener('click', openLBChargeModal);
+  document.getElementById('lb-charge-btn')?.addEventListener('click', ()=>askAndCharge());
 
   document.getElementById('lb-attend-close-btn')?.addEventListener('click', closeLBAttendModal);
   document.getElementById('lb-attend-claim-btn')?.addEventListener('click', claimTodayAttendance);
@@ -2811,16 +2818,10 @@ adModal.addEventListener('click',e=>{if(e.target===adModal)hideAdModal();});
 genBtn.addEventListener('click',()=>{
   if(!isReady) return;
 
-  const drawCost = genCount >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
+  const drawCost = genCount >= 20 ? LB_COSTS.gen20 : genCount >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
 
-  if(needsAd(genCount)){
-    pendingLbCost = drawCost;
-    pendingLbReason = `${genCount}줄 생성`;
-    showAdModal(genCount);
-  }else{
-    if(!spendLB(drawCost, `${genCount}줄 생성`)) return;
-    doGenerate(genCount);
-  }
+if(!spendLB(drawCost, `${genCount}줄 생성`, ()=>{ if(spendLB(drawCost)) doGenerate(genCount); })) return;
+doGenerate(genCount);
 });
  
 // ── 알고리즘 ──
@@ -4151,11 +4152,13 @@ document.getElementById('sim-save-to-mynums').addEventListener('click', async fu
 document.getElementById('sim-btn-100').addEventListener('click',()=>runSimulation(100));
 document.getElementById('sim-btn-1000').addEventListener('click',()=>{
   if(simNums.length===0)return;
-  showAdModal('sim-1000');
+  if(!spendLB(LB_COSTS.sim1000,'1000회 시뮬레이션',()=>{ if(spendLB(LB_COSTS.sim1000)) runSimulation(1000); })) return;
+  runSimulation(1000);
 });
 document.getElementById('sim-btn-10000').addEventListener('click',()=>{
   if(simNums.length===0)return;
-  showAdModal('sim-10000');
+  if(!spendLB(LB_COSTS.sim10000,'10000회 시뮬레이션',()=>{ if(spendLB(LB_COSTS.sim10000)) runSimulation(10000); })) return;
+  runSimulation(10000);
 });
  
 // 시뮬레이션 광고 처리는 confirmBtn 통합 처리됨
