@@ -1746,6 +1746,91 @@ h1{
   border:1px solid var(--border);
 }
 
+.sim-insight-box{
+  margin-top:12px;
+  padding:14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+}
+
+.sim-insight-title{
+  font-size:12px;
+  font-weight:900;
+  color:var(--accent);
+  margin-bottom:10px;
+}
+
+.sim-insight-list{
+  display:grid;
+  gap:8px;
+}
+
+.sim-insight-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 12px;
+}
+
+.sim-insight-item-title{
+  font-size:11px;
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:6px;
+}
+
+.sim-insight-item-desc{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.65;
+}
+
+.sim-top3-list{
+  display:grid;
+  gap:8px;
+}
+
+.sim-top3-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 12px;
+}
+
+.sim-top3-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+  gap:8px;
+}
+
+.sim-top3-rank{
+  font-size:11px;
+  font-weight:900;
+  color:var(--accent);
+}
+
+.sim-top3-score{
+  font-size:10px;
+  color:var(--accent3);
+  font-weight:800;
+}
+
+.sim-top3-balls{
+  display:flex;
+  gap:4px;
+  flex-wrap:wrap;
+}
+
+.sim-inline-note{
+  text-align:center;
+  margin-top:10px;
+  font-size:11px;
+  color:var(--muted);
+}  
+
 
 </style>
 </head>
@@ -5152,12 +5237,11 @@ function renderSimResults(results,total){
   tableHtml += `</tbody></table>`;
 
   const rate = total > 0 ? (winners / total * 100).toFixed(3) : '0.000';
-  const highRate = total > 0 ? (highWins / total * 100).toFixed(3) : '0.000';
   const failRate = total > 0 ? (failCount / total * 100).toFixed(3) : '0.000';
   const avg1 = results[1] > 0 ? Math.round(total / results[1]) : 0;
 
   let ctaTitle = '👉 이 조합, 그냥 넘길래요?';
-  let ctaSub = '시뮬레이션 결과를 바탕으로 상위 조합 분석과 추천을 볼 수 있습니다.';
+  let ctaSub = '상위 조합 분석과 TOP3 추천을 확인할 수 있습니다.';
   if(highWins >= Math.max(1, total * 0.01)){
     ctaTitle = '🔥 상위 결과입니다. 분석 추천';
     ctaSub = '이번 결과는 보통보다 좋습니다. 상위 조합 분석을 눌러보세요.';
@@ -5201,26 +5285,6 @@ function renderSimResults(results,total){
         </div>
       </div>
 
-  <div class="sim-cta-box">
-  <div class="sim-cta-text">
-    👉 이 조합, 그냥 넘길래요?
-  </div>
-
-  <div class="sim-cta-sub">
-    상위 확률 조합 분석과 추천을 확인할 수 있습니다
-  </div>
-
-  <div class="sim-cta-btns">
-    <button class="sim-cta-btn" id="sim-analysis-btn">
-      🔍 분석하기 (3LB)
-    </button>
-
-    <button class="sim-cta-btn secondary" id="sim-top3-btn">
-      🎯 TOP3 추천 (5LB)
-    </button>
-  </div>
-</div>
-
       ${results[1] > 0 ? `
         <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--accent)">
           🎉 1등 일치 확인 평균 ${avg1.toLocaleString()}회에 1번
@@ -5239,6 +5303,8 @@ function renderSimResults(results,total){
           <button class="sim-cta-btn secondary" id="sim-top3-btn">🎯 TOP3 추천 보기 (5LB)</button>
         </div>
       </div>
+
+      <div id="sim-insight-area"></div>
     </div>
   `;
 
@@ -5254,23 +5320,140 @@ function renderSimResults(results,total){
 
 function handleSimAnalysisClick(){
   if(!spendLB(3, '상위 조합 분석')) return;
-  alert('상위 조합 분석 기능은 다음 단계에서 붙이면 됩니다.\n현재는 LB 소모 구조만 먼저 연결한 상태입니다.');
+
+  const area = document.getElementById('sim-insight-area');
+  if(!area) return;
+
+  const target = simTargetSet?.[0];
+  if(!target || target.length !== 6){
+    area.innerHTML = `<div class="sim-inline-note">분석할 번호가 없습니다.</div>`;
+    return;
+  }
+
+  const {lo,hi} = getHL(target);
+  const {odd,even} = getOE(target);
+  const tags = makeTags(target);
+
+  let comment1 = Math.abs(lo-hi) <= 1
+    ? `고저 비율이 ${lo}:${hi}로 안정적입니다.`
+    : `고저 비율이 ${lo}:${hi}로 다소 치우쳐 있습니다.`;
+
+  let comment2 = Math.abs(odd-even) <= 1
+    ? `홀짝 비율이 ${odd}:${even}로 균형형입니다.`
+    : `홀짝 비율이 ${odd}:${even}로 편차가 있습니다.`;
+
+  let comment3 = hasConsec(target)
+    ? `연번이 포함되어 최근 당첨 패턴과 유사한 흐름을 일부 반영합니다.`
+    : `연번이 없어 깔끔한 분산형 조합입니다.`;
+
+  area.innerHTML = `
+    <div class="sim-insight-box">
+      <div class="sim-insight-title">🔍 상위 조합 분석 결과</div>
+      <div class="sim-insight-list">
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">① 고저 분포</div>
+          <div class="sim-insight-item-desc">${comment1}</div>
+        </div>
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">② 홀짝 균형</div>
+          <div class="sim-insight-item-desc">${comment2}</div>
+        </div>
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">③ 패턴 흐름</div>
+          <div class="sim-insight-item-desc">${comment3}</div>
+        </div>
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">④ 종합 태그</div>
+          <div class="sim-insight-item-desc">${tags.map(t=>t.text).join(' · ')}</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  area.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function handleSimTop3Click(){
   if(!spendLB(5, 'TOP3 추천 보기')) return;
-  alert('TOP3 추천 보기 기능은 다음 단계에서 붙이면 됩니다.\n현재는 LB 소모 구조만 먼저 연결한 상태입니다.');
+
+  const area = document.getElementById('sim-insight-area');
+  if(!area) return;
+
+  const picks = buildSimTop3Recommendations();
+  if(!picks.length){
+    area.innerHTML = `<div class="sim-inline-note">추천할 세트가 없습니다.</div>`;
+    return;
+  }
+
+  area.innerHTML = `
+    <div class="sim-insight-box">
+      <div class="sim-insight-title">🎯 TOP3 추천 보기</div>
+      <div class="sim-top3-list">
+        ${picks.map((item, idx)=>`
+          <div class="sim-top3-item">
+            <div class="sim-top3-head">
+              <div class="sim-top3-rank">TOP ${idx+1}</div>
+              <div class="sim-top3-score">추천점수 ${item.score}</div>
+            </div>
+            <div class="sim-top3-balls">
+              ${item.nums.map(n=>`<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  area.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
+
+
+function buildSimTop3Recommendations(){
+  const source = Array.isArray(simTargetSet) && simTargetSet.length
+    ? simTargetSet
+    : (simNums?.length ? [simNums] : []);
+
+  return source
+    .map(nums=>({
+      nums:[...nums].sort((a,b)=>a-b),
+      score:getSimInsightScore(nums)
+    }))
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,3);
+}
+
+function getSimInsightScore(nums){
+  const {lo,hi} = getHL(nums);
+  const {odd,even} = getOE(nums);
+  const sum = nums.reduce((a,b)=>a+b,0);
+  const consecutive = hasConsec(nums) ? 8 : 4;
+
+  let score = 70;
+
+  if(Math.abs(lo-hi) <= 1) score += 10;
+  else if(Math.abs(lo-hi) <= 2) score += 6;
+
+  if(Math.abs(odd-even) <= 1) score += 10;
+  else if(Math.abs(odd-even) <= 2) score += 6;
+
+  if(sum >= 100 && sum <= 170) score += 8;
+  else if(sum >= 90 && sum <= 180) score += 4;
+
+  score += consecutive;
+
+  return Math.min(100, score);
+}
+
  
 function updateSimTarget(numsOrSet, isCustom=false){
   const isSet = Array.isArray(numsOrSet?.[0]);
 
   simTargetSet = isSet
-    ? numsOrSet.map(nums => [...nums].sort((a,b)=>a-b))
-    : [[...numsOrSet].sort((a,b)=>a-b)];
+  ? numsOrSet.map(nums => [...nums].sort((a,b)=>a-b))
+  : [[...numsOrSet].sort((a,b)=>a-b)];
 
-  // 기존 단일 번호 로직도 유지
   simNums = [...simTargetSet[0]];
+  saveBtn._nums = canSaveSingle ? [...simTargetSet[0]] : null;
 
   const target = document.getElementById('sim-target');
   if(target){
