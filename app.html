@@ -2190,7 +2190,50 @@ let unsubPrize = null;
 let unsubHistory = null;
 const MAX_FREE = 5;
 const FREE_KEY = 'lotto_usedFree';
-const FREE_DATE_KEY = 'lotto_freeDate';
+// ── 주간 업데이트 캐시 ──
+const UPDATE_CACHE_KEY = 'lotto_last_update_round';
+const UPDATE_CACHE_TIME_KEY = 'lotto_last_update_time';
+
+function getNextSaturdayMs(){
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9*3600000);
+  const day = kst.getDay(); // 0=일, 6=토
+  const daysUntilSat = (6 - day + 7) % 7 || 7;
+  const target = new Date(kst);
+  target.setDate(kst.getDate() + daysUntilSat);
+  target.setHours(21, 15, 0, 0);
+  if(target.getTime() <= kst.getTime()) target.setDate(target.getDate() + 7);
+  return new Date(target.getTime() - 9*3600000).getTime();
+}
+
+function shouldRunUpdate(){
+  try{
+    const lastTime = Number(localStorage.getItem(UPDATE_CACHE_TIME_KEY) || 0);
+    if(!lastTime) return true;
+    // 마지막 업데이트 이후 다음 토요일 21:15가 지났으면 재실행
+    const lastUpdateNextSat = getNextUpdateDeadline(lastTime);
+    return Date.now() >= lastUpdateNextSat;
+  }catch(e){ return true; }
+}
+
+function getNextUpdateDeadline(fromTimestamp){
+  // fromTimestamp 기준으로 다음 토요일 21:15 KST 계산
+  const kst = new Date(fromTimestamp + 9*3600000);
+  const day = kst.getDay();
+  const daysUntilSat = (6 - day + 7) % 7 || 7;
+  const target = new Date(kst);
+  target.setDate(kst.getDate() + daysUntilSat);
+  target.setHours(21, 15, 0, 0);
+  if(target.getTime() <= kst.getTime()) target.setDate(target.getDate() + 7);
+  return new Date(target.getTime() - 9*3600000).getTime();
+}
+
+function saveUpdateTime(){
+  try{
+    localStorage.setItem(UPDATE_CACHE_TIME_KEY, String(Date.now()));
+    localStorage.setItem(UPDATE_CACHE_ROUND_KEY, String(latestRound));
+  }catch(e){}
+}
  
 function getTodayKST(){
   const kst=new Date(new Date().getTime()+9*3600000);
@@ -2689,32 +2732,39 @@ async function init(){
 // ── 자동업데이트 스케줄 ──
 // 자동 업데이트 (재시도 포함)
 async function autoUpdate(retry=0){
+  // 이번 주에 이미 업데이트했으면 스킵
+  if(!shouldRunUpdate()){
+    setStatus('ok', `최신 상태 (261~${latestRound}회) · 내장 통계 사용 중`);
+    if(currentUid) loadMyNums();
+    return;
+  }
+
   setStatus('loading','최신 회차 확인 중...');
   try{
     const oldRound=latestRound;
     const added = await fetchNewRounds();
     if(added > 0){
+      saveUpdateTime(); // 업데이트 성공 시 시간 저장
       setStatus('ok', `${added}회차 업데이트 완료 — 최신: ${latestRound}회`);
       updateStats(); renderFreqBars(); renderFreqGrid();
       renderPrizeHeader(); renderLatestDrawCard(); loadPrizeTab(latestRound);
       if(currentUid) loadMyNums();
-      
       if(latestRound!==oldRound){ resetChallengeState(); onAuthReady(()=>initChallenge()); }
-      checkPrizeUnlock(); // 회차 갱신 후 탭 활성화 재평가
+      checkPrizeUnlock();
       maybeScoreCurrentChallenge();
     } else {
+      saveUpdateTime(); // 확인했으나 새 회차 없음도 기록
       setStatus('ok', `최신 상태 (261~${latestRound}회)`);
     }
     if(currentUid) loadMyNums();
   }catch(e){
     if(retry < 3){
-      // 실패시 5초 후 재시도
       setStatus('loading', `업데이트 재시도 중... (${retry+1}/3)`);
       setTimeout(()=>autoUpdate(retry+1), 5000);
-   } else {
+    } else {
       setStatus('ok', `내장 통계 사용 중 (261~${latestRound}회)`);
+      if(currentUid) loadMyNums();
     }
-    if(currentUid) loadMyNums();
   }
 }
  
