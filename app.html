@@ -5244,7 +5244,7 @@ function renderSimResults(results,total){
   let ctaSub = '상위 조합 분석과 TOP3 추천을 확인할 수 있습니다.';
   if(highWins >= Math.max(1, total * 0.01)){
     ctaTitle = '🔥 상위 결과입니다. 분석 추천';
-    ctaSub = '이번 결과는 보통보다 좋습니다. 상위 조합 분석을 눌러보세요.';
+    ctaSub = '번호 구성, 최근 흐름, 안정성, 시뮬레이션 평가까지 한 번에 확인할 수 있습니다.';
   }
 
   out.innerHTML = `
@@ -5299,7 +5299,7 @@ function renderSimResults(results,total){
         <div class="sim-cta-text">${ctaTitle}</div>
         <div class="sim-cta-sub">${ctaSub}</div>
         <div class="sim-cta-btns">
-          <button class="sim-cta-btn" id="sim-analysis-btn">🔍 상위 조합 분석 (3LB)</button>
+          <button class="sim-cta-btn" id="sim-analysis-btn">🔍 이 번호 자세히 보기 (3LB)</button>
           <button class="sim-cta-btn secondary" id="sim-top3-btn">🎯 TOP3 추천 보기 (5LB)</button>
         </div>
       </div>
@@ -5319,7 +5319,7 @@ function renderSimResults(results,total){
 }
 
 function handleSimAnalysisClick(){
-  if(!spendLB(3, '상위 조합 분석')) return;
+  if(!spendLB(3, '이 번호 자세히 보기')) return;
 
   const area = document.getElementById('sim-insight-area');
   if(!area) return;
@@ -5332,45 +5332,219 @@ function handleSimAnalysisClick(){
 
   const {lo,hi} = getHL(target);
   const {odd,even} = getOE(target);
-  const tags = makeTags(target);
+  const sum = target.reduce((a,b)=>a+b,0);
+  const consecutive = hasConsec(target);
+  const zones = getZoneCounts(target);
 
-  let comment1 = Math.abs(lo-hi) <= 1
-    ? `고저 비율이 ${lo}:${hi}로 안정적입니다.`
-    : `고저 비율이 ${lo}:${hi}로 다소 치우쳐 있습니다.`;
+  const hotCount = getRecentHotCount(target);
+  const coldCount = getRecentColdCount(target);
+  const carryCount = getCarryOverCount(target);
 
-  let comment2 = Math.abs(odd-even) <= 1
-    ? `홀짝 비율이 ${odd}:${even}로 균형형입니다.`
-    : `홀짝 비율이 ${odd}:${even}로 편차가 있습니다.`;
+  const zoneMax = Math.max(...zones);
+  const zoneSpreadGood = zoneMax <= 2;
+  const tailDup = getTailDuplicateCount(target);
 
-  let comment3 = hasConsec(target)
-    ? `연번이 포함되어 최근 당첨 패턴과 유사한 흐름을 일부 반영합니다.`
-    : `연번이 없어 깔끔한 분산형 조합입니다.`;
+  const simGrade = getSimPatternGrade(target);
+
+  let part1 = [];
+  part1.push(`고저 비율은 ${lo}:${hi}${Math.abs(lo-hi)<=1 ? '로 균형형' : '로 약간 치우친 편'}입니다.`);
+  part1.push(`홀짝 비율은 ${odd}:${even}${Math.abs(odd-even)<=1 ? '로 안정적' : '로 편차가 있는 편'}입니다.`);
+  part1.push(`번호 합계는 ${sum}이며 ${sum>=100 && sum<=170 ? '안정 구간에 들어갑니다.' : '평균 구간에서 다소 벗어납니다.'}`);
+  part1.push(consecutive ? '연속번호가 포함되어 최근 자주 보이는 흐름과 일부 유사합니다.' : '연속번호 없이 분산형으로 구성되어 있습니다.');
+
+  let part2 = [];
+  part2.push(`최근 흐름 번호는 ${hotCount}개 포함되어 있습니다.`);
+  part2.push(`장기 미출현 성격의 번호는 ${coldCount}개 포함되어 있습니다.`);
+  part2.push(carryCount > 0 ? `직전 회차 이월수 성격 번호가 ${carryCount}개 포함되어 있습니다.` : '직전 회차 이월수는 포함되지 않았습니다.');
+
+  let part3 = [];
+  part3.push(zoneSpreadGood ? '구간 분포가 비교적 고르게 퍼져 있습니다.' : '특정 구간으로 다소 몰린 구성입니다.');
+  part3.push(`끝자리 중복은 ${tailDup}회 감지되며 ${tailDup <= 1 ? '끝수 분산은 양호한 편입니다.' : '끝수 중복이 조금 있는 편입니다.'}`);
+  part3.push(zoneMax <= 2 ? '한 구간 과밀이 없어 안정형 패턴에 가깝습니다.' : '한 구간 집중도가 있어 공격형 성향이 있습니다.');
+
+  let part4 = [];
+  part4.push(`시뮬레이션 관점에서는 "${simGrade.label}" 성향으로 평가됩니다.`);
+  part4.push(simGrade.desc);
+  part4.push(`현재 세트 안에서는 ${getSetRelativeComment(target)}.`);
+
+  const conclusion = buildFinalConclusion({
+    lo, hi, odd, even, sum, consecutive,
+    hotCount, coldCount, carryCount,
+    zoneMax, tailDup, simGrade
+  });
 
   area.innerHTML = `
     <div class="sim-insight-box">
-      <div class="sim-insight-title">🔍 상위 조합 분석 결과</div>
+      <div class="sim-insight-title">🔍 AI 번호 진단 리포트</div>
+
       <div class="sim-insight-list">
         <div class="sim-insight-item">
-          <div class="sim-insight-item-title">① 고저 분포</div>
-          <div class="sim-insight-item-desc">${comment1}</div>
+          <div class="sim-insight-item-title">① 기본 분포 분석</div>
+          <div class="sim-insight-item-desc">${part1.join('<br>')}</div>
         </div>
+
         <div class="sim-insight-item">
-          <div class="sim-insight-item-title">② 홀짝 균형</div>
-          <div class="sim-insight-item-desc">${comment2}</div>
+          <div class="sim-insight-item-title">② 최근 흐름 반영</div>
+          <div class="sim-insight-item-desc">${part2.join('<br>')}</div>
         </div>
+
         <div class="sim-insight-item">
-          <div class="sim-insight-item-title">③ 패턴 흐름</div>
-          <div class="sim-insight-item-desc">${comment3}</div>
+          <div class="sim-insight-item-title">③ 패턴 안정성 분석</div>
+          <div class="sim-insight-item-desc">${part3.join('<br>')}</div>
         </div>
+
         <div class="sim-insight-item">
-          <div class="sim-insight-item-title">④ 종합 태그</div>
-          <div class="sim-insight-item-desc">${tags.map(t=>t.text).join(' · ')}</div>
+          <div class="sim-insight-item-title">④ 시뮬레이션 기준 평가</div>
+          <div class="sim-insight-item-desc">${part4.join('<br>')}</div>
+        </div>
+
+        <div class="sim-insight-item" style="border-color:rgba(240,192,64,.22);background:rgba(240,192,64,.06)">
+          <div class="sim-insight-item-title" style="color:var(--accent)">✅ 최종 결론</div>
+          <div class="sim-insight-item-desc" style="color:var(--text)">${conclusion}</div>
         </div>
       </div>
     </div>
   `;
 
   area.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function getZoneCounts(nums){
+  const z = [0,0,0,0,0];
+  nums.forEach(n=>{
+    if(n <= 10) z[0]++;
+    else if(n <= 20) z[1]++;
+    else if(n <= 30) z[2]++;
+    else if(n <= 40) z[3]++;
+    else z[4]++;
+  });
+  return z;
+}
+
+function getRecentHotCount(nums){
+  const hist = getFullHistory().slice(-10);
+  const freq = {};
+  hist.forEach(r => (r.nums || []).forEach(n => {
+    freq[n] = (freq[n] || 0) + 1;
+  }));
+
+  const hotNums = Object.entries(freq)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,12)
+    .map(([n])=>Number(n));
+
+  return nums.filter(n => hotNums.includes(n)).length;
+}
+
+function getRecentColdCount(nums){
+  const hist = getFullHistory().slice(-15);
+  const seen = new Set();
+  hist.forEach(r => (r.nums || []).forEach(n => seen.add(n)));
+  return nums.filter(n => !seen.has(n)).length;
+}
+
+function getCarryOverCount(nums){
+  const prev = getPrev() || [];
+  return nums.filter(n => prev.includes(n)).length;
+}
+
+function getTailDuplicateCount(nums){
+  const m = {};
+  nums.forEach(n=>{
+    const t = n % 10;
+    m[t] = (m[t] || 0) + 1;
+  });
+  let dup = 0;
+  Object.values(m).forEach(v=>{
+    if(v >= 2) dup += (v - 1);
+  });
+  return dup;
+}
+
+function getSimPatternGrade(nums){
+  const sum = nums.reduce((a,b)=>a+b,0);
+  const {odd,even} = getOE(nums);
+  const {lo,hi} = getHL(nums);
+  const zones = getZoneCounts(nums);
+  const consecutive = hasConsec(nums);
+  const zoneMax = Math.max(...zones);
+
+  let score = 0;
+
+  if(sum >= 100 && sum <= 170) score += 2;
+  if(Math.abs(odd-even) <= 1) score += 2;
+  if(Math.abs(lo-hi) <= 1) score += 2;
+  if(zoneMax <= 2) score += 2;
+  if(consecutive) score += 1;
+
+  if(score >= 8){
+    return {
+      label:'안정 분산형',
+      desc:'균형과 분산이 잘 맞아 참고용으로 유지 가치가 높은 조합입니다.'
+    };
+  }
+  if(score >= 5){
+    return {
+      label:'무난 균형형',
+      desc:'극단적 치우침은 적지만 일부 포인트에서 보완 여지가 있는 조합입니다.'
+    };
+  }
+  return {
+    label:'공격 편향형',
+    desc:'특정 분포가 강하게 나타나므로 메인보다는 보조 조합으로 보는 것이 좋습니다.'
+  };
+}
+
+function getSetRelativeComment(target){
+  if(!Array.isArray(simTargetSet) || simTargetSet.length <= 1){
+    return '현재 단일 조합 기준으로 해석하는 것이 적절합니다';
+  }
+
+  const ranked = simTargetSet
+    .map(nums => ({
+      nums,
+      score: getSimInsightScore(nums)
+    }))
+    .sort((a,b)=>b.score-a.score);
+
+  const idx = ranked.findIndex(x => x.nums.join(',') === target.join(','));
+  if(idx === 0) return '세트 내 상위권 조합으로 볼 수 있습니다';
+  if(idx <= 2) return '세트 내 중상위권 조합으로 볼 수 있습니다';
+  return '세트 내에서는 보조 성격의 조합에 가깝습니다';
+}
+
+function buildFinalConclusion(data){
+  const {
+    lo, hi, odd, even, sum, consecutive,
+    hotCount, coldCount, carryCount,
+    zoneMax, tailDup, simGrade
+  } = data;
+
+  let tone = '안정형';
+  if(Math.abs(lo-hi) > 1 || Math.abs(odd-even) > 1 || zoneMax >= 3) tone = '편향형';
+  if(simGrade.label === '안정 분산형') tone = '안정형';
+  if(simGrade.label === '공격 편향형') tone = '공격형';
+
+  let flow = hotCount >= 2
+    ? '최근 흐름 반영도는 좋은 편'
+    : hotCount === 1
+      ? '최근 흐름은 일부만 반영'
+      : '최근 흐름 반영은 강하지 않은 편';
+
+  let balance = (Math.abs(lo-hi) <= 1 && Math.abs(odd-even) <= 1 && zoneMax <= 2)
+    ? '전체 균형감은 우수합니다'
+    : '구성 균형은 약간의 편차가 있습니다';
+
+  let risk = tailDup <= 1 && sum >= 100 && sum <= 170
+    ? '과도한 몰림 위험은 크지 않습니다'
+    : '일부 몰림 요소는 체크가 필요합니다';
+
+  let add = '';
+  if(consecutive) add += ' 연속번호가 포함돼 최근 자주 보이는 패턴 감각도 일부 갖고 있습니다.';
+  if(coldCount >= 2) add += ' 장기 미출현 번호가 함께 섞여 있어 반등형 기대도 약간 있습니다.';
+  if(carryCount > 0) add += ` 이월수 성격 번호 ${carryCount}개가 포함되어 흐름 연결성도 있습니다.`;
+
+  return `이 번호는 ${tone} 성향의 조합입니다. ${balance} ${flow}이며, ${risk}. ${simGrade.desc}${add}`;
 }
 
 function handleSimTop3Click(){
