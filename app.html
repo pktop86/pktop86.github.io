@@ -1640,7 +1640,7 @@ h1{
 
       <div class="lb-sticky-bar" id="lb-sticky-bar">
        <div class="lb-left">
-        <div class="lb-streak" id="lb-streak-badge">🔥연속🔥 0D</div>
+        <div class="lb-streak" id="lb-streak-badge">연속 0Day</div>
         <button class="lb-mini-btn attend" id="lb-attend-btn">출석체크</button>
         <button class="lb-mini-btn attend-done" id="lb-attend-check" disabled style="height:22px;padding:0 8px;border-radius:7px;border:1px solid rgba(64,208,128,.25);background:rgba(64,208,128,.08);color:var(--green);font-size:9px;font-weight:800;font-family:inherit;cursor:default;display:inline-flex;align-items:center;justify-content:center;opacity:.4">✔</button>
       </div>
@@ -2360,17 +2360,16 @@ function renderLBUI(){
 
   if(balanceEl) balanceEl.textContent = state.balance + 'LB';
 
-  if(streakEl){
-    if(state.streak >= 10){
-      streakEl.classList.add('star');
-      streakEl.textContent = '★';
-      streakEl.title = state.streak + '일 연속 출석';
-    }else{
-      streakEl.classList.remove('star');
-      streakEl.textContent = '연속 ' + state.streak + 'D';
-      streakEl.title = state.streak + '일 연속 출석';
-    }
+ if(streakEl){
+  if(state.streak >= 10){
+    streakEl.classList.add('star');
+    streakEl.textContent = '연속 🔥' + state.streak + 'Day';
+  }else{
+    streakEl.classList.remove('star');
+    streakEl.textContent = '연속 ' + state.streak + 'Day';
   }
+  streakEl.title = state.streak + '일 연속 출석';
+}
   const checkBtn = document.getElementById('lb-attend-check');
   if(checkBtn){
     const today = getKstDateKey();
