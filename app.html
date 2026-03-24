@@ -2226,7 +2226,6 @@ function getNextUpdateDeadline(fromTimestamp){
 function saveUpdateTime(){
   try{
     localStorage.setItem(UPDATE_CACHE_TIME_KEY, String(Date.now()));
-    localStorage.setItem(UPDATE_CACHE_ROUND_KEY, String(latestRound));
   }catch(e){}
 }
  
