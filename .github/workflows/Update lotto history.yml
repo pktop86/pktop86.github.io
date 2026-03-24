@@ -2,7 +2,8 @@ name: Update Lotto Draw History
 
 permissions:
  contents: write
- 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
 on:
   schedule:
     # 매주 토요일 21:15 KST = 12:15 UTC
