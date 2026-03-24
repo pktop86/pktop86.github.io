@@ -2078,9 +2078,9 @@ h1{
         <button id="sim-save-to-mynums" style="display:none;background:rgba(64,208,128,.15);color:var(--green);border:1px solid rgba(64,208,128,.3);border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">⭐ 내 번호에 저장</button>
       </div>
       <div class="sim-btns">
-        <button class="sim-btn sim-btn-free" id="sim-btn-100" disabled>🎲 1,000회 (무료)</button>
-        <button class="sim-btn sim-btn-ad" id="sim-btn-1000" disabled>📺 10,000회</button>
-        <button class="sim-btn sim-btn-ad" id="sim-btn-10000" disabled>📺 100,000회</button>
+        <button class="sim-btn sim-btn-free" id="sim-btn-1000" disabled>🎲 1,000회 (무료)</button>
+        <button class="sim-btn sim-btn-ad" id="sim-btn-10000" disabled>📺 10,000회</button>
+        <button class="sim-btn sim-btn-ad" id="sim-btn-100000" disabled>📺 100,000회</button>
       </div>
       <!-- 직접 번호 선택 -->
       <div style="margin-bottom:10px">
@@ -2849,6 +2849,7 @@ if(sim10000 && !sim10000.dataset.lbBound){
 if(sim100000 && !sim100000.dataset.lbBound){
   sim100000.innerHTML = `📺 100,000회 <span class="lb-cost">${LB_COSTS.sim100000}LB</span>`;
   sim100000.dataset.lbBound = '1';
+}
 }
 
 function initLBSystem(){
