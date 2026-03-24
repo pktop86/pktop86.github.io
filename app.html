@@ -2126,47 +2126,7 @@ h1{
 
  
 
-<script>
-(function(){
-  const overlay = document.getElementById('sys-modal-overlay');
-  const msgEl   = document.getElementById('sys-modal-msg');
-  const btnsEl  = document.getElementById('sys-modal-btns');
 
-  function showModal(msg, buttons){
-    msgEl.textContent = msg;
-    btnsEl.innerHTML = '';
-    overlay.style.display = 'flex';
-    return new Promise(resolve => {
-      buttons.forEach(({label, value, primary}) => {
-        const btn = document.createElement('button');
-        btn.textContent = label;
-        btn.style.cssText = `width:100%;padding:13px;border:none;border-radius:10px;font-size:13px;font-weight:900;font-family:inherit;cursor:pointer;${
-          primary
-            ? 'background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000'
-            : 'background:var(--card);color:var(--muted);border:1px solid var(--border)'
-        }`;
-        btn.addEventListener('click', () => {
-          overlay.style.display = 'none';
-          resolve(value);
-        });
-        btnsEl.appendChild(btn);
-      });
-    });
-  }
-
-  window.alert = (msg) => showModal(String(msg), [
-    { label:'확인', value:true, primary:true }
-  ]);
-
-  window.confirm = (msg) => showModal(String(msg), [
-    { label:'확인', value:true,  primary:true },
-    { label:'취소', value:false, primary:false }
-  ]);
-
-  // confirm은 동기 반환이 필요한 곳 있으면 아래처럼 await 필요
-  // 기존 confirm() 호출부가 if(confirm(...)) 형태면 async 처리 필요
-})();
-</script>
 
   
 <script src="draw-history-261-latest.js"></script>
