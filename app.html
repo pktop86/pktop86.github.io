@@ -2131,10 +2131,56 @@ h1{
 </div>
 
 <script>
-  window._nativeAlert = window.alert.bind(window);
-  window._nativeConfirm = window.confirm.bind(window);
-  window.alert = (msg) => window._nativeAlert('로또엔진:\n' + msg);
-  window.confirm = (msg) => window._nativeConfirm('로또엔진:\n' + msg);
+ <!-- 커스텀 alert/confirm 모달 -->
+<div id="sys-modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--panel);border:1px solid rgba(240,192,64,.25);border-radius:20px;padding:26px 22px;max-width:320px;width:100%;text-align:center;animation:modalIn .25s ease">
+    <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px">🎰 로또엔진</div>
+    <div id="sys-modal-msg" style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:20px;white-space:pre-line"></div>
+    <div id="sys-modal-btns" style="display:flex;gap:8px;flex-direction:column"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const overlay = document.getElementById('sys-modal-overlay');
+  const msgEl   = document.getElementById('sys-modal-msg');
+  const btnsEl  = document.getElementById('sys-modal-btns');
+
+  function showModal(msg, buttons){
+    msgEl.textContent = msg;
+    btnsEl.innerHTML = '';
+    overlay.style.display = 'flex';
+    return new Promise(resolve => {
+      buttons.forEach(({label, value, primary}) => {
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        btn.style.cssText = `width:100%;padding:13px;border:none;border-radius:10px;font-size:13px;font-weight:900;font-family:inherit;cursor:pointer;${
+          primary
+            ? 'background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000'
+            : 'background:var(--card);color:var(--muted);border:1px solid var(--border)'
+        }`;
+        btn.addEventListener('click', () => {
+          overlay.style.display = 'none';
+          resolve(value);
+        });
+        btnsEl.appendChild(btn);
+      });
+    });
+  }
+
+  window.alert = (msg) => showModal(String(msg), [
+    { label:'확인', value:true, primary:true }
+  ]);
+
+  window.confirm = (msg) => showModal(String(msg), [
+    { label:'확인', value:true,  primary:true },
+    { label:'취소', value:false, primary:false }
+  ]);
+
+  // confirm은 동기 반환이 필요한 곳 있으면 아래처럼 await 필요
+  // 기존 confirm() 호출부가 if(confirm(...)) 형태면 async 처리 필요
+})();
+</script>
 </script>
   
 <script src="draw-history-261-latest.js"></script>
@@ -2476,7 +2522,7 @@ function claimTodayAttendance(){
   alert(`${nextStreak}일 출석 완료!\n+${reward}LB 지급되었습니다.`);
 }
 function askAndCharge(callback){
-  if(!confirm('광고를 시청하시고 25LB를 충전 하시겠습니까?')) return;
+  if(!await confirm('광고를 시청하시고 25LB를 충전 하시겠습니까?')) return;
   openLBChargeModal(callback);
 }
 function openLBChargeModal(onCharged){
@@ -5040,13 +5086,13 @@ document.getElementById('sim-save-to-mynums').addEventListener('click', async fu
 document.getElementById('sim-btn-100').addEventListener('click',()=>runSimulation(100));
 document.getElementById('sim-btn-1000').addEventListener('click',()=>{
   if(simNums.length===0)return;
-  if(!confirm(`${LB_COSTS.sim1000}LB를 소모해서 1000회 시뮬레이션을 돌리시겠습니까?`)) return;
+  if(!await confirm(`${LB_COSTS.sim1000}LB를 소모해서 1000회 시뮬레이션을 돌리시겠습니까?`)) return;
   if(!spendLB(LB_COSTS.sim1000,'1000회 시뮬레이션',()=>{ if(spendLB(LB_COSTS.sim1000)) runSimulation(1000); })) return;
   runSimulation(1000);
 });
 document.getElementById('sim-btn-10000').addEventListener('click',()=>{
   if(simNums.length===0)return;
-  if(!confirm(`${LB_COSTS.sim10000}LB를 소모해서 10000회 시뮬레이션을 돌리시겠습니까?`)) return;
+  if(!await confirm(`${LB_COSTS.sim10000}LB를 소모해서 10000회 시뮬레이션을 돌리시겠습니까?`)) return;
   if(!spendLB(LB_COSTS.sim10000,'10000회 시뮬레이션',()=>{ if(spendLB(LB_COSTS.sim10000)) runSimulation(10000); })) return;
   runSimulation(10000);
 });
@@ -5320,7 +5366,7 @@ async function joinChallenge(numbers, sourceType){
 }
 // 챌린지 취소
   async function cancelChallenge(){
-  if(!confirm('챌린지 참여를 취소 하시겠습니까?')) return;
+  if(!await confirm('챌린지 참여를 취소 하시겠습니까?')) return;
   if(!db||!currentUid) return;
   const roundId=String(latestRound);
   try{
@@ -5778,7 +5824,7 @@ document.getElementById('myinfo-save-btn').addEventListener('click', ()=>{
  
 // 초기화 버튼
 document.getElementById('myinfo-reset-btn').addEventListener('click', ()=>{
-  if(!confirm('내 정보를 초기화하겠습니까?')) return;
+  if(!await confirm('내 정보를 초기화하겠습니까?')) return;
   localStorage.removeItem(MYINFO_KEY);
   document.getElementById('myinfo-birth').value = '';
   document.getElementById('myinfo-hour').value = '';
