@@ -2877,13 +2877,18 @@ function claimLBCharge(){
 }
 
 function injectLBCostLabels(){
-  document.querySelectorAll('.seg-btn').forEach(btn=>{
+  document.querySelectorAll('.seg-btn[data-n]').forEach(btn=>{
     const n = Number(btn.dataset.n || 0);
     const cost = n >= 20 ? LB_COSTS.gen20 : n >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
-    if(!btn.querySelector('.lb-cost-sm')){
+
+    const badge = btn.querySelector('.lb-cost-sm');
+    if(!badge){
       btn.insertAdjacentHTML('beforeend', `<span class="lb-cost-sm">${cost}LB</span>`);
+    }else{
+      badge.textContent = `${cost}LB`;
     }
   });
+}
  
 function initLBSystem(){
   renderLBUI();
@@ -3288,30 +3293,32 @@ function startAdTimer(){
 }
 confirmBtn.addEventListener('click',()=>{
   if(pendingCount === 'sim-1000'){
-    if(!spendLB(LB_COSTS.sim1000, '1000회 시뮬레이션')) return;
     hideAdModal();
     runSimulation(1000);
     return;
   }
 
   if(pendingCount === 'sim-10000'){
-    if(!spendLB(LB_COSTS.sim10000, '10000회 시뮬레이션')) return;
+    if(!spendLB(LB_COSTS.sim10000, '10,000회 시뮬레이션')) return;
     hideAdModal();
     runSimulation(10000);
     return;
   }
 
-  const drawCost = pendingCount >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
+  if(pendingCount === 'sim-100000'){
+    if(!spendLB(LB_COSTS.sim100000, '100,000회 시뮬레이션')) return;
+    hideAdModal();
+    runSimulation(100000);
+    return;
+  }
+
+  const drawCost = pendingCount >= 20 ? LB_COSTS.gen20 : pendingCount >= 10 ? LB_COSTS.gen10 : LB_COSTS.gen5;
   if(!spendLB(drawCost, `${pendingCount}줄 생성`)) return;
 
   hideAdModal();
-  if(pendingCount < 10){
-    usedFree = 0;
-    saveUsedFree(0);
-    updateFreeCounter();
-  }
   doGenerate(pendingCount);
 });
+  
 cancelBtn.addEventListener('click',hideAdModal);
 adModal.addEventListener('click',e=>{if(e.target===adModal)hideAdModal();});
  
@@ -5490,354 +5497,6 @@ function closeSimSetModal(){
 
 document.getElementById('sim-set-close')?.addEventListener('click', closeSimSetModal);
 document.getElementById('sim-set-backdrop')?.addEventListener('click', closeSimSetModal);
-
-async function saveCurrentInsightNumber(){
-  const nums = simTargetSet?.[0];
-  if(!nums || nums.length !== 6){
-    alert('저장할 번호가 없습니다.');
-    return;
-  }
-  if(!currentUid || !db){
-    alert('로그인 준비 후 다시 시도해주세요.');
-    return;
-  }
-
-  try{
-    await addDoc(collection(db,'picks'),{
-      uid:currentUid,
-      round:getActivePickRound(),
-      nums:[...nums].sort((a,b)=>a-b),
-      prize:checkPrize(nums,latestWinNums,latestBonusNum),
-      sourceType:'sim_saved',
-      createdAt:serverTimestamp()
-    });
-    loadMyNums();
-    alert('후보번호로 저장되었습니다.');
-  }catch(e){
-    console.error(e);
-    alert('저장 중 오류가 발생했습니다.');
-  }
-}
-
-function rerunCurrentInsightNumber(){
-  const nums = simTargetSet?.[0];
-  if(!nums || nums.length !== 6){
-    alert('번호가 없습니다.');
-    return;
-  }
-  updateSimTarget(nums, false);
-  runSimulation(1000);
-}
-
-function handleSimAnalysisClick(){
-  if(!spendLB(3, '이 번호 자세히 보기')) return;
-
-  const area = document.getElementById('sim-insight-area');
-  if(!area) return;
-
-  const target = simTargetSet?.[0];
-  if(!target || target.length !== 6){
-    area.innerHTML = `<div class="sim-inline-note">분석할 번호가 없습니다.</div>`;
-    return;
-  }
-
-  const {lo,hi} = getHL(target);
-  const {odd,even} = getOE(target);
-  const sum = target.reduce((a,b)=>a+b,0);
-  const consecutive = hasConsec(target);
-  const zones = getZoneCounts(target);
-
-  const hotCount = getRecentHotCount(target);
-  const coldCount = getRecentColdCount(target);
-  const carryCount = getCarryOverCount(target);
-
-  const zoneMax = Math.max(...zones);
-  const zoneSpreadGood = zoneMax <= 2;
-  const tailDup = getTailDuplicateCount(target);
-
-  const simGrade = getSimPatternGrade(target);
-
-  let part1 = [];
-  part1.push(`고저 비율은 ${lo}:${hi}${Math.abs(lo-hi)<=1 ? '로 균형형' : '로 약간 치우친 편'}입니다.`);
-  part1.push(`홀짝 비율은 ${odd}:${even}${Math.abs(odd-even)<=1 ? '로 안정적' : '로 편차가 있는 편'}입니다.`);
-  part1.push(`번호 합계는 ${sum}이며 ${sum>=100 && sum<=170 ? '안정 구간에 들어갑니다.' : '평균 구간에서 다소 벗어납니다.'}`);
-  part1.push(consecutive ? '연속번호가 포함되어 최근 자주 보이는 흐름과 일부 유사합니다.' : '연속번호 없이 분산형으로 구성되어 있습니다.');
-
-  let part2 = [];
-  part2.push(`최근 흐름 번호는 ${hotCount}개 포함되어 있습니다.`);
-  part2.push(`장기 미출현 성격의 번호는 ${coldCount}개 포함되어 있습니다.`);
-  part2.push(carryCount > 0 ? `직전 회차 이월수 성격 번호가 ${carryCount}개 포함되어 있습니다.` : '직전 회차 이월수는 포함되지 않았습니다.');
-
-  let part3 = [];
-  part3.push(zoneSpreadGood ? '구간 분포가 비교적 고르게 퍼져 있습니다.' : '특정 구간으로 다소 몰린 구성입니다.');
-  part3.push(`끝자리 중복은 ${tailDup}회 감지되며 ${tailDup <= 1 ? '끝수 분산은 양호한 편입니다.' : '끝수 중복이 조금 있는 편입니다.'}`);
-  part3.push(zoneMax <= 2 ? '한 구간 과밀이 없어 안정형 패턴에 가깝습니다.' : '한 구간 집중도가 있어 공격형 성향이 있습니다.');
-
-  let part4 = [];
-  part4.push(`시뮬레이션 관점에서는 "${simGrade.label}" 성향으로 평가됩니다.`);
-  part4.push(simGrade.desc);
-  part4.push(`현재 세트 안에서는 ${getSetRelativeComment(target)}.`);
-
-  const conclusion = buildFinalConclusion({
-    lo, hi, odd, even, sum, consecutive,
-    hotCount, coldCount, carryCount,
-    zoneMax, tailDup, simGrade
-  });
-
-  area.innerHTML = `
-    <div class="sim-insight-box">
-      <div class="sim-insight-title">🔍 AI 번호 진단 리포트</div>
-
-      <div class="sim-insight-list">
-        <div class="sim-insight-item">
-          <div class="sim-insight-item-title">① 기본 분포 분석</div>
-          <div class="sim-insight-item-desc">${part1.join('<br>')}</div>
-        </div>
-
-        <div class="sim-insight-item">
-          <div class="sim-insight-item-title">② 최근 흐름 반영</div>
-          <div class="sim-insight-item-desc">${part2.join('<br>')}</div>
-        </div>
-
-        <div class="sim-insight-item">
-          <div class="sim-insight-item-title">③ 패턴 안정성 분석</div>
-          <div class="sim-insight-item-desc">${part3.join('<br>')}</div>
-        </div>
-
-        <div class="sim-insight-item">
-          <div class="sim-insight-item-title">④ 시뮬레이션 기준 평가</div>
-          <div class="sim-insight-item-desc">${part4.join('<br>')}</div>
-        </div>
-
-        <div class="sim-insight-item" style="border-color:rgba(240,192,64,.22);background:rgba(240,192,64,.06)">
-          <div class="sim-insight-item-title" style="color:var(--accent)">✅ 최종 결론</div>
-          <div class="sim-insight-item-desc" style="color:var(--text)">${conclusion}</div>
-        </div>
-
-        <div class="sim-cta-btns" style="margin-top:10px">
-          <button class="sim-cta-btn secondary" id="sim-save-current-btn">⭐ 이 번호 내 번호에 저장</button>
-          <button class="sim-cta-btn" id="sim-rerun-1000-btn">🎲 이 번호로 다시 1,000회 돌리기</button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  setTimeout(()=>{
-    document.getElementById('sim-save-current-btn')?.addEventListener('click', saveCurrentInsightNumber);
-    document.getElementById('sim-rerun-1000-btn')?.addEventListener('click', rerunCurrentInsightNumber);
-  }, 0);
-
-  area.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-function handleSimTop3Click(){
-  if(!spendLB(5, 'TOP3 추천 보기')) return;
-
-  const area = document.getElementById('sim-insight-area');
-  if(!area) return;
-
-  const picks = buildSimTop3Recommendations();
-  if(!picks.length){
-    area.innerHTML = `<div class="sim-inline-note">추천할 세트가 없습니다.</div>`;
-    return;
-  }
-
-  area.innerHTML = `
-    <div class="sim-insight-box">
-      <div class="sim-insight-title">🎯 TOP3 추천 보기</div>
-      <div class="sim-top3-list">
-        ${picks.map((item, idx)=>`
-          <div class="sim-top3-item">
-            <div class="sim-top3-head">
-              <div class="sim-top3-rank">TOP ${idx+1}</div>
-              <div class="sim-top3-score">추천점수 ${item.score}</div>
-            </div>
-            <div class="sim-top3-balls">
-              ${item.nums.map(n=>`<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`).join('')}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-
-  area.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-function buildSimTop3Recommendations(){
-  const source = Array.isArray(simTargetSet) && simTargetSet.length
-    ? simTargetSet
-    : (simNums?.length ? [simNums] : []);
-
-  return source
-    .map(nums=>({
-      nums:[...nums].sort((a,b)=>a-b),
-      score:getSimInsightScore(nums)
-    }))
-    .sort((a,b)=>b.score-a.score)
-    .slice(0,3);
-}
-
-function getSimInsightScore(nums){
-  const {lo,hi} = getHL(nums);
-  const {odd,even} = getOE(nums);
-  const sum = nums.reduce((a,b)=>a+b,0);
-  const consecutive = hasConsec(nums) ? 8 : 4;
-
-  let score = 70;
-
-  if(Math.abs(lo-hi) <= 1) score += 10;
-  else if(Math.abs(lo-hi) <= 2) score += 6;
-
-  if(Math.abs(odd-even) <= 1) score += 10;
-  else if(Math.abs(odd-even) <= 2) score += 6;
-
-  if(sum >= 100 && sum <= 170) score += 8;
-  else if(sum >= 90 && sum <= 180) score += 4;
-
-  score += consecutive;
-
-  return Math.min(100, score);
-}
-
-function getZoneCounts(nums){
-  const z = [0,0,0,0,0];
-  nums.forEach(n=>{
-    if(n <= 10) z[0]++;
-    else if(n <= 20) z[1]++;
-    else if(n <= 30) z[2]++;
-    else if(n <= 40) z[3]++;
-    else z[4]++;
-  });
-  return z;
-}
-
-function getRecentHotCount(nums){
-  const hist = getFullHistory().slice(-10);
-  const freq = {};
-  hist.forEach(r => (r.nums || []).forEach(n => {
-    freq[n] = (freq[n] || 0) + 1;
-  }));
-
-  const hotNums = Object.entries(freq)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0,12)
-    .map(([n])=>Number(n));
-
-  return nums.filter(n => hotNums.includes(n)).length;
-}
-
-function getRecentColdCount(nums){
-  const hist = getFullHistory().slice(-15);
-  const seen = new Set();
-  hist.forEach(r => (r.nums || []).forEach(n => seen.add(n)));
-  return nums.filter(n => !seen.has(n)).length;
-}
-
-function getCarryOverCount(nums){
-  const prev = getPrev() || [];
-  return nums.filter(n => prev.includes(n)).length;
-}
-
-function getTailDuplicateCount(nums){
-  const m = {};
-  nums.forEach(n=>{
-    const t = n % 10;
-    m[t] = (m[t] || 0) + 1;
-  });
-  let dup = 0;
-  Object.values(m).forEach(v=>{
-    if(v >= 2) dup += (v - 1);
-  });
-  return dup;
-}
-
-function getSimPatternGrade(nums){
-  const sum = nums.reduce((a,b)=>a+b,0);
-  const {odd,even} = getOE(nums);
-  const {lo,hi} = getHL(nums);
-  const zones = getZoneCounts(nums);
-  const consecutive = hasConsec(nums);
-  const zoneMax = Math.max(...zones);
-
-  let score = 0;
-
-  if(sum >= 100 && sum <= 170) score += 2;
-  if(Math.abs(odd-even) <= 1) score += 2;
-  if(Math.abs(lo-hi) <= 1) score += 2;
-  if(zoneMax <= 2) score += 2;
-  if(consecutive) score += 1;
-
-  if(score >= 8){
-    return {
-      label:'안정 분산형',
-      desc:'균형과 분산이 잘 맞아 참고용으로 유지 가치가 높은 조합입니다.'
-    };
-  }
-  if(score >= 5){
-    return {
-      label:'무난 균형형',
-      desc:'극단적 치우침은 적지만 일부 포인트에서 보완 여지가 있는 조합입니다.'
-    };
-  }
-  return {
-    label:'공격 편향형',
-    desc:'특정 분포가 강하게 나타나므로 메인보다는 보조 조합으로 보는 것이 좋습니다.'
-  };
-}
-
-function getSetRelativeComment(target){
-  if(!Array.isArray(simTargetSet) || simTargetSet.length <= 1){
-    return '현재 단일 조합 기준으로 해석하는 것이 적절합니다';
-  }
-
-  const ranked = simTargetSet
-    .map(nums => ({
-      nums,
-      score: getSimInsightScore(nums)
-    }))
-    .sort((a,b)=>b.score-a.score);
-
-  const idx = ranked.findIndex(x => x.nums.join(',') === target.join(','));
-  if(idx === 0) return '세트 내 상위권 조합으로 볼 수 있습니다';
-  if(idx <= 2) return '세트 내 중상위권 조합으로 볼 수 있습니다';
-  return '세트 내에서는 보조 성격의 조합에 가깝습니다';
-}
-
-function buildFinalConclusion(data){
-  const {
-    lo, hi, odd, even, sum, consecutive,
-    hotCount, coldCount, carryCount,
-    zoneMax, tailDup, simGrade
-  } = data;
-
-  let tone = '안정형';
-  if(Math.abs(lo-hi) > 1 || Math.abs(odd-even) > 1 || zoneMax >= 3) tone = '편향형';
-  if(simGrade.label === '안정 분산형') tone = '안정형';
-  if(simGrade.label === '공격 편향형') tone = '공격형';
-
-  let flow = hotCount >= 2
-    ? '최근 흐름 반영도는 좋은 편'
-    : hotCount === 1
-      ? '최근 흐름은 일부만 반영'
-      : '최근 흐름 반영은 강하지 않은 편';
-
-  let balance = (Math.abs(lo-hi) <= 1 && Math.abs(odd-even) <= 1 && zoneMax <= 2)
-    ? '전체 균형감은 우수합니다'
-    : '구성 균형은 약간의 편차가 있습니다';
-
-  let risk = tailDup <= 1 && sum >= 100 && sum <= 170
-    ? '과도한 몰림 위험은 크지 않습니다'
-    : '일부 몰림 요소는 체크가 필요합니다';
-
-  let add = '';
-  if(consecutive) add += ' 연속번호가 포함돼 최근 자주 보이는 패턴 감각도 일부 갖고 있습니다.';
-  if(coldCount >= 2) add += ' 장기 미출현 번호가 함께 섞여 있어 반등형 기대도 약간 있습니다.';
-  if(carryCount > 0) add += ` 이월수 성격 번호 ${carryCount}개가 포함되어 흐름 연결성도 있습니다.`;
-
-  return `이 번호는 ${tone} 성향의 조합입니다. ${balance} ${flow}이며, ${risk}. ${simGrade.desc}${add}`;
-}
-
   
 // 시뮬레이션 버튼 이벤트
 document.getElementById('sim-btn-1000').addEventListener('click', ()=>{
