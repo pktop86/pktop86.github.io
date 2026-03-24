@@ -1700,6 +1700,52 @@ h1{
   gap:5px;
 }
 
+.sim-cta-box{
+  margin-top:14px;
+  padding:14px;
+  border-radius:14px;
+  background:linear-gradient(135deg, rgba(240,192,64,.15), rgba(224,92,32,.15));
+  border:1px solid rgba(240,192,64,.35);
+  text-align:center;
+}
+
+.sim-cta-text{
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.sim-cta-sub{
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:12px;
+  line-height:1.5;
+}
+
+.sim-cta-btns{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.sim-cta-btn{
+  padding:10px 12px;
+  border-radius:10px;
+  border:none;
+  background:linear-gradient(135deg,#f0c040,#e05c20);
+  color:#000;
+  font-weight:900;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:12px;
+}
+
+.sim-cta-btn.secondary{
+  background:var(--card);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+
 
 </style>
 </head>
@@ -5110,7 +5156,14 @@ function renderSimResults(results,total){
   const failRate = total > 0 ? (failCount / total * 100).toFixed(3) : '0.000';
   const avg1 = results[1] > 0 ? Math.round(total / results[1]) : 0;
 
-  out.innerHTML = `
+  let ctaTitle = '👉 이 조합, 그냥 넘길래요?';
+  let ctaSub = '시뮬레이션 결과를 바탕으로 상위 조합 분석과 추천을 볼 수 있습니다.';
+  if(highWins >= Math.max(1, total * 0.01)){
+    ctaTitle = '🔥 상위 결과입니다. 분석 추천';
+    ctaSub = '이번 결과는 보통보다 좋습니다. 상위 조합 분석을 눌러보세요.';
+  }
+
+  out.innerHTML =
     <div class="sim-results">
       <div style="font-size:11px;color:var(--muted);margin-bottom:10px;text-align:center">
         ${simTargetSet?.length > 1 ? `${simTargetSet.length}줄 세트 기준 최고 등수로 계산됨` : `선택 번호 기준 결과`}
@@ -5148,6 +5201,26 @@ function renderSimResults(results,total){
         </div>
       </div>
 
+  <div class="sim-cta-box">
+  <div class="sim-cta-text">
+    👉 이 조합, 그냥 넘길래요?
+  </div>
+
+  <div class="sim-cta-sub">
+    상위 확률 조합 분석과 추천을 확인할 수 있습니다
+  </div>
+
+  <div class="sim-cta-btns">
+    <button class="sim-cta-btn" id="sim-analysis-btn">
+      🔍 분석하기 (3LB)
+    </button>
+
+    <button class="sim-cta-btn secondary" id="sim-top3-btn">
+      🎯 TOP3 추천 (5LB)
+    </button>
+  </div>
+</div>
+
       ${results[1] > 0 ? `
         <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--accent)">
           🎉 1등 일치 확인 평균 ${avg1.toLocaleString()}회에 1번
@@ -5157,6 +5230,15 @@ function renderSimResults(results,total){
           고등수는 원래 매우 희소하며, 세트 기준 결과로 해석하는 것이 좋습니다
         </div>
       `}
+
+      <div class="sim-cta-box">
+        <div class="sim-cta-text">${ctaTitle}</div>
+        <div class="sim-cta-sub">${ctaSub}</div>
+        <div class="sim-cta-btns">
+          <button class="sim-cta-btn" id="sim-analysis-btn">🔍 상위 조합 분석 (3LB)</button>
+          <button class="sim-cta-btn secondary" id="sim-top3-btn">🎯 TOP3 추천 보기 (5LB)</button>
+        </div>
+      </div>
     </div>
   `;
 
@@ -5164,7 +5246,20 @@ function renderSimResults(results,total){
     out.querySelectorAll('.sim-bar-fill').forEach(el=>{
       el.style.width = el.dataset.w + '%';
     });
+
+    document.getElementById('sim-analysis-btn')?.addEventListener('click', handleSimAnalysisClick);
+    document.getElementById('sim-top3-btn')?.addEventListener('click', handleSimTop3Click);
   },100);
+}
+
+function handleSimAnalysisClick(){
+  if(!spendLB(3, '상위 조합 분석')) return;
+  alert('상위 조합 분석 기능은 다음 단계에서 붙이면 됩니다.\n현재는 LB 소모 구조만 먼저 연결한 상태입니다.');
+}
+
+function handleSimTop3Click(){
+  if(!spendLB(5, 'TOP3 추천 보기')) return;
+  alert('TOP3 추천 보기 기능은 다음 단계에서 붙이면 됩니다.\n현재는 LB 소모 구조만 먼저 연결한 상태입니다.');
 }
  
 function updateSimTarget(numsOrSet, isCustom=false){
@@ -5302,6 +5397,8 @@ document.getElementById('sim-custom-apply').addEventListener('click', ()=>{
   updateSimTarget(sorted, true); // isCustom=true → 저장 버튼 표시
   document.getElementById('sim-custom-area').style.display = 'none';
 });
+
+
 
 document.getElementById('sim-set-close')?.addEventListener('click', closeSimSetModal);
 document.getElementById('sim-set-backdrop')?.addEventListener('click', closeSimSetModal);
