@@ -2203,11 +2203,28 @@ function getNextSaturdayMs(){
 
 function shouldRunUpdate(){
   try{
+    // 현재 KST 시각이 토요일 21:15 이후 또는 일요일 새벽 3시 이전인지 확인
+    const kst = new Date(new Date().getTime() + 9*3600000);
+    const day = kst.getDay(), h = kst.getHours(), m = kst.getMinutes();
+    const isDrawWindow =
+      (day === 6 && (h > 21 || (h === 21 && m >= 15))) ||
+      (day === 0 && h < 3);
+
     const lastTime = Number(localStorage.getItem(UPDATE_CACHE_TIME_KEY) || 0);
-    if(!lastTime) return true;
-    // 마지막 업데이트 이후 다음 토요일 21:15가 지났으면 재실행
-    const lastUpdateNextSat = getNextUpdateDeadline(lastTime);
-    return Date.now() >= lastUpdateNextSat;
+
+    // 추첨 시간대가 아니고 + 이미 이번 주에 확인했으면 스킵
+    if(!isDrawWindow && lastTime){
+      const lastUpdateNextSat = getNextUpdateDeadline(lastTime);
+      if(Date.now() < lastUpdateNextSat) return false;
+    }
+
+    // 추첨 시간대라면 → 이미 이번 회차를 가져왔는지 확인
+    if(isDrawWindow && lastTime){
+      const savedRound = Number(localStorage.getItem(UPDATE_CACHE_TIME_KEY + '_round') || 0);
+      if(savedRound >= latestRound + 1) return false; // 이미 최신
+    }
+
+    return true;
   }catch(e){ return true; }
 }
 
@@ -2226,6 +2243,7 @@ function getNextUpdateDeadline(fromTimestamp){
 function saveUpdateTime(){
   try{
     localStorage.setItem(UPDATE_CACHE_TIME_KEY, String(Date.now()));
+    localStorage.setItem(UPDATE_CACHE_TIME_KEY + '_round', String(latestRound));
   }catch(e){}
 }
  
@@ -2726,28 +2744,43 @@ async function init(){
 // ── 자동업데이트 스케줄 ──
 // 자동 업데이트 (재시도 포함)
 async function autoUpdate(retry=0){
-  // 이번 주에 이미 업데이트했으면 스킵
+  // 추첨 시간대가 아니고 캐시가 유효하면 즉시 스킵
   if(!shouldRunUpdate()){
     setStatus('ok', `최신 상태 (261~${latestRound}회) · 내장 통계 사용 중`);
     if(currentUid) loadMyNums();
     return;
   }
 
+  // 추첨 시간대인지 확인 — 평일에는 API 호출 자체를 안 함
+  const kst = new Date(new Date().getTime() + 9*3600000);
+  const day = kst.getDay(), h = kst.getHours(), m = kst.getMinutes();
+  const isDrawWindow =
+    (day === 6 && (h > 21 || (h === 21 && m >= 15))) ||
+    (day === 0 && h < 3);
+
+  if(!isDrawWindow){
+    saveUpdateTime(); // 캐시 시간 기록해서 다음 접속 때도 스킵
+    setStatus('ok', `최신 상태 (261~${latestRound}회)`);
+    if(currentUid) loadMyNums();
+    return;
+  }
+
+  // 이하 기존 코드 동일
   setStatus('loading','최신 회차 확인 중...');
   try{
-    const oldRound=latestRound;
+    const oldRound = latestRound;
     const added = await fetchNewRounds();
     if(added > 0){
-      saveUpdateTime(); // 업데이트 성공 시 시간 저장
+      saveUpdateTime();
       setStatus('ok', `${added}회차 업데이트 완료 — 최신: ${latestRound}회`);
       updateStats(); renderFreqBars(); renderFreqGrid();
       renderPrizeHeader(); renderLatestDrawCard(); loadPrizeTab(latestRound);
       if(currentUid) loadMyNums();
-      if(latestRound!==oldRound){ resetChallengeState(); onAuthReady(()=>initChallenge()); }
+      if(latestRound !== oldRound){ resetChallengeState(); onAuthReady(()=>initChallenge()); }
       checkPrizeUnlock();
       maybeScoreCurrentChallenge();
     } else {
-      saveUpdateTime(); // 확인했으나 새 회차 없음도 기록
+      saveUpdateTime();
       setStatus('ok', `최신 상태 (261~${latestRound}회)`);
     }
     if(currentUid) loadMyNums();
