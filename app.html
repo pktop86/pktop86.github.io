@@ -5372,6 +5372,58 @@ function renderSimResults(results,total){
   },100);
 }
 
+function updateSimTarget(numsOrSet, isCustom=false){
+  const isSet = Array.isArray(numsOrSet?.[0]);
+
+  simTargetSet = isSet
+    ? numsOrSet.map(nums => [...nums].sort((a,b)=>a-b))
+    : [[...numsOrSet].sort((a,b)=>a-b)];
+
+  simNums = [...simTargetSet[0]];
+
+  const target = document.getElementById('sim-target');
+  if(!target) return;
+
+  if(simTargetSet.length === 1){
+    target.innerHTML = simNums.map(n =>
+      `<div class="ball ${ballCls(n)}" style="width:30px;height:30px;font-size:11px">${n}</div>`
+    ).join('');
+  }else{
+    target.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:12px;color:var(--accent);font-weight:800">🎯 ${simTargetSet.length}줄 세트 선택됨</span>
+        <span style="font-size:10px;color:var(--muted)">시뮬레이션은 세트 기준 최고 등수로 계산됩니다</span>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">
+        ${simTargetSet[0].map(n =>
+          `<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`
+        ).join('')}
+        <span style="align-self:center;font-size:10px;color:var(--muted)">외 ${simTargetSet.length-1}줄</span>
+        <button type="button" class="sim-set-view-btn" id="sim-set-view-btn">세트보기</button>
+      </div>
+    `;
+  }
+
+  ['sim-btn-1000','sim-btn-10000','sim-btn-100000'].forEach(id=>{
+    const b = document.getElementById(id);
+    if(b){
+      b.disabled = false;
+      b.style.opacity = '1';
+    }
+  });
+
+  const saveBtn = document.getElementById('sim-save-to-mynums');
+  if(saveBtn){
+    const canSaveSingle = isCustom && simTargetSet.length === 1;
+    saveBtn.style.display = canSaveSingle ? 'block' : 'none';
+    saveBtn._nums = canSaveSingle ? [...simTargetSet[0]] : null;
+  }
+
+  const setViewBtn = document.getElementById('sim-set-view-btn');
+  if(setViewBtn){
+    setViewBtn.onclick = openSimSetModal;
+  }
+}
 
 async function saveCurrentInsightNumber(){
   const nums = simTargetSet?.[0];
