@@ -2277,8 +2277,8 @@ const LB_COSTS = {
   gen5: 5,
   gen10: 7,
   gen20: 10,
-  sim1000: 10,
-  sim10000: 50,
+  sim1000: 1,
+  sim10000: 3,
   chargeReward: 25
 };
 
@@ -2527,11 +2527,11 @@ function injectLBCostLabels(){
   const sim10000 = document.getElementById('sim-btn-10000');
 
   if(sim1000 && !sim1000.dataset.lbBound){
-    sim1000.innerHTML = `📺 1000회 <span class="lb-cost">7 ${LB_COSTS.sim1000}LB</span>`;
+    sim1000.innerHTML = `📺 1000회 <span class="lb-cost">${LB_COSTS.sim1000}LB</span>`;
     sim1000.dataset.lbBound = '1';
   }
   if(sim10000 && !sim10000.dataset.lbBound){
-    sim10000.innerHTML = `📺 10000회 <span class="lb-cost">7 ${LB_COSTS.sim10000}LB</span>`;
+    sim10000.innerHTML = `📺 10000회 <span class="lb-cost">${LB_COSTS.sim10000}LB</span>`;
     sim10000.dataset.lbBound = '1';
   }
 }
@@ -5032,11 +5032,13 @@ document.getElementById('sim-save-to-mynums').addEventListener('click', async fu
 document.getElementById('sim-btn-100').addEventListener('click',()=>runSimulation(100));
 document.getElementById('sim-btn-1000').addEventListener('click',()=>{
   if(simNums.length===0)return;
+  if(!confirm(`${LB_COSTS.sim1000}LB를 소모해서 1000회 시뮬레이션을 돌리시겠습니까?`)) return;
   if(!spendLB(LB_COSTS.sim1000,'1000회 시뮬레이션',()=>{ if(spendLB(LB_COSTS.sim1000)) runSimulation(1000); })) return;
   runSimulation(1000);
 });
 document.getElementById('sim-btn-10000').addEventListener('click',()=>{
   if(simNums.length===0)return;
+  if(!confirm(`${LB_COSTS.sim10000}LB를 소모해서 10000회 시뮬레이션을 돌리시겠습니까?`)) return;
   if(!spendLB(LB_COSTS.sim10000,'10000회 시뮬레이션',()=>{ if(spendLB(LB_COSTS.sim10000)) runSimulation(10000); })) return;
   runSimulation(10000);
 });
