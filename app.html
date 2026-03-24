@@ -5412,43 +5412,113 @@ function renderSimResults(results,total){
   },100);
 }
 
+function saveSimNumber(nums){
+  let list = JSON.parse(localStorage.getItem('myNums')||'[]');
+
+  list.push({
+    nums,
+    source:'sim',
+    ts:Date.now()
+  });
+
+  localStorage.setItem('myNums', JSON.stringify(list));
+
+  alert('내 번호에 저장되었습니다');
+}
+
 function handleSimAnalysisClick(){
   const area = document.getElementById('sim-insight-area');
   if(!area) return;
 
-  const target = simTargetSet?.[0];
-  if(!target || target.length !== 6){
-    area.innerHTML = `<div class="sim-inline-note">분석할 번호가 없습니다.</div>`;
+  const nums = simTargetSet?.[0];
+  if(!nums || nums.length !== 6){
+    area.innerHTML = `<div class="sim-inline-note">번호가 없습니다</div>`;
     return;
   }
 
-  const {lo,hi} = getHL(target);
-  const {odd,even} = getOE(target);
-  const sum = target.reduce((a,b)=>a+b,0);
-  const consecutive = hasConsec(target);
+  const {lo,hi} = getHL(nums);
+  const {odd,even} = getOE(nums);
+  const sum = nums.reduce((a,b)=>a+b,0);
+  const consecutive = hasConsec(nums);
+
+  // 최근 흐름 (freq 기반)
+  const freqScore = nums.reduce((s,n)=>s+(freq[n]||0),0);
+  const avgFreq = Math.round(freqScore / 6);
+
+  const recentLevel = avgFreq > 60 ? '🔥 높은 흐름' :
+                      avgFreq > 40 ? '⚖️ 평균 흐름' :
+                      '❄️ 낮은 흐름';
+
+  // 패턴
+  const pattern =
+    (lo===3 && hi===3) && (odd===3 && even===3)
+      ? '⚖️ 균형형'
+      : consecutive
+      ? '⚡ 공격형'
+      : '🎯 분산형';
 
   area.innerHTML = `
     <div class="sim-insight-box">
+
       <div class="sim-insight-title">🔍 AI 번호 진단 리포트</div>
-      <div class="sim-insight-list">
-        <div class="sim-insight-item">
-          <div class="sim-insight-item-title">① 기본 분포 분석</div>
-          <div class="sim-insight-item-desc">
-            고저 비율은 ${lo}:${hi}입니다.<br>
-            홀짝 비율은 ${odd}:${even}입니다.<br>
-            번호 합계는 ${sum}입니다.<br>
-            ${consecutive ? '연속번호가 포함되어 있습니다.' : '연속번호 없이 분산형입니다.'}
-          </div>
-        </div>
-        <div class="sim-insight-item">
-          <div class="sim-insight-item-title">✅ 최종 결론</div>
-          <div class="sim-insight-item-desc">
-            이 번호는 기본 분포가 무난한 편이며, 참고용 후보로 유지할 가치가 있습니다.
-          </div>
+
+      <div class="sim-insight-item">
+        <div class="sim-insight-item-title">① 기본 분포 분석</div>
+        <div class="sim-insight-item-desc">
+          고저 비율 ${lo}:${hi}<br>
+          홀짝 비율 ${odd}:${even}<br>
+          합계 ${sum}
         </div>
       </div>
+
+      <div class="sim-insight-item">
+        <div class="sim-insight-item-title">② 최근 흐름 반영</div>
+        <div class="sim-insight-item-desc">
+          평균 출현 점수 ${avgFreq}<br>
+          ${recentLevel}
+        </div>
+      </div>
+
+      <div class="sim-insight-item">
+        <div class="sim-insight-item-title">③ 패턴 유형</div>
+        <div class="sim-insight-item-desc">
+          ${pattern}<br>
+          ${consecutive ? '연속번호 포함' : '연속번호 없음'}
+        </div>
+      </div>
+
+      <div class="sim-insight-item">
+        <div class="sim-insight-item-title">④ 시뮬레이션 평가</div>
+        <div class="sim-insight-item-desc">
+          이 번호는 통계적으로 평균 범위 내 안정형 조합입니다.
+        </div>
+      </div>
+
+      <div class="sim-insight-item">
+        <div class="sim-insight-item-title">✅ 최종 결론</div>
+        <div class="sim-insight-item-desc">
+          실전 후보로 유지 가능하며, 추가 조합과 함께 사용하는 것이 좋습니다.
+        </div>
+      </div>
+
+      <div class="sim-cta-row">
+        <button class="sim-save-btn" id="sim-save-btn">⭐ 이 번호 저장</button>
+        <button class="sim-rerun-btn" id="sim-rerun-btn">🎲 다시 1,000회</button>
+      </div>
+
     </div>
   `;
+
+  // 저장
+  document.getElementById('sim-save-btn').onclick = ()=>{
+    saveSimNumber(nums);
+  };
+
+  // 재시뮬
+  document.getElementById('sim-rerun-btn').onclick = ()=>{
+    updateSimTarget(nums);
+    runSimulation(1000);
+  };
 }
 
 function handleSimTop3Click(){
