@@ -2129,6 +2129,13 @@ h1{
     <button class="modal-btn modal-btn-secondary" id="lb-charge-close-btn">취소</button>
   </div>
 </div>
+
+<script>
+  window._nativeAlert = window.alert.bind(window);
+  window._nativeConfirm = window.confirm.bind(window);
+  window.alert = (msg) => window._nativeAlert('로또엔진:\n' + msg);
+  window.confirm = (msg) => window._nativeConfirm('로또엔진:\n' + msg);
+</script>
   
 <script src="draw-history-261-latest.js"></script>
 <script type="module">
