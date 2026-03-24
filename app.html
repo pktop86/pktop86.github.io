@@ -1831,6 +1831,34 @@ h1{
   color:var(--muted);
 }  
 
+  .source-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:2px 7px;
+  border-radius:999px;
+  font-size:9px;
+  font-weight:800;
+  line-height:1;
+}
+
+.source-badge.auto{
+  background:rgba(58,184,255,.12);
+  color:var(--accent3);
+  border:1px solid rgba(58,184,255,.22);
+}
+
+.source-badge.sim{
+  background:rgba(240,192,64,.14);
+  color:var(--accent);
+  border:1px solid rgba(240,192,64,.24);
+}
+
+.source-badge.custom{
+  background:rgba(64,208,128,.12);
+  color:var(--green);
+  border:1px solid rgba(64,208,128,.22);
+}
 
 </style>
 </head>
@@ -2050,9 +2078,9 @@ h1{
         <button id="sim-save-to-mynums" style="display:none;background:rgba(64,208,128,.15);color:var(--green);border:1px solid rgba(64,208,128,.3);border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">⭐ 내 번호에 저장</button>
       </div>
       <div class="sim-btns">
-        <button class="sim-btn sim-btn-free" id="sim-btn-100" disabled>🎲 100회 (무료)</button>
-        <button class="sim-btn sim-btn-ad" id="sim-btn-1000" disabled>📺 1000회</button>
-        <button class="sim-btn sim-btn-ad" id="sim-btn-10000" disabled>📺 10000회</button>
+        <button class="sim-btn sim-btn-free" id="sim-btn-100" disabled>🎲 1,000회 (무료)</button>
+        <button class="sim-btn sim-btn-ad" id="sim-btn-1000" disabled>📺 10,000회</button>
+        <button class="sim-btn sim-btn-ad" id="sim-btn-10000" disabled>📺 100,000회</button>
       </div>
       <!-- 직접 번호 선택 -->
       <div style="margin-bottom:10px">
@@ -2808,15 +2836,19 @@ function injectLBCostLabels(){
 
   const sim1000 = document.getElementById('sim-btn-1000');
   const sim10000 = document.getElementById('sim-btn-10000');
+  const sim100000 = document.getElementById('sim-btn-100000');
 
-  if(sim1000 && !sim1000.dataset.lbBound){
-    sim1000.innerHTML = `📺 1000회 <span class="lb-cost">${LB_COSTS.sim1000}LB</span>`;
-    sim1000.dataset.lbBound = '1';
-  }
-  if(sim10000 && !sim10000.dataset.lbBound){
-    sim10000.innerHTML = `📺 10000회 <span class="lb-cost">${LB_COSTS.sim10000}LB</span>`;
-    sim10000.dataset.lbBound = '1';
-  }
+if(sim1000 && !sim1000.dataset.lbBound){
+  sim1000.innerHTML = `🎲 1,000회 <span class="lb-cost">무료</span>`;
+  sim1000.dataset.lbBound = '1';
+}
+if(sim10000 && !sim10000.dataset.lbBound){
+  sim10000.innerHTML = `📺 10,000회 <span class="lb-cost">${LB_COSTS.sim10000}LB</span>`;
+  sim10000.dataset.lbBound = '1';
+}
+if(sim100000 && !sim100000.dataset.lbBound){
+  sim100000.innerHTML = `📺 100,000회 <span class="lb-cost">${LB_COSTS.sim100000}LB</span>`;
+  sim100000.dataset.lbBound = '1';
 }
 
 function initLBSystem(){
@@ -3966,6 +3998,19 @@ function checkPrize(nums,win,bonus){
 const PLABELS=['','🥇 1등','🥈 2등','🥉 3등','4등','5등'];
 const PCLS=['','win1','win2','win3','win4','win5'];
 
+function getSourceBadgeHTML(sourceType){
+  if(sourceType === 'auto_gen'){
+    return `<span class="source-badge auto">자동생성</span>`;
+  }
+  if(sourceType === 'custom_sim' || sourceType === 'sim_saved'){
+    return `<span class="source-badge sim">시뮬 저장</span>`;
+  }
+  if(sourceType === 'manual_pick'){
+    return `<span class="source-badge custom">직접선택</span>`;
+  }
+  return `<span class="source-badge auto">일반저장</span>`;
+}  
+
 const getHL = ns => ({ lo: ns.filter(n=>n<=22).length, hi: ns.filter(n=>n>=23).length });
 const getOE = ns => ({ odd: ns.filter(n=>n%2).length, even: ns.filter(n=>!(n%2)).length });
 const lds   = ns => ns.reduce((s,n)=>s+n%10, 0);
@@ -4119,7 +4164,14 @@ async function savePick(nums, round){
   const r = round || latestRound;
   if(!currentUid||!db){return null;}
   try{
-    const d=await addDoc(collection(db,'picks'),{uid:currentUid,round:r,nums,prize:checkPrize(nums,latestWinNums,latestBonusNum),createdAt:serverTimestamp()});
+  const d=await addDoc(collection(db,'picks'),{
+  uid:currentUid,
+  round:r,
+  nums,
+  prize:checkPrize(nums,latestWinNums,latestBonusNum),
+  sourceType:'auto_gen',
+  createdAt:serverTimestamp()
+});
     return d.id;
   }catch(e){return null;}
 }
@@ -4279,6 +4331,7 @@ function renderMyNums(docs){
       item.appendChild(top);
       if(showResult){
         const tags=document.createElement('div'); tags.className='my-item-tags';
+        tags.innerHTML += getSourceBadgeHTML(d.sourceType);
         if(p>0)tags.innerHTML+=`<span class="tag ${PCLS[p]}">${PLABELS[p]}</span>`;
         else tags.innerHTML+='<span class="tag warn">일치 없음</span>';
         const hc=(d.nums||[]).filter(n=>wn.includes(n)).length;
@@ -5147,7 +5200,7 @@ async function runSimulation(count){
   if(simRunning || !simTargetSet.length) return;
 
   simRunning = true;
-  const btns = ['sim-btn-100','sim-btn-1000','sim-btn-10000'];
+  const btns = ['sim-btn-1000','sim-btn-10000','sim-btn-100000'];
   btns.forEach(id=>{
     const b = document.getElementById(id);
     if(b) b.disabled = true;
@@ -5401,12 +5454,59 @@ function handleSimAnalysisClick(){
         <div class="sim-insight-item" style="border-color:rgba(240,192,64,.22);background:rgba(240,192,64,.06)">
           <div class="sim-insight-item-title" style="color:var(--accent)">✅ 최종 결론</div>
           <div class="sim-insight-item-desc" style="color:var(--text)">${conclusion}</div>
+          <div class="sim-cta-btns" style="margin-top:10px">
+          <button class="sim-cta-btn secondary" id="sim-save-current-btn">⭐ 이 번호 내 번호에 저장</button>
+          <button class="sim-cta-btn" id="sim-rerun-1000-btn">🎲 이 번호로 다시 1,000회 돌리기</button>
+          </div>
         </div>
       </div>
     </div>
   `;
-
+  
+  setTimeout(()=>{
+  document.getElementById('sim-save-current-btn')?.addEventListener('click', saveCurrentInsightNumber);
+  document.getElementById('sim-rerun-1000-btn')?.addEventListener('click', rerunCurrentInsightNumber);
+  }, 0);
+  
   area.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+async function saveCurrentInsightNumber(){
+  const nums = simTargetSet?.[0];
+  if(!nums || nums.length !== 6){
+    alert('저장할 번호가 없습니다.');
+    return;
+  }
+  if(!currentUid || !db){
+    alert('로그인 준비 후 다시 시도해주세요.');
+    return;
+  }
+
+  try{
+    await addDoc(collection(db,'picks'),{
+      uid:currentUid,
+      round:getActivePickRound(),
+      nums:[...nums].sort((a,b)=>a-b),
+      prize:checkPrize(nums,latestWinNums,latestBonusNum),
+      sourceType:'sim_saved',
+      createdAt:serverTimestamp()
+    });
+    loadMyNums();
+    alert('후보번호로 저장되었습니다.');
+  }catch(e){
+    console.error(e);
+    alert('저장 중 오류가 발생했습니다.');
+  }
+}
+
+function rerunCurrentInsightNumber(){
+  const nums = simTargetSet?.[0];
+  if(!nums || nums.length !== 6){
+    alert('번호가 없습니다.');
+    return;
+  }
+  updateSimTarget(nums, false);
+  runSimulation(1000);
 }
 
 function getZoneCounts(nums){
@@ -5652,7 +5752,7 @@ function updateSimTarget(numsOrSet, isCustom=false){
     }
   }
 
-  ['sim-btn-100','sim-btn-1000','sim-btn-10000'].forEach(id=>{
+  ['sim-btn-1000','sim-btn-10000','sim-btn-100000'].forEach(id=>{
     const b = document.getElementById(id);
     if(b){
       b.disabled = false;
@@ -5779,18 +5879,23 @@ document.getElementById('sim-save-to-mynums').addEventListener('click', async fu
 });
  
 // 시뮬레이션 버튼 이벤트
-document.getElementById('sim-btn-100').addEventListener('click',()=>runSimulation(100));
-document.getElementById('sim-btn-1000').addEventListener('click', async ()=>{
-  if(simNums.length===0)return;
-  if(!await confirm(`${LB_COSTS.sim1000}LB를 소모해서 1000회 시뮬레이션을 돌리시겠습니까?`)) return;
-  if(!spendLB(LB_COSTS.sim1000,'1000회 시뮬레이션',()=>{ if(spendLB(LB_COSTS.sim1000)) runSimulation(1000); })) return;
+document.getElementById('sim-btn-1000').addEventListener('click', ()=>{
+  if(simNums.length===0) return;
   runSimulation(1000);
 });
+
 document.getElementById('sim-btn-10000').addEventListener('click', async ()=>{
-  if(simNums.length===0)return;
-  if(!await confirm(`${LB_COSTS.sim10000}LB를 소모해서 10000회 시뮬레이션을 돌리시겠습니까?`)) return;
-  if(!spendLB(LB_COSTS.sim10000,'10000회 시뮬레이션',()=>{ if(spendLB(LB_COSTS.sim10000)) runSimulation(10000); })) return;
+  if(simNums.length===0) return;
+  if(!await confirm(`${LB_COSTS.sim10000}LB를 소모해서 10,000회 시뮬레이션을 돌리시겠습니까?`)) return;
+  if(!spendLB(LB_COSTS.sim10000,'10,000회 시뮬레이션')) return;
   runSimulation(10000);
+});
+
+document.getElementById('sim-btn-100000').addEventListener('click', async ()=>{
+  if(simNums.length===0) return;
+  if(!await confirm(`${LB_COSTS.sim100000}LB를 소모해서 100,000회 시뮬레이션을 돌리시겠습니까?`)) return;
+  if(!spendLB(LB_COSTS.sim100000,'100,000회 시뮬레이션')) return;
+  runSimulation(100000);
 });
  
 // 시뮬레이션 광고 처리는 confirmBtn 통합 처리됨
