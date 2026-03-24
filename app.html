@@ -2110,13 +2110,7 @@ h1{
     </div>
 
     <div class="modal-ad-area">
-      <ins class="adsbygoogle"
-           style="display:block;width:100%;min-height:100px"
-           data-ad-client="ca-pub-9933896132600937"
-           data-ad-slot="auto"
-           data-ad-format="rectangle"
-           data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+      
     </div>
 
     <div class="timer-bar-bg">
@@ -2173,16 +2167,19 @@ h1{
   // 기존 confirm() 호출부가 if(confirm(...)) 형태면 async 처리 필요
 })();
 </script>
-</script>
+
   
 <script src="draw-history-261-latest.js"></script>
   <script>
 (function(){
-  const overlay = document.getElementById('sys-modal-overlay');
-  const msgEl   = document.getElementById('sys-modal-msg');
-  const btnsEl  = document.getElementById('sys-modal-btns');
-
   function showModal(msg, buttons){
+    // ✅ 호출 시점에 찾도록 변경 (상단 변수 선언 제거)
+    const overlay = document.getElementById('sys-modal-overlay');
+    const msgEl   = document.getElementById('sys-modal-msg');
+    const btnsEl  = document.getElementById('sys-modal-btns');
+
+    if(!overlay) return Promise.resolve(true); // 안전장치
+
     msgEl.textContent = msg;
     btnsEl.innerHTML = '';
     overlay.style.display = 'flex';
@@ -2550,7 +2547,7 @@ function claimTodayAttendance(){
 
   alert(`${nextStreak}일 출석 완료!\n+${reward}LB 지급되었습니다.`);
 }
-function askAndCharge(callback){
+async function askAndCharge(callback){
   if(!await confirm('광고를 시청하시고 25LB를 충전 하시겠습니까?')) return;
   openLBChargeModal(callback);
 }
@@ -5113,13 +5110,13 @@ document.getElementById('sim-save-to-mynums').addEventListener('click', async fu
  
 // 시뮬레이션 버튼 이벤트
 document.getElementById('sim-btn-100').addEventListener('click',()=>runSimulation(100));
-document.getElementById('sim-btn-1000').addEventListener('click',()=>{
+document.getElementById('sim-btn-1000').addEventListener('click', async ()=>{
   if(simNums.length===0)return;
   if(!await confirm(`${LB_COSTS.sim1000}LB를 소모해서 1000회 시뮬레이션을 돌리시겠습니까?`)) return;
   if(!spendLB(LB_COSTS.sim1000,'1000회 시뮬레이션',()=>{ if(spendLB(LB_COSTS.sim1000)) runSimulation(1000); })) return;
   runSimulation(1000);
 });
-document.getElementById('sim-btn-10000').addEventListener('click',()=>{
+document.getElementById('sim-btn-10000').addEventListener('click', async ()=>{
   if(simNums.length===0)return;
   if(!await confirm(`${LB_COSTS.sim10000}LB를 소모해서 10000회 시뮬레이션을 돌리시겠습니까?`)) return;
   if(!spendLB(LB_COSTS.sim10000,'10000회 시뮬레이션',()=>{ if(spendLB(LB_COSTS.sim10000)) runSimulation(10000); })) return;
@@ -5852,7 +5849,7 @@ document.getElementById('myinfo-save-btn').addEventListener('click', ()=>{
 });
  
 // 초기화 버튼
-document.getElementById('myinfo-reset-btn').addEventListener('click', ()=>{
+document.getElementById('myinfo-reset-btn').addEventListener('click', async ()=>{
   if(!await confirm('내 정보를 초기화하겠습니까?')) return;
   localStorage.removeItem(MYINFO_KEY);
   document.getElementById('myinfo-birth').value = '';
