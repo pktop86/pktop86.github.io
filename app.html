@@ -5449,11 +5449,11 @@ function updateSimTarget(numsOrSet, isCustom=false){
   const isSet = Array.isArray(numsOrSet?.[0]);
 
   simTargetSet = isSet
-  ? numsOrSet.map(nums => [...nums].sort((a,b)=>a-b))
-  : [[...numsOrSet].sort((a,b)=>a-b)];
+    ? numsOrSet.map(nums => [...nums].sort((a,b)=>a-b))
+    : [[...numsOrSet].sort((a,b)=>a-b)];
 
+  // 기존 단일번호 호환용
   simNums = [...simTargetSet[0]];
-  saveBtn._nums = canSaveSingle ? [...simTargetSet[0]] : null;
 
   const target = document.getElementById('sim-target');
   if(target){
@@ -5486,17 +5486,17 @@ function updateSimTarget(numsOrSet, isCustom=false){
     }
   });
 
-  // 직접 선택 저장 버튼은 단일 번호일 때만 유지
   const saveBtn = document.getElementById('sim-save-to-mynums');
   if(saveBtn){
     const canSaveSingle = isCustom && simTargetSet.length === 1;
     saveBtn.style.display = canSaveSingle ? 'block' : 'none';
     saveBtn._nums = canSaveSingle ? [...simTargetSet[0]] : null;
   }
+
   const setViewBtn = document.getElementById('sim-set-view-btn');
   if(setViewBtn){
-  setViewBtn.onclick = openSimSetModal;
-}
+    setViewBtn.onclick = openSimSetModal;
+  }
 }
 
 function openSimSetModal(){
