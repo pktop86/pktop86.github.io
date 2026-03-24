@@ -5412,18 +5412,33 @@ function renderSimResults(results,total){
   },100);
 }
 
-function saveSimNumber(nums){
-  let list = JSON.parse(localStorage.getItem('myNums')||'[]');
+async function saveSimNumber(nums){
+  if(!nums || nums.length !== 6){
+    alert('저장할 번호가 없습니다.');
+    return;
+  }
 
-  list.push({
-    nums,
-    source:'sim',
-    ts:Date.now()
-  });
+  if(!currentUid || !db){
+    alert('로그인 정보가 없습니다.');
+    return;
+  }
 
-  localStorage.setItem('myNums', JSON.stringify(list));
+  try{
+    await addDoc(collection(db,'picks'),{
+      uid: currentUid,
+      round: getActivePickRound(),
+      nums: [...nums].sort((a,b)=>a-b),
+      prize: checkPrize(nums, latestWinNums, latestBonusNum),
+      sourceType: 'sim_saved',
+      createdAt: serverTimestamp()
+    });
 
-  alert('내 번호에 저장되었습니다');
+    loadMyNums();
+    alert('내 번호에 저장되었습니다.');
+  }catch(e){
+    console.error(e);
+    alert('저장 중 오류가 발생했습니다.');
+  }
 }
 
 function handleSimAnalysisClick(){
@@ -5441,15 +5456,15 @@ function handleSimAnalysisClick(){
   const sum = nums.reduce((a,b)=>a+b,0);
   const consecutive = hasConsec(nums);
 
-  // 최근 흐름 (freq 기반)
-  const freqScore = nums.reduce((s,n)=>s+(freq[n]||0),0);
+  // 최근 흐름 (freqData 기반)
+  const freqScore = nums.reduce((s,n)=>s + (freqData[n] || 0), 0);
   const avgFreq = Math.round(freqScore / 6);
 
-  const recentLevel = avgFreq > 60 ? '🔥 높은 흐름' :
-                      avgFreq > 40 ? '⚖️ 평균 흐름' :
-                      '❄️ 낮은 흐름';
+  const recentLevel =
+    avgFreq > 130 ? '🔥 높은 흐름' :
+    avgFreq > 126 ? '⚖️ 평균 흐름' :
+    '❄️ 낮은 흐름';
 
-  // 패턴
   const pattern =
     (lo===3 && hi===3) && (odd===3 && even===3)
       ? '⚖️ 균형형'
@@ -5462,42 +5477,46 @@ function handleSimAnalysisClick(){
 
       <div class="sim-insight-title">🔍 AI 번호 진단 리포트</div>
 
-      <div class="sim-insight-item">
-        <div class="sim-insight-item-title">① 기본 분포 분석</div>
-        <div class="sim-insight-item-desc">
-          고저 비율 ${lo}:${hi}<br>
-          홀짝 비율 ${odd}:${even}<br>
-          합계 ${sum}
+      <div class="sim-insight-list">
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">① 기본 분포 분석</div>
+          <div class="sim-insight-item-desc">
+            고저 비율 ${lo}:${hi}<br>
+            홀짝 비율 ${odd}:${even}<br>
+            번호 합계 ${sum}<br>
+            ${consecutive ? '연속번호 포함' : '연속번호 없음'}
+          </div>
         </div>
-      </div>
 
-      <div class="sim-insight-item">
-        <div class="sim-insight-item-title">② 최근 흐름 반영</div>
-        <div class="sim-insight-item-desc">
-          평균 출현 점수 ${avgFreq}<br>
-          ${recentLevel}
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">② 최근 흐름 반영</div>
+          <div class="sim-insight-item-desc">
+            평균 출현 점수 ${avgFreq}<br>
+            ${recentLevel}
+          </div>
         </div>
-      </div>
 
-      <div class="sim-insight-item">
-        <div class="sim-insight-item-title">③ 패턴 유형</div>
-        <div class="sim-insight-item-desc">
-          ${pattern}<br>
-          ${consecutive ? '연속번호 포함' : '연속번호 없음'}
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">③ 패턴 유형</div>
+          <div class="sim-insight-item-desc">
+            ${pattern}<br>
+            ${Math.abs(lo-hi)<=1 && Math.abs(odd-even)<=1 ? '분포 균형이 좋은 편입니다.' : '분포 편차가 조금 있습니다.'}
+          </div>
         </div>
-      </div>
 
-      <div class="sim-insight-item">
-        <div class="sim-insight-item-title">④ 시뮬레이션 평가</div>
-        <div class="sim-insight-item-desc">
-          이 번호는 통계적으로 평균 범위 내 안정형 조합입니다.
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">④ 시뮬레이션 평가</div>
+          <div class="sim-insight-item-desc">
+            이 번호는 통계적으로 평균 범위 내 안정형 조합입니다.<br>
+            단일 번호보다 세트 기준 해석 시 더 의미가 큽니다.
+          </div>
         </div>
-      </div>
 
-      <div class="sim-insight-item">
-        <div class="sim-insight-item-title">✅ 최종 결론</div>
-        <div class="sim-insight-item-desc">
-          실전 후보로 유지 가능하며, 추가 조합과 함께 사용하는 것이 좋습니다.
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">✅ 최종 결론</div>
+          <div class="sim-insight-item-desc">
+            실전 후보로 유지 가능하며, 추가 조합과 함께 사용하는 것이 좋습니다.
+          </div>
         </div>
       </div>
 
@@ -5509,16 +5528,16 @@ function handleSimAnalysisClick(){
     </div>
   `;
 
-  // 저장
-  document.getElementById('sim-save-btn').onclick = ()=>{
+  document.getElementById('sim-save-btn')?.addEventListener('click', ()=>{
     saveSimNumber(nums);
-  };
+  });
 
-  // 재시뮬
-  document.getElementById('sim-rerun-btn').onclick = ()=>{
+  document.getElementById('sim-rerun-btn')?.addEventListener('click', ()=>{
     updateSimTarget(nums);
     runSimulation(1000);
-  };
+  });
+
+  area.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function handleSimTop3Click(){
