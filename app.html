@@ -5061,8 +5061,9 @@ async function runSimulation(count){
 }
  
 function renderSimResults(results,total){
-  const out=document.getElementById('sim-output');
-  const ranks=[
+  const out = document.getElementById('sim-output');
+
+  const ranks = [
     {r:1,label:'🥇 1등',cls:'r1',bar:'sim-bar-r1'},
     {r:2,label:'🥈 2등',cls:'r2',bar:'sim-bar-r2'},
     {r:3,label:'🥉 3등',cls:'r3',bar:'sim-bar-r3'},
@@ -5070,40 +5071,98 @@ function renderSimResults(results,total){
     {r:5,label:'5등',cls:'r5',bar:'sim-bar-r5'},
     {r:0,label:'꽝',cls:'r0',bar:'sim-bar-r0'},
   ];
-  const winners=Object.entries(results).filter(([k])=>k!=='0').reduce((a,[,v])=>a+v,0);
-  const maxCount=Math.max(...Object.values(results));
- 
-  let tableHtml=`<table class="sim-table"><thead><tr><th>등수</th><th>횟수</th><th>비율</th><th style="min-width:80px">그래프</th></tr></thead><tbody>`;
+
+  const winners = (results[1]||0) + (results[2]||0) + (results[3]||0) + (results[4]||0) + (results[5]||0);
+  const highWins = (results[1]||0) + (results[2]||0) + (results[3]||0);
+  const lowWins = (results[4]||0) + (results[5]||0);
+  const failCount = results[0] || 0;
+
+  const maxCount = Math.max(...Object.values(results), 1);
+
+  let best = '꽝';
+  if(results[1] > 0) best = '1등';
+  else if(results[2] > 0) best = '2등';
+  else if(results[3] > 0) best = '3등';
+  else if(results[4] > 0) best = '4등';
+  else if(results[5] > 0) best = '5등';
+
+  let tableHtml = `<table class="sim-table"><thead><tr><th>등수</th><th>횟수</th><th>비율</th><th style="min-width:80px">그래프</th></tr></thead><tbody>`;
+
   ranks.forEach(({r,label,cls,bar})=>{
-    const c=results[r]||0;
-    const pct=total>0?(c/total*100):0;
-    const barW=maxCount>0?(c/maxCount*100):0;
-    tableHtml+=`<tr>
-      <td><span class="sim-rank ${cls}">${label}</span></td>
-      <td><span class="sim-count">${c.toLocaleString()}</span></td>
-      <td><span class="sim-pct">${pct.toFixed(4)}%</span></td>
-      <td><div class="sim-bar-wrap"><div class="sim-bar-fill ${bar}" style="width:0%" data-w="${barW}"></div></div></td>
-    </tr>`;
+    const c = results[r] || 0;
+    const pct = total > 0 ? (c / total * 100) : 0;
+    const barW = maxCount > 0 ? (c / maxCount * 100) : 0;
+
+    tableHtml += `
+      <tr>
+        <td><span class="sim-rank ${cls}">${label}</span></td>
+        <td><span class="sim-count">${c.toLocaleString()}</span></td>
+        <td><span class="sim-pct">${pct.toFixed(4)}%</span></td>
+        <td><div class="sim-bar-wrap"><div class="sim-bar-fill ${bar}" style="width:0%" data-w="${barW}"></div></div></td>
+      </tr>
+    `;
   });
-  tableHtml+=`</tbody></table>`;
- 
-  const rate=(winners/total*100).toFixed(3);
-  const avg1=results[1]>0?Math.round(total/results[1]):0;
- 
-  out.innerHTML=`
+
+  tableHtml += `</tbody></table>`;
+
+  const rate = total > 0 ? (winners / total * 100).toFixed(3) : '0.000';
+  const highRate = total > 0 ? (highWins / total * 100).toFixed(3) : '0.000';
+  const failRate = total > 0 ? (failCount / total * 100).toFixed(3) : '0.000';
+  const avg1 = results[1] > 0 ? Math.round(total / results[1]) : 0;
+
+  out.innerHTML = `
     <div class="sim-results">
-      ${tableHtml}
-      <div class="sim-summary">
-        <div><div class="sim-sum-val">${total.toLocaleString()}</div><div class="sim-sum-label">총 시뮬레이션</div></div>
-        <div><div class="sim-sum-val">${winners.toLocaleString()}</div><div class="sim-sum-label">일치 횟수</div></div>
-        <div><div class="sim-sum-val">${rate}%</div><div class="sim-sum-label">일치 비율</div></div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;text-align:center">
+        ${simTargetSet?.length > 1 ? `${simTargetSet.length}줄 세트 기준 최고 등수로 계산됨` : `선택 번호 기준 결과`}
       </div>
-      ${results[1]>0?`<div style="text-align:center;margin-top:10px;font-size:11px;color:var(--accent)">🎉 1등 일치 확인 평균 ${avg1.toLocaleString()}회에 1번</div>`:''}
-    </div>`;
-  // 막대 애니메이션
+
+      ${tableHtml}
+
+      <div class="sim-summary">
+        <div>
+          <div class="sim-sum-val">${total.toLocaleString()}</div>
+          <div class="sim-sum-label">총 시뮬레이션</div>
+        </div>
+        <div>
+          <div class="sim-sum-val">${best}</div>
+          <div class="sim-sum-label">최고 기록</div>
+        </div>
+        <div>
+          <div class="sim-sum-val">${rate}%</div>
+          <div class="sim-sum-label">당첨 비율</div>
+        </div>
+      </div>
+
+      <div class="sim-summary" style="margin-top:10px">
+        <div>
+          <div class="sim-sum-val">${highWins.toLocaleString()}</div>
+          <div class="sim-sum-label">3등 이상</div>
+        </div>
+        <div>
+          <div class="sim-sum-val">${lowWins.toLocaleString()}</div>
+          <div class="sim-sum-label">4~5등</div>
+        </div>
+        <div>
+          <div class="sim-sum-val">${failRate}%</div>
+          <div class="sim-sum-label">꽝 비율</div>
+        </div>
+      </div>
+
+      ${results[1] > 0 ? `
+        <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--accent)">
+          🎉 1등 일치 확인 평균 ${avg1.toLocaleString()}회에 1번
+        </div>
+      ` : `
+        <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted)">
+          고등수는 원래 매우 희소하며, 세트 기준 결과로 해석하는 것이 좋습니다
+        </div>
+      `}
+    </div>
+  `;
+
   setTimeout(()=>{
     out.querySelectorAll('.sim-bar-fill').forEach(el=>{
-      el.style.width=el.dataset.w+'%';
+      el.style.width = el.dataset.w + '%';
     });
   },100);
 }
