@@ -5425,6 +5425,39 @@ function updateSimTarget(numsOrSet, isCustom=false){
   }
 }
 
+function openSimSetModal(){
+  if(!simTargetSet || !simTargetSet.length) return;
+
+  const modal = document.getElementById('sim-set-modal');
+  const body = document.getElementById('sim-set-modal-body');
+  if(!modal || !body) return;
+
+  body.innerHTML = `
+    <div class="sim-set-list">
+      ${simTargetSet.map((nums, idx)=>`
+        <div class="sim-set-row">
+          <div class="sim-set-row-top">${idx + 1}번 세트</div>
+          <div class="sim-set-balls">
+            ${nums.map(n=>`
+              <div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  modal.style.display = 'block';
+}
+
+function closeSimSetModal(){
+  const modal = document.getElementById('sim-set-modal');
+  if(modal) modal.style.display = 'none';
+}  
+
+document.getElementById('sim-set-close')?.addEventListener('click', closeSimSetModal);
+document.getElementById('sim-set-backdrop')?.addEventListener('click', closeSimSetModal);
+
 async function saveCurrentInsightNumber(){
   const nums = simTargetSet?.[0];
   if(!nums || nums.length !== 6){
@@ -5792,6 +5825,7 @@ document.getElementById('sim-btn-100000').addEventListener('click', async ()=>{
   if(!spendLB(LB_COSTS.sim100000,'100,000회 시뮬레이션')) return;
   runSimulation(100000);
 });
+
  
 // 시뮬레이션 광고 처리는 confirmBtn 통합 처리됨
  
