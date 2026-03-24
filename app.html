@@ -5413,11 +5413,71 @@ function renderSimResults(results,total){
 }
 
 function handleSimAnalysisClick(){
-  alert('이 번호 자세히 보기 기능 준비중');
+  const area = document.getElementById('sim-insight-area');
+  if(!area) return;
+
+  const target = simTargetSet?.[0];
+  if(!target || target.length !== 6){
+    area.innerHTML = `<div class="sim-inline-note">분석할 번호가 없습니다.</div>`;
+    return;
+  }
+
+  const {lo,hi} = getHL(target);
+  const {odd,even} = getOE(target);
+  const sum = target.reduce((a,b)=>a+b,0);
+  const consecutive = hasConsec(target);
+
+  area.innerHTML = `
+    <div class="sim-insight-box">
+      <div class="sim-insight-title">🔍 AI 번호 진단 리포트</div>
+      <div class="sim-insight-list">
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">① 기본 분포 분석</div>
+          <div class="sim-insight-item-desc">
+            고저 비율은 ${lo}:${hi}입니다.<br>
+            홀짝 비율은 ${odd}:${even}입니다.<br>
+            번호 합계는 ${sum}입니다.<br>
+            ${consecutive ? '연속번호가 포함되어 있습니다.' : '연속번호 없이 분산형입니다.'}
+          </div>
+        </div>
+        <div class="sim-insight-item">
+          <div class="sim-insight-item-title">✅ 최종 결론</div>
+          <div class="sim-insight-item-desc">
+            이 번호는 기본 분포가 무난한 편이며, 참고용 후보로 유지할 가치가 있습니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function handleSimTop3Click(){
-  alert('TOP3 추천 보기 기능 준비중');
+  const area = document.getElementById('sim-insight-area');
+  if(!area) return;
+
+  const source = Array.isArray(simTargetSet) && simTargetSet.length ? simTargetSet : [];
+  if(!source.length){
+    area.innerHTML = `<div class="sim-inline-note">추천할 세트가 없습니다.</div>`;
+    return;
+  }
+
+  area.innerHTML = `
+    <div class="sim-insight-box">
+      <div class="sim-insight-title">🎯 TOP3 추천 보기</div>
+      <div class="sim-top3-list">
+        ${source.slice(0,3).map((nums, idx)=>`
+          <div class="sim-top3-item">
+            <div class="sim-top3-head">
+              <div class="sim-top3-rank">TOP ${idx+1}</div>
+            </div>
+            <div class="sim-top3-balls">
+              ${nums.map(n=>`<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
 }
 
 function updateSimTarget(numsOrSet, isCustom=false){
