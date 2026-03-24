@@ -2309,6 +2309,10 @@ let usedFree = loadUsedFree();
 let pendingCount = 0;
 let adTimer = null;
 
+let simNums = [];  
+let simTargetSet = [];
+let simRunning = false;
+
 // ===== LB SYSTEM START =====
 const LB_STATE_KEY = 'lotto_lb_state_v1';
 const LB_DEFAULT_BALANCE = 30;
@@ -3829,7 +3833,7 @@ async function doGenerate(count){
     }
 
     if(allNums.length > 0){
-      updateSimTarget(allNums[0]);
+      updateSimTarget(allNums);
       if(typeof updateChallengeGenNums === 'function'){
         updateChallengeGenNums(allNums[0]);
       }
@@ -4892,43 +4896,62 @@ function simCheckPrize(userNums,winNums,bonus){
   if(h===3)return 5;
   return 0;
 }
+
+function getBestPrizeForSet(targetSet, winNums, bonus){
+  let best = 0;
+  for(const nums of targetSet){
+    const p = simCheckPrize(nums, winNums, bonus);
+    if(best === 0 || (p > 0 && p < best)) best = p;
+  }
+  return best;
+}
  
 async function runSimulation(count){
-  if(simRunning||!simNums.length)return;
-  simRunning=true;
-  const btns=['sim-btn-100','sim-btn-1000','sim-btn-10000'];
-  btns.forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;});
-  
-  const out=document.getElementById('sim-output');
-  out.innerHTML=`<div class="sim-running"><div class="sim-running-anim">⚙️</div><div>시뮬레이션 실행 중... (0/${count})</div><div class="sim-progress"><div class="sim-progress-bar" id="sim-prog" style="width:0%"></div></div></div>`;
- 
-  const results={0:0,1:0,2:0,3:0,4:0,5:0};
-  const CHUNK=250;
-  let done=0;
- 
+  if(simRunning || !simTargetSet.length) return;
+
+  simRunning = true;
+  const btns = ['sim-btn-100','sim-btn-1000','sim-btn-10000'];
+  btns.forEach(id=>{
+    const b = document.getElementById(id);
+    if(b) b.disabled = true;
+  });
+
+  const out = document.getElementById('sim-output');
+  out.innerHTML = `<div class="sim-running"><div class="sim-running-anim">⚙️</div><div>시뮬레이션 실행 중... (0/${count})</div><div class="sim-progress"><div class="sim-progress-bar" id="sim-prog" style="width:0%"></div></div></div>`;
+
+  const results = {0:0,1:0,2:0,3:0,4:0,5:0};
+  const CHUNK = 250;
+  let done = 0;
+
   await new Promise(resolve=>{
     function runChunk(){
-      const end=Math.min(done+CHUNK,count);
+      const end = Math.min(done + CHUNK, count);
       for(let i=done;i<end;i++){
-        const{nums,bonus}=simRandNums();
-        const prize=simCheckPrize(simNums,nums,bonus);
+        const {nums, bonus} = simRandNums();
+        const prize = getBestPrizeForSet(simTargetSet, nums, bonus);
         results[prize]++;
       }
-      done=end;
-      const pct=(done/count*100).toFixed(0);
-      const prog=document.getElementById('sim-prog');
-      if(prog)prog.style.width=pct+'%';
-      const runEl=out.querySelector('.sim-running div:nth-child(2)');
-      if(runEl)runEl.textContent=`시뮬레이션 실행 중... (${done.toLocaleString()}/${count.toLocaleString()})`;
-      if(done<count) requestAnimationFrame(runChunk);
+      done = end;
+
+      const pct = (done / count * 100).toFixed(0);
+      const prog = document.getElementById('sim-prog');
+      if(prog) prog.style.width = pct + '%';
+
+      const runEl = out.querySelector('.sim-running div:nth-child(2)');
+      if(runEl) runEl.textContent = `시뮬레이션 실행 중... (${done.toLocaleString()}/${count.toLocaleString()})`;
+
+      if(done < count) requestAnimationFrame(runChunk);
       else resolve();
     }
     requestAnimationFrame(runChunk);
   });
- 
-  renderSimResults(results,count);
-  simRunning=false;
-  btns.forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false;});
+
+  renderSimResults(results, count);
+  simRunning = false;
+  btns.forEach(id=>{
+    const b = document.getElementById(id);
+    if(b) b.disabled = false;
+  });
 }
  
 function renderSimResults(results,total){
@@ -4979,20 +5002,52 @@ function renderSimResults(results,total){
   },100);
 }
  
-function updateSimTarget(nums, isCustom=false){
-  simNums=[...nums];
-  const target=document.getElementById('sim-target');
-  if(!target)return;
-  target.innerHTML=nums.map(n=>`<div class="ball ${ballCls(n)}" style="width:30px;height:30px;font-size:11px">${n}</div>`).join('');
+function updateSimTarget(numsOrSet, isCustom=false){
+  const isSet = Array.isArray(numsOrSet?.[0]);
+
+  simTargetSet = isSet
+    ? numsOrSet.map(nums => [...nums].sort((a,b)=>a-b))
+    : [[...numsOrSet].sort((a,b)=>a-b)];
+
+  // 기존 단일 번호 로직도 유지
+  simNums = [...simTargetSet[0]];
+
+  const target = document.getElementById('sim-target');
+  if(target){
+    if(simTargetSet.length === 1){
+      target.innerHTML = simNums.map(n =>
+        `<div class="ball ${ballCls(n)}" style="width:30px;height:30px;font-size:11px">${n}</div>`
+      ).join('');
+    }else{
+      target.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:12px;color:var(--accent);font-weight:800">🎯 ${simTargetSet.length}줄 세트 선택됨</span>
+          <span style="font-size:10px;color:var(--muted)">시뮬레이션은 세트 기준 최고 등수로 계산됩니다</span>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">
+          ${simTargetSet[0].map(n =>
+            `<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`
+          ).join('')}
+          <span style="align-self:center;font-size:10px;color:var(--muted)">외 ${simTargetSet.length-1}줄</span>
+        </div>
+      `;
+    }
+  }
+
   ['sim-btn-100','sim-btn-1000','sim-btn-10000'].forEach(id=>{
-    const b=document.getElementById(id);
-    if(b){ b.disabled=false; b.style.opacity='1'; }
+    const b = document.getElementById(id);
+    if(b){
+      b.disabled = false;
+      b.style.opacity = '1';
+    }
   });
-  // 직접 선택 시에만 내 번호에 저장 버튼 표시
-  const saveBtn=document.getElementById('sim-save-to-mynums');
+
+  // 직접 선택 저장 버튼은 단일 번호일 때만 유지
+  const saveBtn = document.getElementById('sim-save-to-mynums');
   if(saveBtn){
-    saveBtn.style.display=isCustom?'block':'none';
-    saveBtn._nums=[...nums];
+    const canSaveSingle = isCustom && simTargetSet.length === 1;
+    saveBtn.style.display = canSaveSingle ? 'block' : 'none';
+    saveBtn._nums = canSaveSingle ? [...simTargetSet[0]] : null;
   }
 }
  
