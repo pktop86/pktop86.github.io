@@ -5371,6 +5371,45 @@ function renderSimResults(results,total){
   },100);
 }
 
+
+async function saveCurrentInsightNumber(){
+  const nums = simTargetSet?.[0];
+  if(!nums || nums.length !== 6){
+    alert('저장할 번호가 없습니다.');
+    return;
+  }
+  if(!currentUid || !db){
+    alert('로그인 준비 후 다시 시도해주세요.');
+    return;
+  }
+
+  try{
+    await addDoc(collection(db,'picks'),{
+      uid:currentUid,
+      round:getActivePickRound(),
+      nums:[...nums].sort((a,b)=>a-b),
+      prize:checkPrize(nums,latestWinNums,latestBonusNum),
+      sourceType:'sim_saved',
+      createdAt:serverTimestamp()
+    });
+    loadMyNums();
+    alert('후보번호로 저장되었습니다.');
+  }catch(e){
+    console.error(e);
+    alert('저장 중 오류가 발생했습니다.');
+  }
+}
+
+function rerunCurrentInsightNumber(){
+  const nums = simTargetSet?.[0];
+  if(!nums || nums.length !== 6){
+    alert('번호가 없습니다.');
+    return;
+  }
+  updateSimTarget(nums, false);
+  runSimulation(1000);
+}
+
 function handleSimAnalysisClick(){
   if(!spendLB(3, '이 번호 자세히 보기')) return;
 
@@ -5454,59 +5493,92 @@ function handleSimAnalysisClick(){
         <div class="sim-insight-item" style="border-color:rgba(240,192,64,.22);background:rgba(240,192,64,.06)">
           <div class="sim-insight-item-title" style="color:var(--accent)">✅ 최종 결론</div>
           <div class="sim-insight-item-desc" style="color:var(--text)">${conclusion}</div>
-          <div class="sim-cta-btns" style="margin-top:10px">
+        </div>
+
+        <div class="sim-cta-btns" style="margin-top:10px">
           <button class="sim-cta-btn secondary" id="sim-save-current-btn">⭐ 이 번호 내 번호에 저장</button>
           <button class="sim-cta-btn" id="sim-rerun-1000-btn">🎲 이 번호로 다시 1,000회 돌리기</button>
-          </div>
         </div>
       </div>
     </div>
   `;
-  
+
   setTimeout(()=>{
-  document.getElementById('sim-save-current-btn')?.addEventListener('click', saveCurrentInsightNumber);
-  document.getElementById('sim-rerun-1000-btn')?.addEventListener('click', rerunCurrentInsightNumber);
+    document.getElementById('sim-save-current-btn')?.addEventListener('click', saveCurrentInsightNumber);
+    document.getElementById('sim-rerun-1000-btn')?.addEventListener('click', rerunCurrentInsightNumber);
   }, 0);
-  
+
   area.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-async function saveCurrentInsightNumber(){
-  const nums = simTargetSet?.[0];
-  if(!nums || nums.length !== 6){
-    alert('저장할 번호가 없습니다.');
-    return;
-  }
-  if(!currentUid || !db){
-    alert('로그인 준비 후 다시 시도해주세요.');
+function handleSimTop3Click(){
+  if(!spendLB(5, 'TOP3 추천 보기')) return;
+
+  const area = document.getElementById('sim-insight-area');
+  if(!area) return;
+
+  const picks = buildSimTop3Recommendations();
+  if(!picks.length){
+    area.innerHTML = `<div class="sim-inline-note">추천할 세트가 없습니다.</div>`;
     return;
   }
 
-  try{
-    await addDoc(collection(db,'picks'),{
-      uid:currentUid,
-      round:getActivePickRound(),
-      nums:[...nums].sort((a,b)=>a-b),
-      prize:checkPrize(nums,latestWinNums,latestBonusNum),
-      sourceType:'sim_saved',
-      createdAt:serverTimestamp()
-    });
-    loadMyNums();
-    alert('후보번호로 저장되었습니다.');
-  }catch(e){
-    console.error(e);
-    alert('저장 중 오류가 발생했습니다.');
-  }
+  area.innerHTML = `
+    <div class="sim-insight-box">
+      <div class="sim-insight-title">🎯 TOP3 추천 보기</div>
+      <div class="sim-top3-list">
+        ${picks.map((item, idx)=>`
+          <div class="sim-top3-item">
+            <div class="sim-top3-head">
+              <div class="sim-top3-rank">TOP ${idx+1}</div>
+              <div class="sim-top3-score">추천점수 ${item.score}</div>
+            </div>
+            <div class="sim-top3-balls">
+              ${item.nums.map(n=>`<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  area.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-function rerunCurrentInsightNumber(){
-  const nums = simTargetSet?.[0];
-  if(!nums || nums.length !== 6){
-    alert('번호가 없습니다.');
-    return;
-  }
-  updateSimTarget(nums, false);
-  runSimulation(1000);
+function buildSimTop3Recommendations(){
+  const source = Array.isArray(simTargetSet) && simTargetSet.length
+    ? simTargetSet
+    : (simNums?.length ? [simNums] : []);
+
+  return source
+    .map(nums=>({
+      nums:[...nums].sort((a,b)=>a-b),
+      score:getSimInsightScore(nums)
+    }))
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,3);
+}
+
+function getSimInsightScore(nums){
+  const {lo,hi} = getHL(nums);
+  const {odd,even} = getOE(nums);
+  const sum = nums.reduce((a,b)=>a+b,0);
+  const consecutive = hasConsec(nums) ? 8 : 4;
+
+  let score = 70;
+
+  if(Math.abs(lo-hi) <= 1) score += 10;
+  else if(Math.abs(lo-hi) <= 2) score += 6;
+
+  if(Math.abs(odd-even) <= 1) score += 10;
+  else if(Math.abs(odd-even) <= 2) score += 6;
+
+  if(sum >= 100 && sum <= 170) score += 8;
+  else if(sum >= 90 && sum <= 180) score += 4;
+
+  score += consecutive;
+
+  return Math.min(100, score);
 }
 
 function getZoneCounts(nums){
@@ -5647,75 +5719,42 @@ function buildFinalConclusion(data){
   return `이 번호는 ${tone} 성향의 조합입니다. ${balance} ${flow}이며, ${risk}. ${simGrade.desc}${add}`;
 }
 
-function handleSimTop3Click(){
-  if(!spendLB(5, 'TOP3 추천 보기')) return;
-
-  const area = document.getElementById('sim-insight-area');
-  if(!area) return;
-
-  const picks = buildSimTop3Recommendations();
-  if(!picks.length){
-    area.innerHTML = `<div class="sim-inline-note">추천할 세트가 없습니다.</div>`;
+async function saveCurrentInsightNumber(){
+  const nums = simTargetSet?.[0];
+  if(!nums || nums.length !== 6){
+    alert('저장할 번호가 없습니다.');
+    return;
+  }
+  if(!currentUid || !db){
+    alert('로그인 준비 후 다시 시도해주세요.');
     return;
   }
 
-  area.innerHTML = `
-    <div class="sim-insight-box">
-      <div class="sim-insight-title">🎯 TOP3 추천 보기</div>
-      <div class="sim-top3-list">
-        ${picks.map((item, idx)=>`
-          <div class="sim-top3-item">
-            <div class="sim-top3-head">
-              <div class="sim-top3-rank">TOP ${idx+1}</div>
-              <div class="sim-top3-score">추천점수 ${item.score}</div>
-            </div>
-            <div class="sim-top3-balls">
-              ${item.nums.map(n=>`<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`).join('')}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-
-  area.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-
-function buildSimTop3Recommendations(){
-  const source = Array.isArray(simTargetSet) && simTargetSet.length
-    ? simTargetSet
-    : (simNums?.length ? [simNums] : []);
-
-  return source
-    .map(nums=>({
+  try{
+    await addDoc(collection(db,'picks'),{
+      uid:currentUid,
+      round:getActivePickRound(),
       nums:[...nums].sort((a,b)=>a-b),
-      score:getSimInsightScore(nums)
-    }))
-    .sort((a,b)=>b.score-a.score)
-    .slice(0,3);
+      prize:checkPrize(nums,latestWinNums,latestBonusNum),
+      sourceType:'sim_saved',
+      createdAt:serverTimestamp()
+    });
+    loadMyNums();
+    alert('후보번호로 저장되었습니다.');
+  }catch(e){
+    console.error(e);
+    alert('저장 중 오류가 발생했습니다.');
+  }
 }
 
-function getSimInsightScore(nums){
-  const {lo,hi} = getHL(nums);
-  const {odd,even} = getOE(nums);
-  const sum = nums.reduce((a,b)=>a+b,0);
-  const consecutive = hasConsec(nums) ? 8 : 4;
-
-  let score = 70;
-
-  if(Math.abs(lo-hi) <= 1) score += 10;
-  else if(Math.abs(lo-hi) <= 2) score += 6;
-
-  if(Math.abs(odd-even) <= 1) score += 10;
-  else if(Math.abs(odd-even) <= 2) score += 6;
-
-  if(sum >= 100 && sum <= 170) score += 8;
-  else if(sum >= 90 && sum <= 180) score += 4;
-
-  score += consecutive;
-
-  return Math.min(100, score);
+function rerunCurrentInsightNumber(){
+  const nums = simTargetSet?.[0];
+  if(!nums || nums.length !== 6){
+    alert('번호가 없습니다.');
+    return;
+  }
+  updateSimTarget(nums, false);
+  runSimulation(1000);
 }
 
  
