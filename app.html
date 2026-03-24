@@ -2130,15 +2130,8 @@ h1{
   </div>
 </div>
 
-<script>
- <!-- 커스텀 alert/confirm 모달 -->
-<div id="sys-modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:20px">
-  <div style="background:var(--panel);border:1px solid rgba(240,192,64,.25);border-radius:20px;padding:26px 22px;max-width:320px;width:100%;text-align:center;animation:modalIn .25s ease">
-    <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px">🎰 로또엔진</div>
-    <div id="sys-modal-msg" style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:20px;white-space:pre-line"></div>
-    <div id="sys-modal-btns" style="display:flex;gap:8px;flex-direction:column"></div>
-  </div>
-</div>
+
+ 
 
 <script>
 (function(){
@@ -2184,6 +2177,43 @@ h1{
 </script>
   
 <script src="draw-history-261-latest.js"></script>
+  <script>
+(function(){
+  const overlay = document.getElementById('sys-modal-overlay');
+  const msgEl   = document.getElementById('sys-modal-msg');
+  const btnsEl  = document.getElementById('sys-modal-btns');
+
+  function showModal(msg, buttons){
+    msgEl.textContent = msg;
+    btnsEl.innerHTML = '';
+    overlay.style.display = 'flex';
+    return new Promise(resolve => {
+      buttons.forEach(({label, value, primary}) => {
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        btn.style.cssText = `width:100%;padding:13px;border:none;border-radius:10px;font-size:13px;font-weight:900;font-family:inherit;cursor:pointer;${
+          primary
+            ? 'background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000'
+            : 'background:var(--card);color:var(--muted);border:1px solid var(--border)'
+        }`;
+        btn.addEventListener('click', () => {
+          overlay.style.display = 'none';
+          resolve(value);
+        });
+        btnsEl.appendChild(btn);
+      });
+    });
+  }
+
+  window.alert   = (msg) => showModal(String(msg), [
+    { label:'확인', value:true, primary:true }
+  ]);
+  window.confirm = (msg) => showModal(String(msg), [
+    { label:'확인', value:true,  primary:true },
+    { label:'취소', value:false, primary:false }
+  ]);
+})();
+</script>
 <script type="module">
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
@@ -6332,5 +6362,13 @@ init();
         본 서비스는 참고용 데이터만 제공하며 당첨을 보장하지 않습니다. 과도한 복권 구매는 도박 중독의 위험이 있습니다.
     </p>
 </footer>
+  <!-- 커스텀 alert/confirm 모달 -->
+<div id="sys-modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--panel);border:1px solid rgba(240,192,64,.25);border-radius:20px;padding:26px 22px;max-width:320px;width:100%;text-align:center;animation:modalIn .25s ease">
+    <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px">🎰 로또엔진</div>
+    <div id="sys-modal-msg" style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:20px;white-space:pre-line"></div>
+    <div id="sys-modal-btns" style="display:flex;gap:8px;flex-direction:column"></div>
+  </div>
+</div>
 </body>
 </html>
