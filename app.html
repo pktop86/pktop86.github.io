@@ -287,36 +287,6 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
 .sim-target{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;min-height:38px;align-items:center}
 .sim-target-empty{font-size:12px;color:var(--muted)}
 .sim-btns{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-/* 공통 */
-.sim-btn{
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  min-height:54px;
-  border-radius:14px;
-  font-weight:900;
-  font-size:15px;
-  border:1px solid rgba(255,255,255,.08);
-  transition:.18s ease;
-}
-
-/* 1,000회 무료 = 어두운 버튼 */
-.sim-btn-free{
-  background:linear-gradient(180deg, #1a2033 0%, #12182a 100%);
-  color:#dfe7ff;
-  border:1px solid rgba(255,255,255,.10);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-}
-
-/* 10,000 / 100,000회 = 노란 버튼 */
-.sim-btn-ad{
-  background:linear-gradient(180deg, #f4cb4e 0%, #e8b93a 100%);
-  color:#161616;
-  border:1px solid rgba(0,0,0,.10);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
-}
 
 /* hover/active */
 .sim-btn:active{
@@ -1919,6 +1889,26 @@ h1{
   border:1px solid rgba(64,208,128,.22);
 }
 
+.sim-seg{
+  margin-bottom:12px;
+}
+
+.sim-seg .seg-btn{
+  min-height:62px;
+  font-size:13px;
+  font-weight:900;
+}
+
+.sim-seg .seg-btn .lb-cost-sm{
+  margin-left:6px;
+}
+
+.sim-seg .seg-btn .lb-cost-sm.free{
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.14);
+}
+
 </style>
 </head>
 <body>
@@ -2136,11 +2126,12 @@ h1{
         </div>
         <button id="sim-save-to-mynums" style="display:none;background:rgba(64,208,128,.15);color:var(--green);border:1px solid rgba(64,208,128,.3);border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">⭐ 내 번호에 저장</button>
       </div>
-      <div class="sim-btns">
-        <button class="sim-btn sim-btn-free" id="sim-btn-1000" disabled>🎲 1,000회 (무료)</button>
-        <button class="sim-btn sim-btn-ad" id="sim-btn-10000" disabled>📺 10,000회</button>
-        <button class="sim-btn sim-btn-ad" id="sim-btn-100000" disabled>📺 100,000회</button>
+      <div class="seg sim-seg">
+       <button class="seg-btn sim-opt" id="sim-btn-1000" data-sim="1000">🎲 1,000회 <span class="lb-cost-sm free">무료</span></button>
+       <button class="seg-btn sim-opt" id="sim-btn-10000" data-sim="10000">📺 10,000회 <span class="lb-cost-sm">1LB</span></button>
+       <button class="seg-btn sim-opt" id="sim-btn-100000" data-sim="100000">📺 100,000회 <span class="lb-cost-sm">3LB</span></button>
       </div>
+
       <!-- 직접 번호 선택 -->
       <div style="margin-bottom:10px">
         <button class="sim-btn" id="sim-custom-toggle" style="background:var(--card);color:var(--muted);border:1px solid var(--border);width:100%;font-size:11px;padding:8px">✏️ 직접 번호 선택해서 시뮬레이션</button>
@@ -2893,27 +2884,7 @@ function injectLBCostLabels(){
       btn.insertAdjacentHTML('beforeend', `<span class="lb-cost-sm">${cost}LB</span>`);
     }
   });
-
-  const sim1000 = document.getElementById('sim-btn-1000');
-  const sim10000 = document.getElementById('sim-btn-10000');
-  const sim100000 = document.getElementById('sim-btn-100000');
-
-  if(sim1000){
-    sim1000.innerHTML = `🎲 1,000회 <span class="lb-cost free">무료</span>`;
-    sim1000.dataset.lbBound = '1';
-  }
-
-  if(sim10000){
-    sim10000.innerHTML = `📺 10,000회 <span class="lb-cost">1LB</span>`;
-    sim10000.dataset.lbBound = '1';
-  }
-
-  if(sim100000){
-    sim100000.innerHTML = `📺 100,000회 <span class="lb-cost">3LB</span>`;
-    sim100000.dataset.lbBound = '1';
-  }
-}
-
+ 
 function initLBSystem(){
   renderLBUI();
   injectLBCostLabels();
