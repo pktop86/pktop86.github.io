@@ -1603,6 +1603,104 @@ h1{
 }
 
 
+.sim-set-view-btn{
+  margin-left:6px;
+  padding:5px 8px;
+  border-radius:8px;
+  border:1px solid rgba(58,184,255,.35);
+  background:rgba(58,184,255,.10);
+  color:#7fd2ff;
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.sim-set-modal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+}
+
+.sim-set-modal-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.58);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+
+.sim-set-modal-card{
+  position:relative;
+  width:min(92vw,560px);
+  max-height:78vh;
+  overflow:hidden;
+  margin:8vh auto 0;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg, #111424 0%, #0b1020 100%);
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+  z-index:2;
+}
+
+.sim-set-modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 16px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.sim-set-modal-title{
+  font-size:14px;
+  font-weight:900;
+  color:var(--accent);
+}
+
+.sim-set-close{
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:10px;
+  background:rgba(255,255,255,.06);
+  color:var(--text);
+  cursor:pointer;
+  font-weight:900;
+}
+
+.sim-set-modal-body{
+  padding:14px 16px 18px;
+  max-height:calc(78vh - 62px);
+  overflow:auto;
+}
+
+.sim-set-list{
+  display:grid;
+  gap:10px;
+}
+
+.sim-set-row{
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.05);
+}
+
+.sim-set-row-top{
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:8px;
+  font-weight:700;
+}
+
+.sim-set-balls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
+
+
 </style>
 </head>
 <body>
@@ -1835,6 +1933,16 @@ h1{
         </div>
       </div>
       <div id="sim-output"></div>
+      <div id="sim-set-modal" class="sim-set-modal" style="display:none">
+  <div class="sim-set-modal-backdrop" id="sim-set-backdrop"></div>
+  <div class="sim-set-modal-card">
+    <div class="sim-set-modal-head">
+      <div class="sim-set-modal-title">시뮬레이션 세트 보기</div>
+      <button type="button" class="sim-set-close" id="sim-set-close">✕</button>
+    </div>
+    <div class="sim-set-modal-body" id="sim-set-modal-body"></div>
+  </div>
+</div>
     </div>
     </div>
     <div class="section-box">
@@ -5027,6 +5135,7 @@ function updateSimTarget(numsOrSet, isCustom=false){
             `<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`
           ).join('')}
           <span style="align-self:center;font-size:10px;color:var(--muted)">외 ${simTargetSet.length-1}줄</span>
+          <button type="button" class="sim-set-view-btn" id="sim-set-view-btn">세트보기</button>
         </div>
       `;
     }
@@ -5047,7 +5156,39 @@ function updateSimTarget(numsOrSet, isCustom=false){
     saveBtn.style.display = canSaveSingle ? 'block' : 'none';
     saveBtn._nums = canSaveSingle ? [...simTargetSet[0]] : null;
   }
+  const setViewBtn = document.getElementById('sim-set-view-btn');
+  if(setViewBtn){
+  setViewBtn.onclick = openSimSetModal;
 }
+}
+
+function openSimSetModal(){
+  if(!simTargetSet.length) return;
+
+  const modal = document.getElementById('sim-set-modal');
+  const body = document.getElementById('sim-set-modal-body');
+  if(!modal || !body) return;
+
+  body.innerHTML = `
+    <div class="sim-set-list">
+      ${simTargetSet.map((nums, idx)=>`
+        <div class="sim-set-row">
+          <div class="sim-set-row-top">${idx+1}번 세트</div>
+          <div class="sim-set-balls">
+            ${nums.map(n=>`<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  modal.style.display = 'block';
+}
+
+function closeSimSetModal(){
+  const modal = document.getElementById('sim-set-modal');
+  if(modal) modal.style.display = 'none';
+}  
  
  
 // 시뮬레이션 직접 번호 선택
@@ -5102,6 +5243,9 @@ document.getElementById('sim-custom-apply').addEventListener('click', ()=>{
   updateSimTarget(sorted, true); // isCustom=true → 저장 버튼 표시
   document.getElementById('sim-custom-area').style.display = 'none';
 });
+
+document.getElementById('sim-set-close')?.addEventListener('click', closeSimSetModal);
+document.getElementById('sim-set-backdrop')?.addEventListener('click', closeSimSetModal);
  
 // 내 번호에 저장 버튼 이벤트
 document.getElementById('sim-save-to-mynums').addEventListener('click', async function(){
