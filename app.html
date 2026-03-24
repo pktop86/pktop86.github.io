@@ -6266,7 +6266,12 @@ function initFortuneBlog(){
 
   
 init();
+// ── 커스텀 alert / confirm ──
+window.alert = (msg) => window._nativeAlert('로또엔진:\n' + msg);
+window.confirm = (msg) => window._nativeConfirm('로또엔진:\n' + msg);
+
 </script>
+  
  <footer style="padding: 30px 14px; text-align: center; border-top: 1px solid var(--border); margin-top: 20px; margin-bottom: 80px; position: relative; z-index: 10;">
     <div style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">
         © 2026 로또엔진. All rights reserved.
