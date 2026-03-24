@@ -1638,21 +1638,19 @@ h1{
       </div>
 
       <div class="lb-sticky-bar" id="lb-sticky-bar">
-        <div class="lb-left">
-          <div class="lb-orb">7</div>
-          <div class="lb-balance-wrap">
-            <span class="lb-balance-label">럭키볼</span>
-            <span class="lb-balance-value" id="lb-balance-value">30LB</span>
-          </div>
-        </div>
-
-        <div class="lb-right">
-          <div class="lb-streak" id="lb-streak-badge">연속 0D</div>
-          <button class="lb-mini-btn attend" id="lb-attend-btn">출석</button>
-          <button class="lb-mini-btn charge" id="lb-charge-btn">충전하기▶</button>
-         
-        </div>
+       <div class="lb-left">
+        <div class="lb-streak" id="lb-streak-badge">🔥연속🔥 0D</div>
+        <button class="lb-mini-btn attend" id="lb-attend-btn">출석체크</button>
+        <button class="lb-mini-btn attend-done" id="lb-attend-check" disabled style="height:22px;padding:0 8px;border-radius:7px;border:1px solid rgba(64,208,128,.25);background:rgba(64,208,128,.08);color:var(--green);font-size:9px;font-weight:800;font-family:inherit;cursor:default;display:inline-flex;align-items:center;justify-content:center;opacity:.4">✔</button>
       </div>
+      <div class="lb-right">
+       <div class="lb-balance-wrap">
+          <span class="lb-balance-label">럭키볼</span>
+          <span class="lb-balance-value" id="lb-balance-value">30LB</span>
+        </div>
+        <button class="lb-mini-btn charge" id="lb-charge-btn">충전▶</button>
+      </div>
+    </div>
     </div>
  
 
@@ -2371,6 +2369,16 @@ function renderLBUI(){
       streakEl.textContent = '연속 ' + state.streak + 'D';
       streakEl.title = state.streak + '일 연속 출석';
     }
+  }
+  const checkBtn = document.getElementById('lb-attend-check');
+  if(checkBtn){
+    const today = getKstDateKey();
+    const claimedToday = state.lastAttendDate === today;
+    checkBtn.disabled = !claimedToday;
+    checkBtn.style.opacity = claimedToday ? '1' : '.4';
+    checkBtn.style.background = claimedToday ? 'rgba(64,208,128,.2)' : 'rgba(64,208,128,.08)';
+    checkBtn.style.borderColor = claimedToday ? 'rgba(64,208,128,.5)' : 'rgba(64,208,128,.25)';
+    checkBtn.style.color = claimedToday ? 'var(--green)' : 'var(--muted)';
   }
 }
 
