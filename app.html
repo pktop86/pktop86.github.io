@@ -2588,6 +2588,7 @@ const LB_COSTS = {
   gen5: 5,
   gen10: 7,
   gen20: 10,
+  sim1000: 0,
   sim10000: 1,
   sim100000: 3,
   chargeReward: 25
@@ -2838,18 +2839,20 @@ function injectLBCostLabels(){
   const sim10000 = document.getElementById('sim-btn-10000');
   const sim100000 = document.getElementById('sim-btn-100000');
 
-if(sim1000 && !sim1000.dataset.lbBound){
-  sim1000.innerHTML = `🎲 1,000회 <span class="lb-cost">무료</span>`;
-  sim1000.dataset.lbBound = '1';
-}
-if(sim10000 && !sim10000.dataset.lbBound){
-  sim10000.innerHTML = `📺 10,000회 <span class="lb-cost">${LB_COSTS.sim10000}LB</span>`;
-  sim10000.dataset.lbBound = '1';
-}
-if(sim100000 && !sim100000.dataset.lbBound){
-  sim100000.innerHTML = `📺 100,000회 <span class="lb-cost">${LB_COSTS.sim100000}LB</span>`;
-  sim100000.dataset.lbBound = '1';
-}
+  if(sim1000){
+    sim1000.innerHTML = `🎲 1,000회 <span class="lb-cost free">무료</span>`;
+    sim1000.dataset.lbBound = '1';
+  }
+
+  if(sim10000){
+    sim10000.innerHTML = `📺 10,000회 <span class="lb-cost">1LB</span>`;
+    sim10000.dataset.lbBound = '1';
+  }
+
+  if(sim100000){
+    sim100000.innerHTML = `📺 100,000회 <span class="lb-cost">3LB</span>`;
+    sim100000.dataset.lbBound = '1';
+  }
 }
 
 function initLBSystem(){
