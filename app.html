@@ -287,11 +287,70 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
 .sim-target{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;min-height:38px;align-items:center}
 .sim-target-empty{font-size:12px;color:var(--muted)}
 .sim-btns{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-.sim-btn{flex:1;min-width:80px;border:none;border-radius:9px;padding:10px 6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;text-align:center}
-.sim-btn-free{background:var(--accent);color:#000}
-.sim-btn-free:hover{transform:translateY(-1px);box-shadow:0 4px 12px var(--glow)}
-.sim-btn-ad{background:var(--card);color:var(--muted);border:1px solid var(--border)}
-.sim-btn-ad:hover{color:var(--text);border-color:var(--accent3)}
+/* 공통 */
+.sim-btn{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:54px;
+  border-radius:14px;
+  font-weight:900;
+  font-size:15px;
+  border:1px solid rgba(255,255,255,.08);
+  transition:.18s ease;
+}
+
+/* 1,000회 무료 = 어두운 버튼 */
+.sim-btn-free{
+  background:linear-gradient(180deg, #1a2033 0%, #12182a 100%);
+  color:#dfe7ff;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+/* 10,000 / 100,000회 = 노란 버튼 */
+.sim-btn-ad{
+  background:linear-gradient(180deg, #f4cb4e 0%, #e8b93a 100%);
+  color:#161616;
+  border:1px solid rgba(0,0,0,.10);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+/* hover/active */
+.sim-btn:active{
+  transform:translateY(1px);
+}
+
+/* 비용 뱃지 */
+.lb-cost{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-left:6px;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+  line-height:1;
+}
+
+/* 무료 버튼 안의 '무료' */
+.sim-btn-free .lb-cost,
+.sim-btn-free .lb-cost.free{
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.12);
+  color:#ffffff;
+}
+
+/* 노란 버튼 안의 비용 */
+.sim-btn-ad .lb-cost{
+  background:rgba(0,0,0,.12);
+  border:1px solid rgba(0,0,0,.10);
+  color:#111;
+}
+
 .sim-btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
 .sim-running{text-align:center;padding:16px;color:var(--accent3);font-size:12px}
 .sim-running-anim{font-size:24px;animation:simSpin 1s linear infinite;display:inline-block;margin-bottom:6px}
