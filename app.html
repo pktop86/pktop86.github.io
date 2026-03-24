@@ -5433,17 +5433,17 @@ function renderSimResults(results,total){
       `}
 
       <div class="sim-cta-box">
-        <div class="sim-cta-text">${ctaTitle}</div>
-        <div class="sim-cta-sub">${ctaSub}</div>
-        <div class="sim-cta-btns">
-  <button class="sim-cta-btn" id="sim-analysis-btn">🔍 이 번호 자세히 보기 (3LB)</button>
-  <button class="sim-cta-btn secondary" id="sim-top3-btn">🎯 TOP3 추천 보기 (5LB)</button>
-</div>
+  <div class="sim-cta-text">${ctaTitle}</div>
+  <div class="sim-cta-sub">${ctaSub}</div>
+  <div class="sim-cta-btns">
+    <button class="sim-cta-btn" id="sim-analysis-btn">🔍 이 번호 자세히 보기 (3LB)</button>
+    <button class="sim-cta-btn secondary" id="sim-top3-btn">🎯 TOP3 추천 보기 (5LB)</button>
+  </div>
 
-<div class="top3-save-wrap">
-  <button class="top3-save-btn" id="top3-save-btn" style="display:none">⭐ TOP3 번호 저장</button>
+  <div class="top3-save-wrap">
+    <button id="top3-save-btn" style="display:none">⭐ TOP3 번호 저장</button>
+  </div>
 </div>
-      </div>
 
       <div id="sim-insight-area"></div>
     </div>
@@ -5618,16 +5618,20 @@ function handleSimTop3Click(){
   if(!area) return;
 
   const source = Array.isArray(simTargetSet) && simTargetSet.length ? simTargetSet : [];
+
   if(!source.length){
     area.innerHTML = `<div class="sim-inline-note">추천할 세트가 없습니다.</div>`;
     return;
   }
 
+  const top3 = source.slice(0,3);
+
   area.innerHTML = `
     <div class="sim-insight-box">
       <div class="sim-insight-title">🎯 TOP3 추천 보기</div>
+
       <div class="sim-top3-list">
-        ${source.slice(0,3).map((nums, idx)=>`
+        ${top3.map((nums, idx)=>`
           <div class="sim-top3-item">
             <div class="sim-top3-head">
               <div class="sim-top3-rank">TOP ${idx+1}</div>
@@ -5638,14 +5642,18 @@ function handleSimTop3Click(){
           </div>
         `).join('')}
       </div>
+
     </div>
   `;
-  window.currentTop3Nums = picks?.[0]?.nums ? [...picks[0].nums] : null;
 
-const saveBtn = document.getElementById('top3-save-btn');
-if(saveBtn){
-  saveBtn.style.display = window.currentTop3Nums ? 'block' : 'none';
-}
+  // 👉 저장 대상은 TOP1
+  window.currentTop3Nums = [...top3[0]];
+
+  // 👉 버튼 표시
+  const saveBtn = document.getElementById('top3-save-btn');
+  if(saveBtn){
+    saveBtn.style.display = 'block';
+  }
 }
 
 function updateSimTarget(numsOrSet, isCustom=false){
