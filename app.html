@@ -5163,7 +5163,7 @@ function renderSimResults(results,total){
     ctaSub = '이번 결과는 보통보다 좋습니다. 상위 조합 분석을 눌러보세요.';
   }
 
-  out.innerHTML =
+  out.innerHTML = '
     <div class="sim-results">
       <div style="font-size:11px;color:var(--muted);margin-bottom:10px;text-align:center">
         ${simTargetSet?.length > 1 ? `${simTargetSet.length}줄 세트 기준 최고 등수로 계산됨` : `선택 번호 기준 결과`}
