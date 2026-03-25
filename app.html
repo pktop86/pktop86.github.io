@@ -2668,9 +2668,9 @@ const LB_STATE_KEY = 'lotto_lb_state_v1';
 const LB_DEFAULT_BALANCE = 30;
 
 const LB_COSTS = {
-  gen5: 5,
-  gen10: 7,
-  gen20: 10,
+  gen5: 2,
+  gen10: 3,
+  gen20: 5,
   sim1000: 0,
   sim10000: 1,
   sim100000: 3,
@@ -4582,9 +4582,9 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 });
  
 // 줄 수 선택
-document.querySelectorAll('.seg-btn').forEach(btn=>{
+document.querySelectorAll('.seg-btn[data-n]').forEach(btn=>{
   btn.addEventListener('click',()=>{
-    document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('.seg-btn[data-n]').forEach(b=>b.classList.remove('on'));
     btn.classList.add('on');
     genCount=parseInt(btn.dataset.n);
     injectLBCostLabels();
