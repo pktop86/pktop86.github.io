@@ -2353,7 +2353,17 @@ h1{
 </div>
 </div>
 </div>
- 
+
+<!-- 내 고유 ID 카드 -->
+<div class="myinfo-section" style="margin-top:0">
+  <div class="myinfo-section-title" style="color:var(--muted)">🔑 내 고유 ID</div>
+  <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px">
+    <div id="myinfo-uid-display" style="flex:1;font-size:11px;color:var(--text);font-weight:700;letter-spacing:.5px;word-break:break-all">로딩 중...</div>
+    <button id="myinfo-uid-copy" style="background:rgba(240,192,64,.12);border:1px solid rgba(240,192,64,.25);color:var(--accent);border-radius:7px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0">복사</button>
+  </div>
+  <div style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.6">데이터 복구나 문의 시 이 ID가 필요할 수 있습니다.<br>브라우저 데이터 삭제 시 ID가 변경됩니다.</div>
+</div>
+  
   <!-- 내주변 판매점 탭 -->
   <div class="tab-content" id="tab-near">
     <button class="loc-btn" id="loc-btn">
@@ -7525,11 +7535,15 @@ init();
       표시되는 번호·통계·판매점 정보는 <strong style="color:#fff">재미·참고 목적</strong>이며 결과를 보장하지 않습니다.<br>
       과도한 복권 구매는 도박 중독의 위험이 있습니다.
     </div>
+   <div style="margin-top:14px;padding:10px 14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;display:inline-flex;align-items:center;gap:8px;max-width:320px;width:100%">
+      <span style="font-size:10px;color:var(--muted);flex-shrink:0">🔑 내 ID</span>
+      <span id="footer-uid-display" style="font-size:10px;color:var(--text);font-weight:700;flex:1;word-break:break-all;text-align:left">로딩 중...</span>
+      <button id="footer-uid-copy" style="background:transparent;border:none;color:var(--muted);font-size:10px;cursor:pointer;font-family:inherit;flex-shrink:0;padding:0">복사</button>
+    </div>
     <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:8px 16px;margin-bottom:12px">
         <a href="privacy.html" style="color:var(--accent);font-size:12px;font-weight:700;text-decoration:none">개인정보처리방침</a>
         <a href="terms.html" style="color:var(--muted);font-size:12px;text-decoration:none">이용약관</a>
         <a href="contact.html" style="color:var(--muted);font-size:12px;text-decoration:none">문의하기</a>
-        <a href="disclaimer.html" style="color:var(--muted);font-size:12px;text-decoration:none">서비스안내</a>
         <a href="index.html" style="color:var(--muted);font-size:12px;text-decoration:none">서비스 가이드</a>
     </div>
     <div style="font-size:11px;color:var(--muted);opacity:.6">
