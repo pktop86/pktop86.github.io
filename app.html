@@ -1649,10 +1649,14 @@ h1{
   position:fixed;
   inset:0;
   z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: calc(var(--sticky-ad-h) + var(--sticky-tabs-wrap-h) + 12px) 16px 80px;
 }
 
 .sim-set-modal-backdrop{
-  position:absolute;
+  position:fixed;
   inset:0;
   background:rgba(0,0,0,.58);
   backdrop-filter:blur(4px);
@@ -1661,15 +1665,15 @@ h1{
 
 .sim-set-modal-card{
   position:relative;
-  width:min(92vw,560px);
-  max-height:48vh;
+  width:min(92vw,480px);
+  max-height:min(52vh, 420px);
   overflow:hidden;
-  margin:4vh auto 0;
   border-radius:18px;
   border:1px solid rgba(255,255,255,.08);
   background:linear-gradient(180deg, #111424 0%, #0b1020 100%);
   box-shadow:0 24px 60px rgba(0,0,0,.45);
   z-index:2;
+  margin:0;
 }
 
 .sim-set-modal-head{
@@ -5553,7 +5557,7 @@ function renderSimResults(results,total){
   <div class="sim-cta-sub">${ctaSub}</div>
   <div class="sim-cta-btns">
     <button class="sim-cta-btn" id="sim-analysis-btn">🔍 이 번호 자세히 보기</button>
-    <button class="sim-cta-btn" id="sim-top3-btn">🎯 TOP3 추천 보기</button>
+    <button class="sim-cta-btn" id="sim-top3-btn">🎯 TOP3 추천 보기 <span style="margin-left:5px;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,.18);font-size:10px">3LB</span></button>
   </div>
 
   <div class="top3-save-wrap">
@@ -5660,6 +5664,11 @@ window._saveTop3Single = async function(idx){
     alert('로그인 정보가 없습니다.');
     return;
   }
+  // 중복 저장 방지
+  if(window._top3SavedIdx?.has(idx)){
+    alert(`TOP${idx+1} 번호는 이미 저장되었습니다.`);
+    return;
+  }
   try{
     await addDoc(collection(db,'picks'),{
       uid: currentUid,
@@ -5670,6 +5679,8 @@ window._saveTop3Single = async function(idx){
       top3Pinned: true,
       createdAt: serverTimestamp()
     });
+    window._top3SavedIdx = window._top3SavedIdx || new Set();
+    window._top3SavedIdx.add(idx);
     loadMyNums();
     alert(`TOP${idx+1} 번호가 저장되었습니다.`);
   }catch(e){
@@ -5689,6 +5700,11 @@ async function saveTop3All(){
     alert('로그인 정보가 없습니다.');
     return;
   }
+  // 이미 전체 저장된 경우 방지
+  if(window._top3AllSaved){
+    alert('TOP3 번호는 이미 모두 저장되었습니다.');
+    return;
+  }
   if(!await confirm(`TOP${all.length} 번호를 모두 저장하시겠습니까?`)) return;
   try{
     const savedRound = getActivePickRound();
@@ -5703,6 +5719,8 @@ async function saveTop3All(){
         createdAt: serverTimestamp()
       })
     ));
+    window._top3AllSaved = true;
+    window._top3SavedIdx = new Set(all.map((_,i)=>i));
     loadMyNums();
     alert(`TOP${all.length} 번호가 모두 저장되었습니다.`);
   }catch(e){
@@ -5760,6 +5778,45 @@ async function handleSimRerun(simCount, genCost, simCost, simLabel){
   }finally{
     genBtn.disabled = false;
     genBtn.textContent = '🎲 번호 추첨하기';
+  }
+}
+
+function buildSimNumGrid(){
+  const grid = document.getElementById('sim-num-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  simCustomNums = [];
+
+  const countEl = document.getElementById('sim-custom-count');
+  if(countEl) countEl.textContent = '0/6 선택';
+  const applyBtn = document.getElementById('sim-custom-apply');
+  if(applyBtn) applyBtn.disabled = true;
+
+  for(let n=1; n<=45; n++){
+    const btn = document.createElement('button');
+    btn.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 2px;font-size:11px;font-weight:700;cursor:pointer;text-align:center;color:var(--muted);transition:all .15s';
+    btn.textContent = n;
+    btn.addEventListener('click', ()=>{
+      if(btn.dataset.sel === '1'){
+        btn.dataset.sel = '0';
+        btn.style.background = 'var(--card)';
+        btn.style.color = 'var(--muted)';
+        btn.style.borderColor = 'var(--border)';
+        simCustomNums = simCustomNums.filter(x => x !== n);
+      }else{
+        if(simCustomNums.length >= 6) return;
+        btn.dataset.sel = '1';
+        btn.style.background = 'var(--accent)';
+        btn.style.color = '#000';
+        btn.style.borderColor = 'var(--accent)';
+        simCustomNums.push(n);
+      }
+      const cnt = document.getElementById('sim-custom-count');
+      if(cnt) cnt.textContent = simCustomNums.length + '/6 선택';
+      const apply = document.getElementById('sim-custom-apply');
+      if(apply) apply.disabled = simCustomNums.length !== 6;
+    });
+    grid.appendChild(btn);
   }
 }
 
@@ -5860,6 +5917,9 @@ function handleSimTop3Click(){
   const area = document.getElementById('sim-insight-area');
   if(!area) return;
 
+  // 3LB 차감
+  if(!spendLB(3, 'TOP3 추천 보기', ()=>handleSimTop3Click())) return;
+
   const source = Array.isArray(simTargetSet) && simTargetSet.length ? simTargetSet : [];
 
   if(!source.length){
@@ -5870,6 +5930,7 @@ function handleSimTop3Click(){
   const top3 = source.slice(0,3);
   window.currentTop3Nums = [...top3[0]];
   window.currentTop3All = top3.map(nums=>[...nums]);
+  window._top3SavedIdx = new Set(); // 중복 저장 방지용
 
   area.innerHTML = `
     <div class="sim-insight-box">
@@ -6000,6 +6061,47 @@ function closeSimSetModal(){
 
 document.getElementById('sim-set-close')?.addEventListener('click', closeSimSetModal);
 document.getElementById('sim-set-backdrop')?.addEventListener('click', closeSimSetModal);
+
+// 직접 번호 선택 토글
+document.getElementById('sim-custom-toggle')?.addEventListener('click', ()=>{
+  const area = document.getElementById('sim-custom-area');
+  if(!area) return;
+  const isOpen = area.style.display !== 'none';
+  area.style.display = isOpen ? 'none' : 'block';
+  if(!isOpen) buildSimNumGrid();
+});
+
+// 직접 선택 적용
+document.getElementById('sim-custom-apply')?.addEventListener('click', ()=>{
+  if(simCustomNums.length !== 6) return;
+  const sorted = [...simCustomNums].sort((a,b)=>a-b);
+  updateSimTarget(sorted, true);
+  document.getElementById('sim-custom-area').style.display = 'none';
+});
+
+// 내 번호에 저장
+document.getElementById('sim-save-to-mynums')?.addEventListener('click', async function(){
+  const nums = this._nums;
+  if(!nums || nums.length !== 6){ alert('번호를 먼저 선택해주세요.'); return; }
+  if(!currentUid || !db){ alert('로그인 정보가 없습니다.'); return; }
+  try{
+    await addDoc(collection(db,'picks'),{
+      uid: currentUid,
+      round: getActivePickRound(),
+      nums,
+      prize: checkPrize(nums, latestWinNums, latestBonusNum),
+      sourceType: 'custom_sim',
+      createdAt: serverTimestamp()
+    });
+    loadMyNums();
+    this.textContent = '✅ 저장 완료!';
+    this.style.background = 'rgba(64,208,128,.3)';
+    setTimeout(()=>{
+      this.textContent = '⭐ 내 번호에 저장';
+      this.style.background = 'rgba(64,208,128,.15)';
+    }, 2000);
+  }catch(e){ console.error(e); alert('저장 중 오류가 발생했습니다.'); }
+});
   
 // 시뮬레이션 버튼 이벤트
 document.getElementById('sim-btn-1000').addEventListener('click', async ()=>{
