@@ -1,16 +1,189 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>개인정보 처리방침 | 로또엔진</title>
-    <style>body{font-family:sans-serif; line-height:1.8; color:#333; padding:40px; max-width:800px; margin:0 auto;}</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>개인정보처리방침 - 로또엔진</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Black+Han+Sans&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080f;--panel:#0f1020;--card:#161828;--border:rgba(255,255,255,0.08);--accent:#f0c040;--accent2:#e05c20;--accent3:#3ab8ff;--green:#40d080;--text:#dde0f0;--muted:#505870}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;line-height:1.7}
+.wrap{max-width:640px;margin:0 auto;padding:24px 16px 80px}
+ 
+.page-header{display:flex;align-items:center;gap:12px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.back-btn{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:all .2s;flex-shrink:0}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.page-title{font-family:'Black Han Sans',sans-serif;font-size:1.3rem;background:linear-gradient(120deg,#fff 0%,var(--accent3) 60%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+ 
+.meta-row{display:flex;align-items:center;gap:8px;margin-bottom:24px;font-size:11px;color:var(--muted)}
+.meta-badge{background:rgba(58,184,255,.12);border:1px solid rgba(58,184,255,.25);color:var(--accent3);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700}
+ 
+.notice-box{background:rgba(58,184,255,.06);border:1px solid rgba(58,184,255,.2);border-radius:10px;padding:14px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.75;display:flex;gap:10px}
+.notice-box .icon{font-size:18px;flex-shrink:0;margin-top:1px}
+ 
+.article{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px}
+.article-title{font-size:13px;font-weight:900;color:var(--accent3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.article-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--accent3);border-radius:2px;flex-shrink:0}
+.article-body{font-size:12px;color:var(--muted);line-height:1.85}
+.article-body p{margin-bottom:8px}
+.article-body p:last-child{margin-bottom:0}
+.article-body ul,.article-body ol{padding-left:18px;display:flex;flex-direction:column;gap:8px}
+.article-body li{font-size:12px;color:var(--muted);line-height:1.85;padding-left:4px}
+.article-body strong{color:var(--text);font-weight:700}
+.article-body .highlight{color:var(--accent3);font-weight:700}
+.article-body .sub-list{margin-top:8px;padding-left:16px;display:flex;flex-direction:column;gap:4px;list-style:disc}
+.article-body .sub-list li{font-size:11px}
+ 
+.contact-box{background:linear-gradient(135deg,rgba(58,184,255,.08),rgba(176,96,255,.06));border:1px solid rgba(58,184,255,.2);border-radius:12px;padding:18px;margin-bottom:12px}
+.contact-box .contact-title{font-size:13px;font-weight:900;color:var(--accent3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.contact-box .contact-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--accent3);border-radius:2px;flex-shrink:0}
+.contact-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px}
+.contact-row:last-child{margin-bottom:0}
+.contact-label{color:var(--muted);flex-shrink:0;width:70px}
+.contact-value{color:var(--text);font-weight:700}
+.contact-value a{color:var(--accent3);text-decoration:none}
+.contact-value a:hover{text-decoration:underline}
+ 
+.page-footer{text-align:center;padding:24px 0 0;font-size:11px;color:var(--muted);border-top:1px solid var(--border);margin-top:8px}
+.page-footer a{color:var(--muted);text-decoration:none}
+.page-footer a:hover{color:var(--accent)}
+</style>
 </head>
 <body>
-    <h1>개인정보 처리방침</h1>
-    <p>본 서비스는 사용자의 개인정보를 소중히 다루며, 관련 법령을 준수합니다.</p>
-    <h3>1. 수집하는 데이터</h3>
-    <p>본 서비스는 원활한 기능 제공을 위해 성별, 연령대 정보를 수집할 수 있으나, 이는 익명화된 상태로 서비스 개선을 위해서만 사용됩니다.</p>
-    <h3>2. 쿠키 및 광고</h3>
-    <p>본 사이트는 구글 애드센스를 사용하며, 사용자 맞춤형 광고 제공을 위해 쿠키를 활용할 수 있습니다.</p>
-    </body>
+<div class="wrap">
+ 
+  <div class="page-header">
+    <a href="app.html" class="back-btn">← 돌아가기</a>
+    <div class="page-title">🔒 개인정보처리방침</div>
+  </div>
+ 
+  <div class="meta-row">
+    <span class="meta-badge">최신</span>
+    <span>시행일: 2026년 1월 1일</span>
+    <span>·</span>
+    <span>로또엔진 개인정보 처리방침</span>
+  </div>
+ 
+  <div class="notice-box">
+    <div class="icon">🛡️</div>
+    <div>로또엔진은 사용자의 개인정보 보호를 소중히 여기며, 「개인정보 보호법」 및 구글 플레이 개발자 정책을 준수합니다.</div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제1조 (총칙)</div>
+    <div class="article-body">
+      <p><strong>'로또엔진'</strong>(이하 "앱")은 사용자의 개인정보 보호를 소중히 여기며, 「개인정보 보호법」 및 구글 플레이 개발자 정책을 준수합니다. 본 방침은 앱이 사용자의 데이터를 어떻게 수집, 이용, 보호하는지 상세히 알리는 데 목적이 있습니다.</p>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제2조 (수집하는 개인정보 항목 및 수집방법)</div>
+    <div class="article-body">
+      <p>앱은 서비스 제공을 위해 최소한의 정보만을 수집하며, 사용자의 민감한 개인정보(성명, 주민번호 등)를 강제로 요구하지 않습니다.</p>
+      <p><strong>자동 수집 항목:</strong></p>
+      <ul class="sub-list">
+        <li>기기 정보 (모델명, OS 버전, 언어 및 국가 설정)</li>
+        <li>서비스 이용 기록 (접속 로그, 앱 설치 및 삭제 기록)</li>
+        <li>광고 식별자 (ADID/IDFA): 맞춤형 광고 제공 및 광고 성과 측정을 위해 수집됩니다.</li>
+      </ul>
+      <p style="margin-top:10px"><strong>수집 방법:</strong> 앱 실행 시 생성되는 로그 분석 도구 및 광고 플랫폼 API를 통해 자동으로 수집됩니다.</p>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제3조 (개인정보의 이용 목적)</div>
+    <div class="article-body">
+      <p>수집된 정보는 다음의 목적을 위해서만 이용됩니다.</p>
+      <ul>
+        <li><strong>서비스 최적화:</strong> 사용자 기기에 최적화된 로또 분석 UI/UX 제공 및 버그 수정.</li>
+        <li><strong>가상 재화(LB) 관리:</strong> 출석 체크 및 광고 시청을 통한 럭키볼(LB)의 정상적인 지급 및 관리.</li>
+        <li><strong>타겟 광고 서비스:</strong> 사용자의 관심사에 기반한 보상형 광고(AdMob 등) 송출.</li>
+        <li><strong>부정 이용 방지:</strong> 비정상적인 LB 충전 시도나 시스템 해킹 시도 차단.</li>
+      </ul>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제4조 (개인정보의 제3자 제공)</div>
+    <div class="article-body">
+      <p>앱은 사용자의 동의 없이 개인정보를 외부에 제공하지 않습니다. 단, 다음의 경우 예외로 합니다.</p>
+      <ul>
+        <li>사용자가 사전에 동의한 경우.</li>
+        <li>법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차에 따라 수사기관의 요구가 있는 경우.</li>
+        <li><strong>광고 플랫폼 서비스:</strong> 효율적인 광고 집행을 위해 익명화된 광고 식별자 정보가 Google AdMob 등 협력사에 제공될 수 있습니다.</li>
+      </ul>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제5조 (수집한 개인정보의 보유 및 이용기간)</div>
+    <div class="article-body">
+      <p>사용자의 데이터는 원칙적으로 앱 삭제 시 또는 서비스 종료 시 즉시 파기됩니다.</p>
+      <p>단, 부정 이용 기록 및 서비스 장애 대응을 위해 내부 방침에 따라 일정 기간 <strong>(최대 1년)</strong> 로그 정보를 보관할 수 있습니다.</p>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제6조 (개인정보의 파기절차 및 방법)</div>
+    <div class="article-body">
+      <ul>
+        <li><strong>파기절차:</strong> 이용 목적이 달성된 정보는 별도의 DB로 옮겨져 일정 기간 저장된 후 파기됩니다.</li>
+        <li><strong>파기방법:</strong> 전자적 파일 형태의 정보는 기록을 재생할 수 없는 기술적 방법을 사용하여 삭제합니다.</li>
+      </ul>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제7조 (사용자의 권리 및 행사방법)</div>
+    <div class="article-body">
+      <ul>
+        <li>사용자는 언제든지 앱 설정을 통해 개인정보 수집에 대한 동의를 철회할 수 있습니다.</li>
+        <li>기기 내 설정 <span class="highlight">(Google 설정 &gt; 광고)</span>을 통해 광고 맞춤 설정 선택 해제를 할 수 있습니다.</li>
+        <li>앱을 삭제함으로써 개인정보 수집의 원천적인 중단을 요청할 수 있습니다.</li>
+      </ul>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제8조 (개인정보 보호를 위한 기술적/관리적 대책)</div>
+    <div class="article-body">
+      <p>앱은 사용자의 데이터를 안전하게 보호하기 위해 다음과 같은 조치를 취합니다.</p>
+      <ul>
+        <li><strong>해킹 방지:</strong> 외부로부터의 무단 접근을 차단하기 위해 보안 솔루션을 적용합니다.</li>
+        <li><strong>데이터 최소화:</strong> 서비스 운영에 반드시 필요한 데이터 외에는 수집을 원천적으로 차단합니다.</li>
+      </ul>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제9조 (구글 플레이 정책 준수)</div>
+    <div class="article-body">
+      <p>본 방침은 구글 플레이의 <strong>'데이터 보안(Data Safety)'</strong> 요구사항을 반영하고 있습니다. 앱은 사용자의 위치 정보, 연락처, 사진/영상 등 민감한 권한을 사용자 승인 없이 무단으로 수집하거나 공유하지 않습니다.</p>
+    </div>
+  </div>
+ 
+  <div class="contact-box">
+    <div class="contact-title">제10조 (개인정보 보호책임자 및 문의처)</div>
+    <div class="contact-row">
+      <div class="contact-label">책임자</div>
+      <div class="contact-value">로또엔진 운영팀</div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-label">이메일</div>
+      <div class="contact-value"><a href="mailto:riverhwan@gmail.com">riverhwan@gmail.com</a></div>
+    </div>
+    <div class="contact-row">
+      <div class="contact-label">답변 기한</div>
+      <div class="contact-value">이메일 서면 문의 시 7일 이내 (주말 제외)</div>
+    </div>
+  </div>
+ 
+  <div class="page-footer">
+    <p style="margin-bottom:10px">© 2026 로또엔진 (Clyde Park). All rights reserved.</p>
+    <p><a href="terms.html">이용약관</a> &nbsp;·&nbsp; <a href="app.html">서비스 홈</a></p>
+  </div>
+ 
+</div>
+</body>
 </html>
