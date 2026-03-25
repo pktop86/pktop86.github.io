@@ -4586,22 +4586,6 @@ function renderMyNums(docs){
       }
       list.appendChild(item);
     });
-    
-      const db2=document.createElement('button'); db2.className='del-btn'; db2.textContent='🗑️';
-      db2.addEventListener('click',()=>showDelModal([d.id],[d.nums||[]]));
-      top.appendChild(db2);
-      item.appendChild(top);
-      if(showResult){
-        const tags=document.createElement('div'); tags.className='my-item-tags';
-        tags.innerHTML += getSourceBadgeHTML(d.sourceType);
-        if(p>0)tags.innerHTML+=`<span class="tag ${PCLS[p]}">${PLABELS[p]}</span>`;
-        else tags.innerHTML+='<span class="tag warn">일치 없음</span>';
-        const hc=(d.nums||[]).filter(n=>wn.includes(n)).length;
-        if(hc>0)tags.innerHTML+=`<span class="tag info">${hc}개 일치</span>`;
-        item.appendChild(tags);
-      }
-      list.appendChild(item);
-    });
     sec.appendChild(list); container.appendChild(sec);
   });
   updateSelCount();
