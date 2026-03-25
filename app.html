@@ -4232,55 +4232,59 @@ function renderResult(nums,idx){
   const div=document.createElement('div');
   div.className='r-row';
   div.style.animationDelay=(idx*60)+'ms';
- 
-  // 상단 행
+
+  // ── 1행: 번호 공 ──
   const top=document.createElement('div');
-  top.className='r-top';
- 
+  top.style.cssText='display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:nowrap';
+
   const numEl=document.createElement('div');
   numEl.className='r-num';
   numEl.textContent=idx+1;
   top.appendChild(numEl);
- 
+
   const ballsEl=document.createElement('div');
-  ballsEl.className='r-balls';
+  ballsEl.style.cssText='display:flex;gap:5px;flex-wrap:nowrap;flex:1;min-width:0';
   nums.forEach(n=>{
     const b=document.createElement('div');
     b.className='ball '+ballCls(n);
+    b.style.cssText='width:34px;height:34px;font-size:12px;flex-shrink:0';
     b.textContent=n;
     ballsEl.appendChild(b);
   });
   top.appendChild(ballsEl);
- 
-  // 시뮬레이션 선택 버튼 (번호와 체크 사이)
+
+  const savedEl=document.createElement('div');
+  savedEl.className='r-saved';
+  savedEl.id='rsaved-'+idx;
+  top.appendChild(savedEl);
+
+  div.appendChild(top);
+
+  // ── 2행: 버튼 모음 ──
+  const btnRow=document.createElement('div');
+  btnRow.style.cssText='display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap';
+
   const simBtn=document.createElement('button');
-  simBtn.style.cssText='background:rgba(58,184,255,.15);border:1px solid rgba(58,184,255,.3);color:var(--accent3);border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0';
+  simBtn.style.cssText='background:rgba(58,184,255,.15);border:1px solid rgba(58,184,255,.3);color:var(--accent3);border-radius:6px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap';
   simBtn.textContent='🎯 시뮬레이션';
   simBtn.addEventListener('click',()=>{
     updateSimTarget(nums);
     document.getElementById('sim-box').scrollIntoView({behavior:'smooth',block:'nearest'});
   });
-  top.appendChild(simBtn);
- 
-  const savedEl=document.createElement('div');
-  savedEl.className='r-saved';
-  savedEl.id='rsaved-'+idx;
-  top.appendChild(savedEl);
- 
-  div.appendChild(top);
+  btnRow.appendChild(simBtn);
 
-  //챌린지 참여 번호 선택
   const challengeBtn=document.createElement('button');
-  challengeBtn.style.cssText='background:rgba(176,96,255,.15);border:1px solid rgba(176,96,255,.3);color:#b060ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0';
+  challengeBtn.style.cssText='background:rgba(176,96,255,.15);border:1px solid rgba(176,96,255,.3);color:#b060ff;border-radius:6px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap';
   challengeBtn.textContent='🏆 챌린지 참여';
   challengeBtn.addEventListener('click', async ()=>{
     updateChallengeGenNums(nums);
     await joinChallenge([...nums], 'gen');
   });
-  top.appendChild(challengeBtn);
+  btnRow.appendChild(challengeBtn);
 
-  
-  // 태그 행
+  div.appendChild(btnRow);
+
+  // ── 3행: 태그 ──
   const tagsEl=document.createElement('div');
   tagsEl.className='r-tags';
   tags.forEach(t=>{
@@ -4290,7 +4294,7 @@ function renderResult(nums,idx){
     tagsEl.appendChild(s);
   });
   div.appendChild(tagsEl);
- 
+
   return div;
 }
  
@@ -4740,6 +4744,8 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     if(tab==='mynums'){loadMyNums();}
     if(tab==='near'){initNearTab();}
     if(tab==='myinfo'){const i=loadMyInfo();applyMyInfoToForm(i);updateFortuneDisplay();}
+    // 탭 전환 시 항상 최상단으로
+    window.scrollTo({top:0, behavior:'smooth'});
   });
 });
  
