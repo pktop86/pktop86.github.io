@@ -5283,8 +5283,10 @@ function renderLuckyCard(data){
   },300);
   // 버튼 이벤트 - setTimeout으로 DOM 반영 후 등록
   setTimeout(()=>{
-  document.getElementById('lucky-sim-btn').addEventListener('click',()=>{
-    // 번호추첨 탭으로 이동 후 결과에 행운 번호 표시
+ document.getElementById('lucky-sim-btn').addEventListener('click',()=>{
+    // 시뮬레이션 대상 번호 재설정 (탭 전환 전에 반드시 먼저 호출)
+    updateSimTarget(numbers);
+    // 번호추첨 탭으로 이동
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
     document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
     document.querySelector('[data-tab="pick"]').classList.add('on');
@@ -5297,7 +5299,7 @@ function renderLuckyCard(data){
     row.className='r-row';
     row.innerHTML=`<div class="r-top"><div class="r-num">🍀</div><div class="r-balls">${numbers.map(n=>`<div class="ball ${ballCls(n)}${hitSet.has(n)?' hit':''}">${n}</div>`).join('')}</div><div class="r-saved" style="color:var(--accent);font-size:10px">오늘의 숫자 카드</div></div>`;
     resultsEl.appendChild(row);
-    setTimeout(()=>document.getElementById('sim-box')?.scrollIntoView({behavior:'smooth',block:'center'}), 100);
+    setTimeout(()=>document.getElementById('sim-box')?.scrollIntoView({behavior:'smooth',block:'start'}), 100);
   });
   // 챌린지 버튼
   document.getElementById('lucky-challenge-btn').addEventListener('click',async()=>{
