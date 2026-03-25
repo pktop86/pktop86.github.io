@@ -1942,6 +1942,15 @@ h1{
   border:1px solid rgba(255,255,255,.14);
 }
 
+/* 당첨 등수 클릭 커서 */
+.ldw-val, .my-sc-val {
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.ldw-val:hover, .my-sc-val:hover {
+  opacity: .7;
+}
+  
 </style>
 </head>
 <body>
@@ -2473,12 +2482,16 @@ h1{
   </div>
 </div>
 
-
- 
-
-
-
-  
+<!-- 당첨 번호 확인 모달 -->
+<div class="modal-overlay" id="prize-nums-modal">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-icon" id="prize-nums-icon">🥇</div>
+    <div class="modal-title" id="prize-nums-title">1등 당첨 번호</div>
+    <div id="prize-nums-list" style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:16px;text-align:left"></div>
+    <button class="modal-btn modal-btn-primary" id="prize-nums-close-btn">닫기</button>
+  </div>
+</div>
+   
 <script src="draw-history-261-latest.js"></script>
   <script>
 (function(){
@@ -3073,6 +3086,67 @@ function getPickRoundWinCounts(round){
   return cnt;
 }
 
+// ── 당첨 번호 모달 ──
+function openPrizeNumsModal(rank, mode){
+  const ICONS  = ['','🥇','🥈','🥉','4️⃣','5️⃣'];
+  const LABELS = ['','1등','2등','3등','4등','5등'];
+
+  const matching = [];
+
+  myDocs.forEach(d=>{
+    const nums = d.nums || [];
+    let wn, bn;
+
+    if(mode === 'current'){
+      if(d.round !== latestRound) return;
+      wn = latestWinNums;
+      bn = latestBonusNum;
+    } else {
+      const entry = recentHist.find(h=>h.round===d.round);
+      if(!entry || !entry.nums || entry.nums.length!==6) return;
+      wn = entry.nums;
+      bn = entry.bonus;
+    }
+
+    if(checkPrize(nums, wn, bn) === rank){
+      matching.push({nums, round:d.round, winNums:wn});
+    }
+  });
+
+  const modal   = document.getElementById('prize-nums-modal');
+  const iconEl  = document.getElementById('prize-nums-icon');
+  const titleEl = document.getElementById('prize-nums-title');
+  const listEl  = document.getElementById('prize-nums-list');
+  if(!modal) return;
+
+  if(iconEl)  iconEl.textContent  = ICONS[rank] || '🎯';
+  if(titleEl) titleEl.textContent = `${LABELS[rank]} 당첨 번호 (${matching.length}개)`;
+
+  if(listEl){
+    if(!matching.length){
+      listEl.innerHTML = `<div style="text-align:center;color:var(--muted);padding:20px;font-size:12px">해당 등수 번호가 없습니다.</div>`;
+    } else {
+      listEl.innerHTML = matching.map(d=>{
+        const hitSet = new Set(d.winNums);
+        const balls = d.nums.map(n=>
+          `<div class="ball ${ballCls(n)}${hitSet.has(n)?' hit':''}" style="width:30px;height:30px;font-size:11px">${n}</div>`
+        ).join('');
+        return `
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:8px">${d.round}회차</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap">${balls}</div>
+          </div>`;
+      }).join('');
+    }
+  }
+
+  modal.classList.add('show');
+}
+
+function closePrizeNumsModal(){
+  document.getElementById('prize-nums-modal')?.classList.remove('show');
+}
+  
 function renderLatestDrawCard(){
   const roundEl = document.getElementById('latest-draw-round');
   const ballsEl = document.getElementById('latest-draw-balls');
@@ -3127,6 +3201,27 @@ async function init(){
     // 당첨현황 잠금 확인
     checkPrizeUnlock();
 
+   // 당첨 등수 클릭 이벤트
+   for(let i=1; i<=5; i++){
+   // 번호추첨 탭 (현재 회차만)
+   document.getElementById('pick-cnt'+i)?.addEventListener('click', (()=>{
+    const rank = i;
+    return ()=>openPrizeNumsModal(rank, 'current');
+   })());
+
+   // 내 번호 탭 (전체 회차)
+   document.getElementById('my-cnt'+i)?.addEventListener('click', (()=>{
+    const rank = i;
+    return ()=>openPrizeNumsModal(rank, 'all');
+   })());
+}
+
+// 모달 닫기
+document.getElementById('prize-nums-close-btn')?.addEventListener('click', closePrizeNumsModal);
+document.getElementById('prize-nums-modal')?.addEventListener('click', e=>{
+  if(e.target===document.getElementById('prize-nums-modal')) closePrizeNumsModal();
+});
+    
     
     // 최신 회차 백그라운드 업데이트 (재시도 포함)
     setTimeout(()=>autoUpdate(), 300);
