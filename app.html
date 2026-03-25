@@ -2114,7 +2114,7 @@ h1{
       </div>
       <!-- 참여 버튼 -->
       <div class="challenge-btns" id="challenge-btns">
-        <button class="challenge-btn challenge-btn-main" id="challenge-btn-gen" disabled>🎲 생성 번호로 참여</button>
+        <button class="challenge-btn challenge-btn-main" id="challenge-btn-gen" style="opacity:.45">🎲 생성 번호로 참여</button>
         <button class="challenge-btn challenge-btn-lucky" id="challenge-btn-lucky">🍀 오늘의 숫자로 참여</button>
         <button class="challenge-btn challenge-btn-custom" id="challenge-btn-custom-toggle">✏️ 직접 번호 선택</button>
       </div>
@@ -6338,12 +6338,12 @@ async function initChallenge(){
       // 마감/채점 후 참여 버튼 비활성화
       const btnsEl=document.getElementById('challenge-btns');
       if(status!=='open'&&btnsEl&&!challengeMyEntry) {
-        btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.disabled=true;b.style.opacity='.4';});
+        btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.style.opacity='.4';});
       }
       else if(status==='open'&&btnsEl) {
-      btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.disabled=false;b.style.opacity='1';});
-      const genBtn2=document.getElementById('challenge-btn-gen');
-      if(genBtn2) genBtn2.disabled=!challengeGenNums.length;
+        btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.style.opacity='1';});
+        const genBtn2=document.getElementById('challenge-btn-gen');
+        if(genBtn2) genBtn2.style.opacity = challengeGenNums.length ? '1' : '.45';
       }
       // 채점 완료 시 TOP10 표시
       if(status==='scored'&&challengeRoundData?.top10Preview){
@@ -6732,7 +6732,7 @@ document.getElementById('challenge-btn-custom-submit').addEventListener('click',
 function updateChallengeGenNums(nums){
   challengeGenNums=[...nums];
   const btn=document.getElementById('challenge-btn-gen');
-  if(btn&&!challengeMyEntry&&getChallengeStatus()==='open') btn.disabled=false;
+  if(btn) btn.style.opacity='1';
 }
  
 // ── 내정보 & 오행 운세 ──
