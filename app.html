@@ -6430,44 +6430,74 @@ async function loadChallengeHistory(){
 // 챌린지 참여 - 검증 강화
 async function joinChallenge(numbers, sourceType){
   // 검증: 6개, 중복 없음, 1~45 범위
-  if(!numbers||numbers.length!==6){ alert('6개 번호를 선택해주세요.'); return; }
+  if(!numbers || numbers.length!==6){ alert('6개 번호를 선택해주세요.'); return; }
   if(new Set(numbers).size!==6){ alert('중복된 번호가 있습니다.'); return; }
   if(numbers.some(n=>n<1||n>45||!Number.isInteger(n))){ alert('번호는 1~45 사이 정수여야 합니다.'); return; }
-  if(!db||!currentUid){ alert('로그인 정보가 없습니다. 잠시 후 시도해주세요.'); return; }
+  if(!db || !currentUid){ alert('로그인 정보가 없습니다. 잠시 후 시도해주세요.'); return; }
+
   // 상태 확인 (마감 후 참여 방지)
-  const status=getChallengeStatus();
-  if(status!=='open'){ alert('이번 회차 참여는 마감됐습니다.'); return; }
- 
-  const roundId=String(latestRound);
-  const entryRef=doc(db,'challenge_rounds',roundId,'entries',currentUid);
+  const status = getChallengeStatus();
+  if(status !== 'open'){ alert('이번 회차 참여는 마감됐습니다.'); return; }
+
+  const roundId = String(latestRound);
+  const entryRef = doc(db,'challenge_rounds',roundId,'entries',currentUid);
+  const roundRef = doc(db,'challenge_rounds',roundId);
+
   try{
-    const snap=await getDoc(entryRef);
-    if(snap.exists()){
-      challengeMyEntry={id:currentUid,...snap.data()}; renderMyEntry();
-      alert('이미 이번 회차에 참여하셨습니다.'); return;
-    }
-    // 원자적 트랜잭션: entry 생성 + participantCount 증가
-    const roundRef=doc(db,'challenge_rounds',roundId);
     await runTransaction(db, async t=>{
-      const entrySnap=await t.get(entryRef);
+      // ✅ 읽기를 모두 먼저 수행
+      const entrySnap = await t.get(entryRef);
+      const roundSnap = await t.get(roundRef);
+
       if(entrySnap.exists()) throw new Error('already_joined');
+
+      // entry 저장
       t.set(entryRef,{
-        uid:currentUid, numbers, sourceType, createdAt:serverTimestamp(),
-        matchCount:0, bonusMatch:false, rank:0, resultLabel:'집계 대기'
+        uid: currentUid,
+        numbers,
+        sourceType,
+        createdAt: serverTimestamp(),
+        matchCount: 0,
+        bonusMatch: false,
+        rank: 0,
+        resultLabel: '집계 대기'
       });
-      // participantCount만 증가 (status는 건드리지 않음)
-      t.set(roundRef,{
-        roundId:latestRound,
-        participantCount:increment(1),
-        updatedAt:serverTimestamp()
-      },{merge:true});
+
+      // ✅ round 문서 존재 여부에 따라 분기
+      if(roundSnap.exists()){
+        const current = roundSnap.data().participantCount || 0;
+        t.update(roundRef,{
+          participantCount: current + 1,
+          updatedAt: serverTimestamp()
+        });
+      }else{
+        // 문서가 없으면 새로 생성
+        t.set(roundRef,{
+          roundId: latestRound,
+          participantCount: 1,
+          updatedAt: serverTimestamp()
+        });
+      }
     });
-    challengeMyEntry={id:currentUid,uid:currentUid,numbers,sourceType,rank:0,resultLabel:'집계 대기'};
+
+    challengeMyEntry = {
+      id: currentUid,
+      uid: currentUid,
+      numbers,
+      sourceType,
+      rank: 0,
+      resultLabel: '집계 대기'
+    };
     renderMyEntry();
     alert('✅ 참여가 완료되었습니다!');
   }catch(e){
-    if(e.message==='already_joined'){ alert('이미 이번 회차에 참여하셨습니다.'); checkMyEntry(roundId); }
-    else { console.error('joinChallenge error:',e); alert('참여 중 오류가 발생했습니다.'); }
+    console.error('joinChallenge error:', e);
+    if(e.message === 'already_joined'){
+      alert('이미 이번 회차에 참여하셨습니다.');
+      checkMyEntry(roundId);
+    }else{
+      alert('참여 중 오류가 발생했습니다.\n' + e.message);
+    }
   }
 }
 // 챌린지 취소
