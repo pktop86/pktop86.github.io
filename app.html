@@ -1991,7 +1991,7 @@ h1{
 <div class="wrap">
      <header class="hero-head">
       <div class="badge">📊 261회 ~ 최신회차 실시간 통계</div>
-      <h1>로또번로 생성기<br>AI 자동 추천 로또엔진</h1>
+      <h1>로또번호 생성기<br>AI 자동 추천 로또엔진</h1>
       <p class="credit">제작자: Clyde Park (P.K.H)</p>
       <p class="subtitle">실제 당첨 통계 × 스마트 알고리즘 × Firebase 당첨 추적</p>
     </header>
@@ -2607,6 +2607,7 @@ let unsubPrize = null;
 let unsubHistory = null;
 const MAX_FREE = 5;
 const FREE_KEY = 'lotto_usedFree';
+const FREE_DATE_KEY = 'lotto_usedFreeDate';
 // ── 주간 업데이트 캐시 ──
 const UPDATE_CACHE_KEY = 'lotto_last_update_round';
 const UPDATE_CACHE_TIME_KEY = 'lotto_last_update_time';
@@ -3091,7 +3092,7 @@ async function fetchNewRounds(){
   }
 
   _v3FeatureCache = null;
-  _v3LastFeatureRound = null;
+  _v3FeatureRound = null;
 
   return count;
 }
@@ -3124,7 +3125,8 @@ function openPrizeNumsModal(rank, mode){
       wn = latestWinNums;
       bn = latestBonusNum;
     } else {
-      const entry = recentHist.find(h=>h.round===d.round);
+      const allHist = (window.FULL_DRAW_HISTORY?.length ? window.FULL_DRAW_HISTORY : recentHist);
+      const entry = allHist.find(h=>h.round===d.round);
       if(!entry || !entry.nums || entry.nums.length!==6) return;
       wn = entry.nums;
       bn = entry.bonus;
@@ -6009,6 +6011,7 @@ function handleSimTop3Click(){
   window.currentTop3Nums = [...top3[0]];
   window.currentTop3All = top3.map(nums=>[...nums]);
   window._top3SavedIdx = new Set(); // 중복 저장 방지용
+  window._top3AllSaved = false;     // 전체 저장 플래그 리셋
 
   area.innerHTML = `
     <div class="sim-insight-box">
@@ -6189,14 +6192,14 @@ document.getElementById('sim-btn-1000').addEventListener('click', async ()=>{
 });
 
 document.getElementById('sim-btn-10000').addEventListener('click', async ()=>{
-  if(simNums.length===0) return;
+  if(!simTargetSet.length) return;
   if(!await confirm(`${LB_COSTS.sim10000}LB를 소모해서 10,000회 시뮬레이션을 돌리시겠습니까?`)) return;
   if(!spendLB(LB_COSTS.sim10000,'10,000회 시뮬레이션')) return;
   runSimulation(10000);
 });
 
 document.getElementById('sim-btn-100000').addEventListener('click', async ()=>{
-  if(simNums.length===0) return;
+  if(!simTargetSet.length) return;
   if(!await confirm(`${LB_COSTS.sim100000}LB를 소모해서 100,000회 시뮬레이션을 돌리시겠습니까?`)) return;
   if(!spendLB(LB_COSTS.sim100000,'100,000회 시뮬레이션')) return;
   runSimulation(100000);
