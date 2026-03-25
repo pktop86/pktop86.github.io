@@ -2537,7 +2537,7 @@ h1{
 <script type="module">
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-import { getFirestore, collection, addDoc, getDocs, getDocsFromServer, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, setDoc, getDoc, runTransaction, increment }
+import { getFirestore, collection, addDoc, getDocs, getDocsFromServer, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, setDoc, getDoc }
   from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import { getAuth, signInAnonymously, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
@@ -2679,6 +2679,9 @@ let simTargetSet = [];
 let simRunning = false;
 let simCustomNums = [];
 let lastSimCount = 1000;
+let _top3All = [];
+let _top3SavedIdx = new Set();
+let _top3AllSaved = false;
 
 // ===== LB SYSTEM START =====
 const LB_STATE_KEY = 'lotto_lb_state_v1';
@@ -5129,7 +5132,7 @@ async function saveCurrentTop3Number(){
 }
 
 // TOP1 단일 저장 (인덱스 지정)
-window._saveTop3Single = async function(idx){
+async function saveTop3SingleInternal(idx){
   const all = window.currentTop3All;
   if(!all || !all[idx] || all[idx].length !== 6){
     alert('저장할 번호가 없습니다.');
@@ -5433,8 +5436,8 @@ async function handleSimTop3Click(){
             <div style="margin-top:8px">
               <button
                 class="top3-save-btn"
-                onclick="window._saveTop3Single(${idx})"
-                style="width:100%;padding:9px;border:none;border-radius:9px;background:linear-gradient(135deg,#3ab8ff,#1a80c0);color:#fff;font-weight:900;cursor:pointer;font-family:inherit;font-size:12px">
+                data-top3-idx="${idx}"
+                style="...">
                 ⭐ TOP${idx+1} 저장
               </button>
             </div>
@@ -5457,6 +5460,14 @@ async function handleSimTop3Click(){
 
   // TOP3 모두 저장 이벤트
   document.getElementById('top3-save-all-btn')?.addEventListener('click', saveTop3All);
+
+  // 개별 저장 이벤트 (onclick 인라인 대신 위임)
+  area.querySelectorAll('[data-top3-idx]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = parseInt(btn.dataset.top3Idx);
+      saveTop3SingleInternal(idx);
+    });
+  });
 
   area.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
