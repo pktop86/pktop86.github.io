@@ -4505,40 +4505,88 @@ function renderMyNums(docs){
       const p=showResult?checkPrize(d.nums||[],wn,bn):0;
       const item=document.createElement('div');
       item.className='my-item' + (d.top3Pinned ? ' top3-pinned' : ''); item.dataset.id=d.id;
+
+      // ── 1행: 체크박스 + 번호 + 등수 ──
       const top=document.createElement('div'); top.className='my-item-top';
-      // 체크박스 - DOM 직접 생성
+      top.style.cssText='display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:nowrap';
+
       const cb=document.createElement('input'); cb.type='checkbox'; cb.className='my-checkbox';
       cb.checked=checkedIds.has(d.id);
       cb.addEventListener('change',()=>{ if(cb.checked)checkedIds.add(d.id); else checkedIds.delete(d.id); updateSelCount(); });
       top.appendChild(cb);
+
       const idx=document.createElement('div'); idx.className='my-item-idx'; idx.textContent=i+1; top.appendChild(idx);
+
       const balls=document.createElement('div'); balls.className='my-item-balls';
-      (d.nums||[]).forEach(n=>{const b=document.createElement('div');b.className='ball '+ballCls(n)+(showResult&&hitSet.has(n)?' hit':'');b.style.cssText='width:30px;height:30px;font-size:11px';b.textContent=n;balls.appendChild(b);});
+      balls.style.cssText='display:flex;gap:4px;flex-wrap:nowrap;flex:1;min-width:0';
+      (d.nums||[]).forEach(n=>{
+        const b=document.createElement('div');
+        b.className='ball '+ballCls(n)+(showResult&&hitSet.has(n)?' hit':'');
+        b.style.cssText='width:28px;height:28px;font-size:10px;flex-shrink:0';
+        b.textContent=n;
+        balls.appendChild(b);
+      });
       top.appendChild(balls);
-      if(showResult&&p>0){const pr=document.createElement('div');pr.className='my-item-prize';pr.textContent=PLABELS[p];top.appendChild(pr);}
+
+      if(showResult&&p>0){
+        const pr=document.createElement('div');
+        pr.className='my-item-prize';
+        pr.style.cssText='font-size:10px;flex-shrink:0;white-space:nowrap';
+        pr.textContent=PLABELS[p];
+        top.appendChild(pr);
+      }
+      item.appendChild(top);
+
+      // ── 2행: 버튼 모음 ──
+      const btnRow=document.createElement('div');
+      btnRow.style.cssText='display:flex;gap:6px;align-items:center;flex-wrap:wrap';
+
       // 시뮬레이션 버튼
-      const simB=document.createElement('button'); simB.className='my-item-sim-btn'; simB.textContent = d.top3Pinned ? '🔥 TOP3 시뮬레이션' : '🎯 시뮬레이션';
+      const simB=document.createElement('button'); simB.className='my-item-sim-btn';
+      simB.textContent = d.top3Pinned ? '🔥 TOP3 시뮬레이션' : '🎯 시뮬레이션';
       simB.addEventListener('click',()=>{
         updateSimTarget(d.nums||[]);
-        // 번호추첨 탭으로 이동 + 시뮬레이션 영역 스크롤
         document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
         document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
         document.querySelector('[data-tab="pick"]').classList.add('on');
         document.getElementById('tab-pick').classList.add('on');
         setTimeout(()=>document.getElementById('sim-box')?.scrollIntoView({behavior:'smooth',block:'start'}),100);
       });
-      top.appendChild(simB);
-      // 진행중 회차(아직 추첨 전)에만 챌린지 참여 버튼 표시
+      btnRow.appendChild(simB);
+
+      // 진행중 회차에만 챌린지 참여 버튼
       const activeRound = getActivePickRound();
       if(d.round === activeRound && getChallengeStatus() === 'open' && !challengeMyEntry){
-        const chalB = document.createElement('button');
-        chalB.style.cssText = 'background:rgba(176,96,255,.15);border:1px solid rgba(176,96,255,.3);color:#b060ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s';
-        chalB.textContent = '🏆 챌린지';
-        chalB.addEventListener('click', ()=>{
-          joinChallenge([...(d.nums||[])], 'my_nums');
+        const chalB=document.createElement('button');
+        chalB.style.cssText='background:rgba(176,96,255,.15);border:1px solid rgba(176,96,255,.3);color:#b060ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s';
+        chalB.textContent='🏆 챌린지 참여';
+        chalB.addEventListener('click', async ()=>{
+          await joinChallenge([...(d.nums||[])], 'my_nums');
         });
-        top.appendChild(chalB);
+        btnRow.appendChild(chalB);
       }
+
+      // 삭제 버튼 (오른쪽 끝)
+      const spacer=document.createElement('div'); spacer.style.cssText='flex:1';
+      btnRow.appendChild(spacer);
+      const db2=document.createElement('button'); db2.className='del-btn'; db2.textContent='🗑️';
+      db2.addEventListener('click',()=>showDelModal([d.id],[d.nums||[]]));
+      btnRow.appendChild(db2);
+
+      item.appendChild(btnRow);
+
+      if(showResult){
+        const tags=document.createElement('div'); tags.className='my-item-tags';
+        tags.innerHTML += getSourceBadgeHTML(d.sourceType);
+        if(p>0)tags.innerHTML+=`<span class="tag ${PCLS[p]}">${PLABELS[p]}</span>`;
+        else tags.innerHTML+='<span class="tag warn">일치 없음</span>';
+        const hc=(d.nums||[]).filter(n=>wn.includes(n)).length;
+        if(hc>0)tags.innerHTML+=`<span class="tag info">${hc}개 일치</span>`;
+        item.appendChild(tags);
+      }
+      list.appendChild(item);
+    });
+    
       const db2=document.createElement('button'); db2.className='del-btn'; db2.textContent='🗑️';
       db2.addEventListener('click',()=>showDelModal([d.id],[d.nums||[]]));
       top.appendChild(db2);
