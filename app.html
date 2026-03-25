@@ -1662,9 +1662,9 @@ h1{
 .sim-set-modal-card{
   position:relative;
   width:min(92vw,560px);
-  max-height:78vh;
+  max-height:48vh;
   overflow:hidden;
-  margin:8vh auto 0;
+  margin:4vh auto 0;
   border-radius:18px;
   border:1px solid rgba(255,255,255,.08);
   background:linear-gradient(180deg, #111424 0%, #0b1020 100%);
@@ -1700,10 +1700,10 @@ h1{
 
 .sim-set-modal-body{
   padding:14px 16px 18px;
-  max-height:calc(78vh - 62px);
+  max-height:calc(48vh - 62px);
   overflow:auto;
 }
-
+  
 .sim-set-list{
   display:grid;
   gap:10px;
@@ -1930,10 +1930,26 @@ h1{
   min-height:40px;
   font-size:13px;
   font-weight:900;
+  background:rgba(58,184,255,.15);
+  color:var(--accent3);
+  border:1px solid rgba(58,184,255,.35);
+}
+
+.sim-seg .seg-btn.on{
+  background:rgba(58,184,255,.35);
+  color:#fff;
+  border-color:rgba(58,184,255,.6);
+}
+
+.sim-seg .seg-btn:hover{
+  background:rgba(58,184,255,.25);
 }
 
 .sim-seg .seg-btn .lb-cost-sm{
   margin-left:6px;
+  background:rgba(58,184,255,.18);
+  border:1px solid rgba(58,184,255,.3);
+  color:#fff;
 }
 
 .sim-seg .seg-btn .lb-cost-sm.free{
@@ -2675,6 +2691,7 @@ let adTimer = null;
 let simNums = [];  
 let simTargetSet = [];
 let simRunning = false;
+let simCustomNums = [];
 
 // ===== LB SYSTEM START =====
 const LB_STATE_KEY = 'lotto_lb_state_v1';
@@ -5779,7 +5796,7 @@ function updateSimTarget(numsOrSet, isCustom=false){
         ${simTargetSet[0].map(n =>
           `<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`
         ).join('')}
-        <span style="align-self:center;font-size:10px;color:var(--muted)">외 ${simTargetSet.length-1}줄</span>
+        <span style="align-self:center;font-size:14px;color:var(--accent);font-weight:900">외 ${simTargetSet.length-1}줄</span>
         <button type="button" class="sim-set-view-btn" id="sim-set-view-btn">세트보기</button>
       </div>
     `;
@@ -5840,8 +5857,9 @@ document.getElementById('sim-set-close')?.addEventListener('click', closeSimSetM
 document.getElementById('sim-set-backdrop')?.addEventListener('click', closeSimSetModal);
   
 // 시뮬레이션 버튼 이벤트
-document.getElementById('sim-btn-1000').addEventListener('click', ()=>{
-  if(simNums.length===0) return;
+document.getElementById('sim-btn-1000').addEventListener('click', async ()=>{
+  if(!simTargetSet.length) return;
+  if(!await confirm('1,000회 시뮬레이션을 실행하시겠습니까?')) return;
   runSimulation(1000);
 });
 
