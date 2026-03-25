@@ -170,7 +170,7 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
 .empty-state{text-align:center;padding:36px 16px;color:var(--muted);font-size:12px}
 .empty-icon{font-size:36px;margin-bottom:10px;opacity:.35}
 /* 내주변 판매점 */
-#map-container{width:100%;height:360px;border-radius:12px;overflow:hidden;margin-bottom:16px;background:var(--panel);border:1px solid var(--border);position:relative}
+#map-container{width:100%;height:360px;border-radius:12px;overflow:hidden;margin-bottom:16px;background:var(--panel);border:1px solid var(--border);position:sticky;top:calc(var(--sticky-ad-h) + var(--sticky-tabs-wrap-h) + 4px);z-index:10}
 #map{width:100%;height:100%}
 .map-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--panel);color:var(--muted);font-size:13px}
 .map-loading-icon{font-size:36px;animation:spin 2s linear infinite}
@@ -231,6 +231,7 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
 .hist-time{font-size:9px;color:var(--muted);flex-shrink:0}
 /* 모달 */
 .modal-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:20px}
+#near-top10-modal{padding:calc(var(--sticky-ad-h) + var(--sticky-tabs-wrap-h) + 8px) 16px 20px;align-items:flex-start}
 .modal-overlay.show{display:flex}
 .modal{background:var(--panel);border:1px solid rgba(240,192,64,.25);border-radius:20px;padding:28px 24px;max-width:340px;width:100%;text-align:center;animation:modalIn .3s ease}
 @keyframes modalIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
@@ -667,7 +668,7 @@ h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.5rem,5.5vw,2.4rem);
 
 /* ── TOP10 모달 내부 리스트 ── */
 .near-top10-modal-list{
-  max-height:52vh;
+  max-height:45vh;
   overflow-y:auto;
   display:flex;
   flex-direction:column;
