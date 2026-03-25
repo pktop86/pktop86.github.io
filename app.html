@@ -2114,7 +2114,7 @@ h1{
       </div>
       <!-- 참여 버튼 -->
       <div class="challenge-btns" id="challenge-btns">
-        <button class="challenge-btn challenge-btn-main" id="challenge-btn-gen" style="opacity:.45">🎲 생성 번호로 참여</button>
+        <button class="challenge-btn challenge-btn-main" id="challenge-btn-gen">🎲 생성 번호로 참여</button>
         <button class="challenge-btn challenge-btn-lucky" id="challenge-btn-lucky">🍀 오늘의 숫자로 참여</button>
         <button class="challenge-btn challenge-btn-custom" id="challenge-btn-custom-toggle">✏️ 직접 번호 선택</button>
       </div>
@@ -5839,7 +5839,13 @@ async function saveTop3All(){
   if(!await confirm(`TOP${all.length} 번호를 모두 저장하시겠습니까?`)) return;
   try{
     const savedRound = getActivePickRound();
-    await Promise.all(all.map((nums, idx)=>
+    const alreadySaved = window._top3SavedIdx || new Set();
+    const toSave = all.map((nums, idx)=>({nums, idx})).filter(({idx})=>!alreadySaved.has(idx));
+    if(!toSave.length){
+      alert('이미 모두 저장된 번호입니다.');
+      return;
+    }
+    await Promise.all(toSave.map(({nums})=>
       addDoc(collection(db,'picks'),{
         uid: currentUid,
         round: savedRound,
@@ -6341,9 +6347,7 @@ async function initChallenge(){
         btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.style.opacity='.4';});
       }
       else if(status==='open'&&btnsEl) {
-        btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.style.opacity='1';});
-        const genBtn2=document.getElementById('challenge-btn-gen');
-        if(genBtn2) genBtn2.style.opacity = challengeGenNums.length ? '1' : '.45';
+        btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.disabled=false;b.style.opacity='1';});
       }
       // 채점 완료 시 TOP10 표시
       if(status==='scored'&&challengeRoundData?.top10Preview){
@@ -6598,8 +6602,7 @@ async function joinChallenge(numbers, sourceType){
       b.disabled = false;
       b.style.opacity = '1';
     });
-    const genBtn2 = document.getElementById('challenge-btn-gen');
-    if(genBtn2) genBtn2.disabled = !challengeGenNums.length;
+    
     alert('참여가 취소됐습니다.');
   }catch(e){
     console.error('cancelChallenge error:', e);
@@ -6699,20 +6702,13 @@ document.getElementById('challenge-history-toggle').addEventListener('click',()=
 });
  
 // 챌린지 버튼 이벤트
-document.getElementById('challenge-btn-gen').addEventListener('click', async ()=>{
-  if(!challengeGenNums.length){
-    alert('먼저 번호추첨 탭에서 번호를 생성해주세요.');
-    return;
-  }
-  await joinChallenge([...challengeGenNums], 'gen');
-  if(challengeMyEntry){
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
-    document.querySelector('[data-tab="mynums"]').classList.add('on');
-    document.getElementById('tab-mynums').classList.add('on');
-    loadMyNums();
-    setTimeout(()=>window.scrollTo({top:0, behavior:'smooth'}), 150);
-  }
+document.getElementById('challenge-btn-gen').addEventListener('click', ()=>{
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
+  document.querySelector('[data-tab="mynums"]').classList.add('on');
+  document.getElementById('tab-mynums').classList.add('on');
+  loadMyNums();
+  setTimeout(()=>window.scrollTo({top:0, behavior:'smooth'}), 150);
 });
   
 document.getElementById('challenge-btn-lucky').addEventListener('click',()=>{
@@ -6731,8 +6727,6 @@ document.getElementById('challenge-btn-custom-submit').addEventListener('click',
  
 function updateChallengeGenNums(nums){
   challengeGenNums=[...nums];
-  const btn=document.getElementById('challenge-btn-gen');
-  if(btn) btn.style.opacity='1';
 }
  
 // ── 내정보 & 오행 운세 ──
