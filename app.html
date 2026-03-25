@@ -2498,7 +2498,7 @@ h1{
     </div>
     <div class="timer-text" id="lb-charge-timer-text">5초 후 활성화...</div>
 
-    <button class="modal-btn modal-btn-primary" id="lb-charge-confirm-btn" disabled style="margin-top:12px">25LB 받기!</button>
+    <button class="modal-btn modal-btn-primary" id="lb-charge-confirm-btn" disabled style="margin-top:12px">35LB 받기!</button>
     <button class="modal-btn modal-btn-secondary" id="lb-charge-close-btn">취소</button>
   </div>
 </div>
@@ -2711,7 +2711,7 @@ const LB_COSTS = {
   sim1000: 0,
   sim10000: 1,
   sim100000: 3,
-  chargeReward: 25
+  chargeReward: 35
 };
 
 let lbChargeTimer = null;
@@ -2900,7 +2900,7 @@ function claimTodayAttendance(){
   alert(`${nextStreak}일 출석 완료!\n+${reward}LB 지급되었습니다.`);
 }
 async function askAndCharge(callback){
-  if(!await confirm('광고를 시청하시고 25LB를 충전 하시겠습니까?')) return;
+  if(!await confirm('광고를 시청하시고 35LB를 충전 하시겠습니까?')) return;
   openLBChargeModal(callback);
 }
 function openLBChargeModal(onCharged){
@@ -2912,7 +2912,7 @@ function openLBChargeModal(onCharged){
   if(!modal || !btn || !text || !bar) return;
 
   btn.disabled = true;
-  btn.textContent = '25LB 받기!';
+  btn.textContent = '35LB 받기!';
   text.textContent = '5초 후 활성화...';
   bar.style.width = '100%';
 
