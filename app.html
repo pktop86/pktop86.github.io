@@ -2353,16 +2353,6 @@ h1{
 </div>
 </div>
 </div>
-
-<!-- 내 고유 ID 카드 -->
-<div class="myinfo-section" style="margin-top:0">
-  <div class="myinfo-section-title" style="color:var(--muted)">🔑 내 고유 ID</div>
-  <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px">
-    <div id="myinfo-uid-display" style="flex:1;font-size:11px;color:var(--text);font-weight:700;letter-spacing:.5px;word-break:break-all">로딩 중...</div>
-    <button id="myinfo-uid-copy" style="background:rgba(240,192,64,.12);border:1px solid rgba(240,192,64,.25);color:var(--accent);border-radius:7px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0">복사</button>
-  </div>
-  <div style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.6">데이터 복구나 문의 시 이 ID가 필요할 수 있습니다.<br>브라우저 데이터 삭제 시 ID가 변경됩니다.</div>
-</div>
   
   <!-- 내주변 판매점 탭 -->
   <div class="tab-content" id="tab-near">
@@ -3197,6 +3187,37 @@ async function init(){
     setPrizeTabUnlocked(false); // 초기 잠금 상태 명시
     loadTodayLucky(); // 오늘의 숫자 카드 로드
     initLBSystem();
+  // 고유 ID 표시
+onAuthReady(()=>{
+  const shortUid = currentUid ? currentUid.slice(0,8).toUpperCase() + '...' + currentUid.slice(-4).toUpperCase() : '—';
+  const fullUid = currentUid || '—';
+
+  // 럭키 인사이트 탭
+  const uidEl = document.getElementById('myinfo-uid-display');
+  if(uidEl) uidEl.textContent = shortUid;
+
+  // 하단 footer
+  const footerEl = document.getElementById('footer-uid-display');
+  if(footerEl) footerEl.textContent = shortUid;
+
+  // 복사 버튼 공통 함수
+  function copyUid(btnId){
+    const btn = document.getElementById(btnId);
+    if(!btn) return;
+    btn.addEventListener('click', ()=>{
+      navigator.clipboard.writeText(fullUid).then(()=>{
+        const orig = btn.textContent;
+        btn.textContent = '✅ 복사됨';
+        setTimeout(()=>{ btn.textContent = orig; }, 2000);
+      }).catch(()=>{
+        alert('ID: ' + fullUid);
+      });
+    });
+  }
+  copyUid('myinfo-uid-copy');
+  copyUid('footer-uid-copy');
+});
+    
   // 생년월일 max 동적 설정 (현재 날짜 - 14년)
   const birthEl=document.getElementById('myinfo-birth');
   if(birthEl){
