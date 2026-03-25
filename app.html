@@ -4271,13 +4271,21 @@ function renderResult(nums,idx){
 
   //챌린지 참여 번호 선택
   const challengeBtn=document.createElement('button');
-challengeBtn.style.cssText='background:rgba(176,96,255,.15);border:1px solid rgba(176,96,255,.3);color:#b060ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0';
-challengeBtn.textContent='🏆 참여';
-challengeBtn.addEventListener('click',()=>{
-  updateChallengeGenNums(nums);
-  document.getElementById('challenge-btn-gen').click();
-});
-top.appendChild(challengeBtn);
+  challengeBtn.style.cssText='background:rgba(176,96,255,.15);border:1px solid rgba(176,96,255,.3);color:#b060ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0';
+  challengeBtn.textContent='🏆 참여';
+  challengeBtn.addEventListener('click', async ()=>{
+    updateChallengeGenNums(nums);
+    await joinChallenge([...nums], 'gen');
+    if(challengeMyEntry){
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+      document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
+      document.querySelector('[data-tab="mynums"]').classList.add('on');
+      document.getElementById('tab-mynums').classList.add('on');
+      loadMyNums();
+      setTimeout(()=>window.scrollTo({top:0, behavior:'smooth'}), 150);
+    }
+  });
+  top.appendChild(challengeBtn);
 
   
   // 태그 행
@@ -6692,15 +6700,19 @@ document.getElementById('challenge-history-toggle').addEventListener('click',()=
  
 // 챌린지 버튼 이벤트
 document.getElementById('challenge-btn-gen').addEventListener('click', async ()=>{
-  if(!challengeGenNums.length){ alert('먼저 번호를 생성해주세요.'); return; }
+  if(!challengeGenNums.length){
+    alert('먼저 번호추첨 탭에서 번호를 생성해주세요.');
+    return;
+  }
   await joinChallenge([...challengeGenNums], 'gen');
-  // 참여 성공 후 내 번호 탭으로 이동
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
-  document.querySelector('[data-tab="mynums"]').classList.add('on');
-  document.getElementById('tab-mynums').classList.add('on');
-  loadMyNums();
-  setTimeout(()=>window.scrollTo({top:0, behavior:'smooth'}), 150);
+  if(challengeMyEntry){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
+    document.querySelector('[data-tab="mynums"]').classList.add('on');
+    document.getElementById('tab-mynums').classList.add('on');
+    loadMyNums();
+    setTimeout(()=>window.scrollTo({top:0, behavior:'smooth'}), 150);
+  }
 });
   
 document.getElementById('challenge-btn-lucky').addEventListener('click',()=>{
