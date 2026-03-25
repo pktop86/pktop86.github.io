@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이용약관 - 로또엔진</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Black+Han+Sans&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080f;--panel:#0f1020;--card:#161828;--border:rgba(255,255,255,0.08);--accent:#f0c040;--accent2:#e05c20;--accent3:#3ab8ff;--green:#40d080;--text:#dde0f0;--muted:#505870}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;line-height:1.7}
+.wrap{max-width:640px;margin:0 auto;padding:24px 16px 80px}
+ 
+/* 헤더 */
+.page-header{display:flex;align-items:center;gap:12px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.back-btn{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:all .2s;flex-shrink:0}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.page-title{font-family:'Black Han Sans',sans-serif;font-size:1.3rem;background:linear-gradient(120deg,#fff 0%,var(--accent) 60%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+ 
+/* 메타 정보 */
+.meta-row{display:flex;align-items:center;gap:8px;margin-bottom:24px;font-size:11px;color:var(--muted)}
+.meta-badge{background:rgba(240,192,64,.12);border:1px solid rgba(240,192,64,.25);color:var(--accent);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700}
+ 
+/* 조항 */
+.article{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px}
+.article-title{font-size:13px;font-weight:900;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.article-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--accent);border-radius:2px;flex-shrink:0}
+.article-body{font-size:12px;color:var(--muted);line-height:1.85}
+.article-body p{margin-bottom:8px}
+.article-body p:last-child{margin-bottom:0}
+.article-body ol{padding-left:18px;display:flex;flex-direction:column;gap:8px}
+.article-body li{font-size:12px;color:var(--muted);line-height:1.85;padding-left:4px}
+.article-body strong{color:var(--text);font-weight:700}
+.article-body .highlight{color:var(--accent);font-weight:700}
+ 
+/* 중요 박스 */
+.notice-box{background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.2);border-radius:10px;padding:14px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.75;display:flex;gap:10px}
+.notice-box .icon{font-size:18px;flex-shrink:0;margin-top:1px}
+ 
+/* 푸터 */
+.page-footer{text-align:center;padding:24px 0 0;font-size:11px;color:var(--muted);border-top:1px solid var(--border);margin-top:8px}
+.page-footer a{color:var(--muted);text-decoration:none}
+.page-footer a:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+ 
+  <div class="page-header">
+    <a href="app.html" class="back-btn">← 돌아가기</a>
+    <div class="page-title">🎰 이용약관</div>
+  </div>
+ 
+  <div class="meta-row">
+    <span class="meta-badge">최신</span>
+    <span>시행일: 2026년 1월 1일</span>
+    <span>·</span>
+    <span>로또엔진 서비스 이용약관</span>
+  </div>
+ 
+  <div class="notice-box">
+    <div class="icon">⚠️</div>
+    <div>본 약관은 로또엔진 앱 이용 전 반드시 확인하시기 바랍니다. 서비스 이용 시 본 약관에 동의한 것으로 간주됩니다.</div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제1조 (목적)</div>
+    <div class="article-body">
+      <p>본 약관은 <strong>'로또엔진'</strong>(이하 "앱")이 제공하는 로또 번호 생성 및 분석 서비스(이하 "서비스")를 이용함에 있어 사용자와 서비스 제공자 간의 권리, 의무 및 책임 사항을 규정함을 목적으로 합니다.</p>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제2조 (용어의 정의)</div>
+    <div class="article-body">
+      <ol>
+        <li><strong>럭키볼(LB):</strong> 앱 내에서 특정 기능을 이용하기 위해 사용되는 가상 데이터 단위입니다.</li>
+        <li><strong>충전:</strong> 보상형 광고 시청 등을 통해 LB를 획득하는 행위를 말합니다.</li>
+        <li><strong>번호 생성:</strong> 과거 데이터를 기반으로 알고리즘을 통해 예측 번호를 추출하는 기능을 의미합니다.</li>
+      </ol>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제3조 (구글 정책 준수 및 사행성 부인)</div>
+    <div class="article-body">
+      <ol>
+        <li>본 앱은 실제 현금을 걸고 게임을 하거나 경제적 이익을 취하는 <strong>'사행성 게임'이 아닙니다.</strong></li>
+        <li>앱 내에서 제공되는 모든 번호는 통계적 알고리즘에 의한 <strong>'예측치'</strong>일 뿐이며, 실제 당첨을 보장하지 않습니다.</li>
+        <li>사용자는 본 앱을 실제 복권 구매의 보조 수단으로만 사용해야 하며, 결과에 대한 모든 책임은 사용자 본인에게 있습니다.</li>
+      </ol>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제4조 (가상 재화 '럭키볼(LB)' 이용 규정)</div>
+    <div class="article-body">
+      <ol>
+        <li><strong>환전 불가:</strong> 앱 내에서 획득한 LB는 어떠한 경우에도 현금으로 환전되거나 실제 가치를 지닌 재화로 교환될 수 없습니다. <span class="highlight">(구글 플레이 스토어 재화 정책 준수)</span></li>
+        <li><strong>양도 금지:</strong> 사용자는 본인이 보유한 LB를 타인에게 양도, 매매 또는 담보로 제공할 수 없습니다.</li>
+        <li><strong>소멸:</strong> 사용자가 앱을 삭제하거나 회원 탈퇴(또는 로그아웃 후 계정 분실) 시 보유한 LB는 자동 소멸되며, 이에 대한 복구 책임은 앱에 없습니다.</li>
+      </ol>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제5조 (보상형 광고 및 서비스 제공)</div>
+    <div class="article-body">
+      <ol>
+        <li>사용자는 광고 시청을 통해 서비스를 무료로 이용할 수 있는 LB를 충전할 수 있습니다.</li>
+        <li>광고 제공 플랫폼(AdMob 등)의 장애로 인해 광고 시청이 불가능하거나 LB 충전이 지연될 경우, 앱은 이에 대한 직접적인 보상 책임을 지지 않습니다.</li>
+      </ol>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제6조 (서비스 이용의 제한)</div>
+    <div class="article-body">
+      <p>앱은 다음 각 호에 해당하는 경우 사용자의 서비스 이용을 제한하거나 계정을 정지할 수 있습니다.</p>
+      <ol>
+        <li>시스템 취약점을 이용해 LB를 비정상적으로 생성하거나 획득한 경우</li>
+        <li>앱의 알고리즘을 역설계(Reverse Engineering)하거나 서버를 해킹하려는 시도가 발견된 경우</li>
+        <li>타인의 명의를 도용하여 서비스를 이용하는 경우</li>
+      </ol>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제7조 (책임 제한 및 면책 조항)</div>
+    <div class="article-body">
+      <ol>
+        <li><strong>결과 보장 부인:</strong> 앱에서 생성된 번호로 실제 로또를 구매하여 발생한 손실(낙첨 등)에 대해 앱은 어떠한 경제적, 법적 책임도 지지 않습니다.</li>
+        <li><strong>데이터 정확성:</strong> 과거 데이터 분석 결과는 데이터 제공처(동행복권 등)의 사정에 따라 오차가 발생할 수 있습니다.</li>
+        <li><strong>불가항력:</strong> 천재지변, 서버 점검, 통신 장애 등 앱이 통제할 수 없는 사유로 서비스가 중단될 경우 이로 인한 손해에 대해 면책됩니다.</li>
+      </ol>
+    </div>
+  </div>
+ 
+  <div class="article">
+    <div class="article-title">제8조 (약관의 개정)</div>
+    <div class="article-body">
+      <p>앱은 운영상 필요한 경우 구글 정책 변화에 맞춰 약관을 개정할 수 있으며, 개정된 약관은 앱 내 공지사항을 통해 게시함과 동시에 효력이 발생합니다.</p>
+    </div>
+  </div>
+ 
+  <div class="page-footer">
+    <p style="margin-bottom:10px">© 2026 로또엔진 (Clyde Park). All rights reserved.</p>
+    <p><a href="privacy.html">개인정보처리방침</a> &nbsp;·&nbsp; <a href="app.html">서비스 홈</a></p>
+  </div>
+ 
+</div>
+</body>
+</html>
