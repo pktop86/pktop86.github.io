@@ -4272,18 +4272,10 @@ function renderResult(nums,idx){
   //챌린지 참여 번호 선택
   const challengeBtn=document.createElement('button');
   challengeBtn.style.cssText='background:rgba(176,96,255,.15);border:1px solid rgba(176,96,255,.3);color:#b060ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0';
-  challengeBtn.textContent='🏆 참여';
+  challengeBtn.textContent='🏆 챌린지 참여';
   challengeBtn.addEventListener('click', async ()=>{
     updateChallengeGenNums(nums);
     await joinChallenge([...nums], 'gen');
-    if(challengeMyEntry){
-      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-      document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
-      document.querySelector('[data-tab="mynums"]').classList.add('on');
-      document.getElementById('tab-mynums').classList.add('on');
-      loadMyNums();
-      setTimeout(()=>window.scrollTo({top:0, behavior:'smooth'}), 150);
-    }
   });
   top.appendChild(challengeBtn);
 
