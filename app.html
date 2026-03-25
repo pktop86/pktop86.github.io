@@ -5286,8 +5286,12 @@ function renderLuckyCard(data){
       <button class="lucky-btn lucky-btn-sim" id="lucky-sim-btn">🎲 이 번호로 시뮬레이션</button>
       <button class="lucky-btn lucky-btn-challenge" id="lucky-challenge-btn">🏆 챌린지 참여</button>
     </div>
+    <button id="lucky-save-btn" style="width:100%;margin-top:10px;padding:10px;border:none;border-radius:10px;background:rgba(64,208,128,.15);color:var(--green);border:1px solid rgba(64,208,128,.3);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s">
+      ⭐ 내 번호에 저장
+    </button>
     <div class="lucky-challenge-banner" id="lucky-challenge-banner">✅ 참여가 완료되었습니다. 번호가 저장됐습니다.</div>
   `;
+  
   // 공 렌더
   const ballsEl=document.getElementById('lucky-balls');
   numbers.forEach(n=>{
@@ -5330,6 +5334,80 @@ function renderLuckyCard(data){
     if(luckyBalls.length!==6){alert('오늘의 숫자 카드 번호를 먼저 불러오세요.');return;}
     await joinChallenge(luckyBalls,'lucky');
   });
+
+  // 내 번호에 저장 버튼
+  document.getElementById('lucky-save-btn').addEventListener('click', async ()=>{
+    if(!numbers || numbers.length !== 6){
+      alert('저장할 번호가 없습니다.');
+      return;
+    }
+    if(!currentUid || !db){
+      alert('로그인 정보가 없습니다.');
+      return;
+    }
+
+    // 중복 체크 1: localStorage (오늘 날짜 기준)
+    const LUCKY_SAVE_KEY = 'lotto_lucky_saved_' + getTodayKey();
+    try{
+      if(localStorage.getItem(LUCKY_SAVE_KEY) === 'true'){
+        alert('오늘의 숫자 카드는 이미 내 번호에 저장했습니다.\n하루에 한 번만 저장할 수 있습니다.');
+        return;
+      }
+    }catch(e){}
+
+    // 중복 체크 2: myDocs 비교 (같은 번호 + 같은 회차)
+    const targetRound = getActivePickRound();
+    const sortedNums = [...numbers].sort((a,b)=>a-b).join(',');
+    const alreadyInDocs = myDocs.some(d=>{
+      if(d.round !== targetRound) return false;
+      return [...(d.nums||[])].sort((a,b)=>a-b).join(',') === sortedNums;
+    });
+
+    if(alreadyInDocs){
+      alert('이미 동일한 번호가 내 번호에 저장되어 있습니다.');
+      return;
+    }
+
+    const btn = document.getElementById('lucky-save-btn');
+    try{
+      await addDoc(collection(db,'picks'),{
+        uid: currentUid,
+        round: targetRound,
+        nums: [...numbers].sort((a,b)=>a-b),
+        prize: checkPrize(numbers, latestWinNums, latestBonusNum),
+        sourceType: 'lucky_saved',
+        createdAt: serverTimestamp()
+      });
+
+      // localStorage에 오늘 저장 기록
+      try{ localStorage.setItem(LUCKY_SAVE_KEY, 'true'); }catch(e){}
+
+      loadMyNums();
+      if(btn){
+        btn.textContent = '✅ 저장 완료!';
+        btn.style.background = 'rgba(64,208,128,.3)';
+        btn.disabled = true;
+      }
+    }catch(e){
+      console.error(e);
+      alert('저장 중 오류가 발생했습니다.');
+    }
+  });
+
+  // 오늘 이미 저장했으면 버튼 비활성화
+  try{
+    const LUCKY_SAVE_KEY = 'lotto_lucky_saved_' + getTodayKey();
+    if(localStorage.getItem(LUCKY_SAVE_KEY) === 'true'){
+      const btn = document.getElementById('lucky-save-btn');
+      if(btn){
+        btn.textContent = '✅ 오늘 이미 저장됨';
+        btn.style.background = 'rgba(64,208,128,.08)';
+        btn.style.color = 'var(--muted)';
+        btn.disabled = true;
+      }
+    }
+  }catch(e){}
+
   }, 0); // setTimeout 닫기
 }
  
