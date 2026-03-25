@@ -4528,6 +4528,17 @@ function renderMyNums(docs){
         setTimeout(()=>document.getElementById('sim-box')?.scrollIntoView({behavior:'smooth',block:'start'}),100);
       });
       top.appendChild(simB);
+      // 진행중 회차(아직 추첨 전)에만 챌린지 참여 버튼 표시
+      const activeRound = getActivePickRound();
+      if(d.round === activeRound && getChallengeStatus() === 'open' && !challengeMyEntry){
+        const chalB = document.createElement('button');
+        chalB.style.cssText = 'background:rgba(176,96,255,.15);border:1px solid rgba(176,96,255,.3);color:#b060ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s';
+        chalB.textContent = '🏆 챌린지';
+        chalB.addEventListener('click', ()=>{
+          joinChallenge([...(d.nums||[])], 'my_nums');
+        });
+        top.appendChild(chalB);
+      }
       const db2=document.createElement('button'); db2.className='del-btn'; db2.textContent='🗑️';
       db2.addEventListener('click',()=>showDelModal([d.id],[d.nums||[]]));
       top.appendChild(db2);
@@ -5993,9 +6004,12 @@ function handleSimAnalysisClick(){
   area.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-function handleSimTop3Click(){
+async function handleSimTop3Click(){
   const area = document.getElementById('sim-insight-area');
   if(!area) return;
+
+  // 확인 모달 먼저
+  if(!await confirm('3LB를 소모해서 TOP3 추천 보기를 실행하시겠습니까?')) return;
 
   // 3LB 차감
   if(!spendLB(3, 'TOP3 추천 보기', ()=>handleSimTop3Click())) return;
@@ -6647,8 +6661,15 @@ document.getElementById('challenge-history-toggle').addEventListener('click',()=
 // 챌린지 버튼 이벤트
 document.getElementById('challenge-btn-gen').addEventListener('click',()=>{
   if(!challengeGenNums.length){ alert('먼저 번호를 생성해주세요.'); return; }
-  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+  // 내 번호 탭으로 이동
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
+  document.querySelector('[data-tab="mynums"]').classList.add('on');
+  document.getElementById('tab-mynums').classList.add('on');
+  loadMyNums();
+  setTimeout(()=>document.getElementById('tab-mynums')?.scrollIntoView({behavior:'smooth', block:'start'}), 100);
 });
+  
 document.getElementById('challenge-btn-lucky').addEventListener('click',()=>{
   const luckyBalls=[...document.querySelectorAll('#lucky-balls .lucky-ball')].map(b=>parseInt(b.textContent));
   if(luckyBalls.length!==6){ alert('오늘의 숫자 카드 번호를 먼저 불러오세요.'); return; }
