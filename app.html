@@ -5550,8 +5550,8 @@ function renderSimResults(results,total){
   <div class="sim-cta-text">${ctaTitle}</div>
   <div class="sim-cta-sub">${ctaSub}</div>
   <div class="sim-cta-btns">
-    <button class="sim-cta-btn" id="sim-analysis-btn">🔍 이 번호 자세히 보기 (3LB)</button>
-    <button class="sim-cta-btn secondary" id="sim-top3-btn">🎯 TOP3 추천 보기 (5LB)</button>
+    <button class="sim-cta-btn" id="sim-analysis-btn">🔍 이 번호 자세히 보기</button>
+    <button class="sim-cta-btn" id="sim-top3-btn">🎯 TOP3 추천 보기</button>
   </div>
 
   <div class="top3-save-wrap">
@@ -5633,6 +5633,68 @@ async function saveCurrentTop3Number(){
     alert('저장 중 오류가 발생했습니다.');
   }
 }
+
+// TOP1 단일 저장 (인덱스 지정)
+window._saveTop3Single = async function(idx){
+  const all = window.currentTop3All;
+  if(!all || !all[idx] || all[idx].length !== 6){
+    alert('저장할 번호가 없습니다.');
+    return;
+  }
+  if(!currentUid || !db){
+    alert('로그인 정보가 없습니다.');
+    return;
+  }
+  try{
+    await addDoc(collection(db,'picks'),{
+      uid: currentUid,
+      round: getActivePickRound(),
+      nums: [...all[idx]].sort((a,b)=>a-b),
+      prize: checkPrize(all[idx], latestWinNums, latestBonusNum),
+      sourceType: 'top3_saved',
+      top3Pinned: true,
+      createdAt: serverTimestamp()
+    });
+    loadMyNums();
+    alert(`TOP${idx+1} 번호가 저장되었습니다.`);
+  }catch(e){
+    console.error(e);
+    alert('저장 중 오류가 발생했습니다.');
+  }
+};
+
+// TOP3 전체 저장
+async function saveTop3All(){
+  const all = window.currentTop3All;
+  if(!all || !all.length){
+    alert('저장할 번호가 없습니다.');
+    return;
+  }
+  if(!currentUid || !db){
+    alert('로그인 정보가 없습니다.');
+    return;
+  }
+  if(!await confirm(`TOP${all.length} 번호를 모두 저장하시겠습니까?`)) return;
+  try{
+    const savedRound = getActivePickRound();
+    await Promise.all(all.map((nums, idx)=>
+      addDoc(collection(db,'picks'),{
+        uid: currentUid,
+        round: savedRound,
+        nums: [...nums].sort((a,b)=>a-b),
+        prize: checkPrize(nums, latestWinNums, latestBonusNum),
+        sourceType: 'top3_saved',
+        top3Pinned: true,
+        createdAt: serverTimestamp()
+      })
+    ));
+    loadMyNums();
+    alert(`TOP${all.length} 번호가 모두 저장되었습니다.`);
+  }catch(e){
+    console.error(e);
+    alert('저장 중 오류가 발생했습니다.');
+  }
+}  
 
 function handleSimAnalysisClick(){
   const area = document.getElementById('sim-insight-area');
@@ -5739,10 +5801,12 @@ function handleSimTop3Click(){
   }
 
   const top3 = source.slice(0,3);
+  window.currentTop3Nums = [...top3[0]];
+  window.currentTop3All = top3.map(nums=>[...nums]);
 
   area.innerHTML = `
     <div class="sim-insight-box">
-      <div class="sim-insight-title">🎯 TOP3 추천 보기</div>
+      <div class="sim-insight-title">🎯 TOP3 추천 번호</div>
 
       <div class="sim-top3-list">
         ${top3.map((nums, idx)=>`
@@ -5753,21 +5817,35 @@ function handleSimTop3Click(){
             <div class="sim-top3-balls">
               ${nums.map(n=>`<div class="ball ${ballCls(n)}" style="width:28px;height:28px;font-size:10px">${n}</div>`).join('')}
             </div>
+            <div style="margin-top:8px">
+              <button
+                class="top3-save-btn"
+                onclick="window._saveTop3Single(${idx})"
+                style="width:100%;padding:9px;border:none;border-radius:9px;background:linear-gradient(135deg,#3ab8ff,#1a80c0);color:#fff;font-weight:900;cursor:pointer;font-family:inherit;font-size:12px">
+                ⭐ TOP${idx+1} 저장
+              </button>
+            </div>
           </div>
         `).join('')}
       </div>
 
+      <button
+        id="top3-save-all-btn"
+        style="width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;font-weight:900;cursor:pointer;font-family:inherit;font-size:13px;box-shadow:0 4px 14px var(--glow)">
+        ⭐ TOP3 모두 저장
+      </button>
+
     </div>
   `;
 
-  // 👉 저장 대상은 TOP1
-  window.currentTop3Nums = [...top3[0]];
+  // 이전 저장 버튼 숨기기
+  const oldSaveBtn = document.getElementById('top3-save-btn');
+  if(oldSaveBtn) oldSaveBtn.style.display = 'none';
 
-  // 👉 버튼 표시
-  const saveBtn = document.getElementById('top3-save-btn');
-  if(saveBtn){
-    saveBtn.style.display = 'block';
-  }
+  // TOP3 모두 저장 이벤트
+  document.getElementById('top3-save-all-btn')?.addEventListener('click', saveTop3All);
+
+  area.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function updateSimTarget(numsOrSet, isCustom=false){
