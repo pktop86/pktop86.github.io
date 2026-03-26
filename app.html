@@ -1971,6 +1971,48 @@ h1{
 .ldw-val:hover, .my-sc-val:hover {
   opacity: .7;
 }
+
+/* ── 엔진룸 블러 ── */
+.engine-blur-wrap{
+  position:relative;
+  border-radius:14px;
+  overflow:hidden;
+  margin-bottom:14px;
+}
+.engine-blur-inner{
+  filter:blur(6px);
+  pointer-events:none;
+  user-select:none;
+  opacity:.45;
+}
+.engine-blur-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  z-index:2;
+}
+.engine-blur-text{
+  font-family:'Black Han Sans',sans-serif;
+  font-size:1.3rem;
+  color:var(--accent);
+  letter-spacing:2px;
+  text-shadow:0 0 20px rgba(240,192,64,.6);
+  animation:enginePulse 1.8s ease-in-out infinite;
+}
+.engine-blur-sub{
+  font-size:11px;
+  color:var(--muted);
+  text-align:center;
+  line-height:1.7;
+}
+@keyframes enginePulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.6;transform:scale(1.04)}
+}
   
 </style>
 </head>
@@ -2249,38 +2291,44 @@ h1{
     </div>
   </div>
  
-  <!-- 당첨현황 탭 -->
+  <!-- 엔진룸 탭 -->
   <div class="tab-content" id="tab-prize">
-    <div class="prize-locked" id="prize-locked">
-      <div class="prize-locked-icon">🔒</div>
-      <div class="prize-locked-title">당첨현황 잠금 중</div>
-      <div class="prize-locked-desc">앱 이용자 중 누군가<br><strong style="color:var(--accent)">1등 또는 2등</strong>에 당첨되는 순간<br>이 탭이 활성화됩니다!<br><br>첫 번째 행운의 주인공을 기다리는 중... 🍀</div>
-    </div>
-    <div id="prize-content" style="display:none">
+    <div id="prize-content">
       <div class="prize-header">
         <div class="prize-round" id="ph-round">— 회차 결과번호</div>
         <div class="prize-winning-balls" id="ph-balls"></div>
         <div id="ph-bonus" style="font-size:11px;color:var(--muted)"></div>
         <div class="prize-date" id="ph-date"></div>
       </div>
-      <div class="prize-cards">
-        <div class="prize-card p1"><div class="pz-rank">🥇 1등</div><div class="pz-count" id="pc1">0</div><div class="pz-label">명</div></div>
-        <div class="prize-card p2"><div class="pz-rank">🥈 2등</div><div class="pz-count" id="pc2">0</div><div class="pz-label">명</div></div>
-        <div class="prize-card p3"><div class="pz-rank">🥉 3등</div><div class="pz-count" id="pc3">0</div><div class="pz-label">명</div></div>
-        <div class="prize-card p4"><div class="pz-rank">4등</div><div class="pz-count" id="pc4">0</div><div class="pz-label">명</div></div>
-        <div class="prize-card p5"><div class="pz-rank">5등</div><div class="pz-count" id="pc5">0</div><div class="pz-label">명</div></div>
+
+      <!-- 엔진룸 블러 -->
+      <div class="engine-blur-wrap">
+        <div class="engine-blur-overlay">
+          <div class="engine-blur-text">⚙️ 엔진 가동 중...</div>
+          <div class="engine-blur-sub">로또엔진 v3 PRO가<br>데이터를 처리하고 있습니다.</div>
+        </div>
+        <div class="engine-blur-inner">
+          <div class="prize-cards">
+            <div class="prize-card p1"><div class="pz-rank">🥇 1등</div><div class="pz-count" id="pc1">0</div><div class="pz-label">명</div></div>
+            <div class="prize-card p2"><div class="pz-rank">🥈 2등</div><div class="pz-count" id="pc2">0</div><div class="pz-label">명</div></div>
+            <div class="prize-card p3"><div class="pz-rank">🥉 3등</div><div class="pz-count" id="pc3">0</div><div class="pz-label">명</div></div>
+            <div class="prize-card p4"><div class="pz-rank">4등</div><div class="pz-count" id="pc4">0</div><div class="pz-label">명</div></div>
+            <div class="prize-card p5"><div class="pz-rank">5등</div><div class="pz-count" id="pc5">0</div><div class="pz-label">명</div></div>
+          </div>
+          <div class="summary-bar">
+            <div class="sum-item"><div class="sum-val" id="sum-total">0</div><div class="sum-label">총 추첨줄</div></div>
+            <div class="sum-item"><div class="sum-val" id="sum-users">0</div><div class="sum-label">참여자</div></div>
+            <div class="sum-item"><div class="sum-val" id="sum-winners">0</div><div class="sum-label">당첨자</div></div>
+            <div class="sum-item"><div class="sum-val" id="sum-rate">0%</div><div class="sum-label">일치 비율</div></div>
+          </div>
+          <div style="margin-bottom:12px" id="round-chips"></div>
+          <div class="history-section">
+            <div class="sec-title">전체 추첨 기록</div>
+            <div class="history-list" id="history-list"></div>
+          </div>
+        </div>
       </div>
-      <div class="summary-bar">
-        <div class="sum-item"><div class="sum-val" id="sum-total">0</div><div class="sum-label">총 추첨줄</div></div>
-        <div class="sum-item"><div class="sum-val" id="sum-users">0</div><div class="sum-label">참여자</div></div>
-        <div class="sum-item"><div class="sum-val" id="sum-winners">0</div><div class="sum-label">당첨자</div></div>
-        <div class="sum-item"><div class="sum-val" id="sum-rate">0%</div><div class="sum-label">일치 비율</div></div>
-      </div>
-      <div style="margin-bottom:12px" id="round-chips"></div>
-      <div class="history-section">
-        <div class="sec-title">전체 추첨 기록</div>
-        <div class="history-list" id="history-list"></div>
-      </div>
+
     </div>
   </div>
   <!-- 내정보 탭 -->
@@ -4049,19 +4097,8 @@ function renderRoundChips(active){
   }
 }
 function setPrizeTabUnlocked(isUnlocked){
-  const tabBtn=document.getElementById('tab-prize-btn');
-  const locked=document.getElementById('prize-locked');
-  const prizeCont=document.getElementById('prize-content');
-  prizeUnlocked=!!isUnlocked;
-  if(isUnlocked){
-    tabBtn.classList.remove('disabled');
-    if(locked) locked.style.display='none';
-    if(prizeCont) prizeCont.style.display='block';
-  } else {
-    tabBtn.classList.add('disabled');
-    if(locked) locked.style.display='block';
-    if(prizeCont) prizeCont.style.display='none';
-  }
+  // 엔진룸 탭: prize-content 항상 표시, 잠금 UI 없음
+  prizeUnlocked=true;
 }
  
 function checkPrizeUnlock(){
