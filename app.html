@@ -6994,6 +6994,19 @@ function initFortuneBlog(){
   
 init();
 
+function openContactForm(){
+  const modal = document.createElement('div');
+  modal.id = 'contact-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#07080f;display:flex;flex-direction:column;';
+  modal.innerHTML = `
+    <div style="padding:12px 16px;background:#111;display:flex;align-items:center;gap:12px;border-bottom:1px solid #222;">
+      <button onclick="document.getElementById('contact-modal').remove()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;">✕</button>
+      <span style="color:#f0c040;font-size:15px;font-weight:bold;">📩 문의하기</span>
+    </div>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfJjUk1pQ4y5Tu-UlNb5e-SqD69shd89dlqLoVA2CIj-te-hg/viewform?usp=header" style="flex:1;border:none;width:100%;" allow="*"></iframe>
+  `;
+  document.body.appendChild(modal);
+}
 
 </script>
   
@@ -7011,7 +7024,7 @@ init();
     <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:8px 16px;margin-bottom:12px">
         <a href="privacy.html" style="color:var(--accent);font-size:12px;font-weight:700;text-decoration:none">개인정보처리방침</a>
         <a href="terms.html" style="color:var(--muted);font-size:12px;text-decoration:none">이용약관</a>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJjUk1pQ4y5Tu-UlNb5e-SqD69shd89dlqLoVA2CIj-te-hg/viewform?usp=header" target="_blank" style="color: var(--muted); font-size: 13px; text-decoration: none;">문의하기</a>
+        <a href="javascript:void(0)" onclick="openContactForm()" style="color: var(--muted); font-size: 13px; text-decoration: none;">문의하기</a>
         <a href="index.html" style="color:var(--muted);font-size:12px;text-decoration:none">서비스 가이드</a>
     </div>
     <div style="font-size:11px;color:var(--muted);opacity:.6">
