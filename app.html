@@ -2004,7 +2004,7 @@ h1{
         <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
         <button class="tab-btn" data-tab="myinfo">🔮 럭키 인사이트</button>
         <button class="tab-btn" data-tab="near">📍 내주변 판매점</button>
-        <button class="tab-btn disabled" data-tab="prize" id="tab-prize-btn">🏆 당첨현황</button>
+        <button class="tab-btn" data-tab="prize" id="tab-prize-btn">🏆 엔진룸</button>
       </div>
 
       <div class="lb-sticky-bar" id="lb-sticky-bar">
@@ -3213,7 +3213,7 @@ async function init(){
     updateStats(); renderFreqBars(); renderFreqGrid(); updateFreeCounter();
     renderPrizeHeader(); renderLatestDrawCard(); scheduleAutoUpdate(); startSaturdayChecker();
     setStatus('ok',`내장 통계 준비 완료 (261~${latestRound}회)`);
-    setPrizeTabUnlocked(false); // 초기 잠금 상태 명시
+    setPrizeTabUnlocked(true); // 항상 활성화
     loadTodayLucky(); // 오늘의 숫자 카드 로드
     initLBSystem();
     onAuthReady(()=>syncLBFromServer());
@@ -3265,7 +3265,7 @@ onAuthReady(()=>{
     onAuthReady(()=>loadMyNums());
  
     // 당첨현황 잠금 확인
-    checkPrizeUnlock();
+    // checkPrizeUnlock(); // 잠금 해제 조건 제거
 
    // 당첨 등수 클릭 이벤트
    for(let i=1; i<=5; i++){
@@ -3333,7 +3333,7 @@ async function autoUpdate(retry=0){
       renderPrizeHeader(); renderLatestDrawCard(); loadPrizeTab(latestRound);
       if(currentUid) loadMyNums();
       if(latestRound !== oldRound){ resetChallengeState(); onAuthReady(()=>initChallenge()); }
-      checkPrizeUnlock();
+      // checkPrizeUnlock(); // 잠금 해제 조건 제거
       maybeScoreCurrentChallenge();
     } else {
       saveUpdateTime();
