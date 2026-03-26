@@ -2013,6 +2013,61 @@ h1{
   0%,100%{opacity:1;transform:scale(1)}
   50%{opacity:.6;transform:scale(1.04)}
 }
+
+/* ── 엔진룸 블러 ── */
+.engine-blur-wrap{
+  position:relative;
+  border-radius:14px;
+  overflow:hidden;
+  margin-bottom:14px;
+}
+.engine-blur-inner{
+  filter:blur(12px);
+  pointer-events:none;
+  user-select:none;
+  opacity:0;
+}
+.engine-blur-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  z-index:2;
+  background:rgba(7,8,15,.92);
+  border-radius:14px;
+}
+.engine-blur-text{
+  font-family:'Black Han Sans',sans-serif;
+  font-size:1.3rem;
+  color:var(--accent);
+  letter-spacing:2px;
+  text-shadow:0 0 20px rgba(240,192,64,.6);
+  animation:enginePulse 1.8s ease-in-out infinite;
+}
+.engine-blur-sub{
+  font-size:11px;
+  color:var(--muted);
+  text-align:center;
+  line-height:1.7;
+}
+@keyframes enginePulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.6;transform:scale(1.04)}
+}
+
+/* 블러 해제 상태 */
+.engine-blur-wrap.unlocked .engine-blur-overlay{
+  display:none;
+}
+.engine-blur-wrap.unlocked .engine-blur-inner{
+  filter:none;
+  opacity:1;
+  pointer-events:auto;
+  user-select:auto;
+}
   
 </style>
 </head>
@@ -2046,7 +2101,7 @@ h1{
         <button class="tab-btn" data-tab="mynums">⭐ 내 번호</button>
         <button class="tab-btn" data-tab="myinfo">🔮 럭키 인사이트</button>
         <button class="tab-btn" data-tab="near">📍 내주변 판매점</button>
-        <button class="tab-btn" data-tab="prize" id="tab-prize-btn">🏆 엔진룸</button>
+        <button class="tab-btn" data-tab="prize" id="tab-prize-btn">⚙️ 엔진룸</button>
       </div>
 
       <div class="lb-sticky-bar" id="lb-sticky-bar">
@@ -2302,10 +2357,10 @@ h1{
       </div>
 
       <!-- 엔진룸 블러 -->
-      <div class="engine-blur-wrap">
+      <div class="engine-blur-wrap" id="engine-blur-wrap">
         <div class="engine-blur-overlay">
           <div class="engine-blur-text">⚙️ 엔진 가동 중...</div>
-          <div class="engine-blur-sub">로또엔진 v3 PRO가<br>데이터를 처리하고 있습니다.</div>
+          <div class="engine-blur-sub">이용자 중 1등 또는 2등 당첨자가<br>나오면 이 화면이 열립니다.</div>
         </div>
         <div class="engine-blur-inner">
           <div class="prize-cards">
@@ -3261,7 +3316,7 @@ async function init(){
     updateStats(); renderFreqBars(); renderFreqGrid(); updateFreeCounter();
     renderPrizeHeader(); renderLatestDrawCard(); scheduleAutoUpdate(); startSaturdayChecker();
     setStatus('ok',`내장 통계 준비 완료 (261~${latestRound}회)`);
-    setPrizeTabUnlocked(true); // 항상 활성화
+    setPrizeTabUnlocked(false); // 초기 블러 상태 (1/2등 당첨 시 자동 해제)
     loadTodayLucky(); // 오늘의 숫자 카드 로드
     initLBSystem();
     onAuthReady(()=>syncLBFromServer());
@@ -4097,8 +4152,15 @@ function renderRoundChips(active){
   }
 }
 function setPrizeTabUnlocked(isUnlocked){
-  // 엔진룸 탭: prize-content 항상 표시, 잠금 UI 없음
-  prizeUnlocked=true;
+  prizeUnlocked=!!isUnlocked;
+  const blurWrap = document.getElementById('engine-blur-wrap');
+  if(isUnlocked){
+    // 1등/2등 당첨자 있으면 블러 해제
+    if(blurWrap) blurWrap.classList.add('unlocked');
+  } else {
+    // 블러 유지
+    if(blurWrap) blurWrap.classList.remove('unlocked');
+  }
 }
  
 function checkPrizeUnlock(){
