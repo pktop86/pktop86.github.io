@@ -3059,6 +3059,9 @@ function initLBSystem(){
   document.getElementById('lb-confirm-modal')?.addEventListener('click', (e)=>{
     if(e.target === document.getElementById('lb-confirm-modal')) closeLBConfirmModal();
   });
+
+  document.getElementById('lb-confirm-yes-btn')?.addEventListener('click', confirmLBChargeYes);
+  document.getElementById('lb-confirm-no-btn')?.addEventListener('click', closeLBConfirmModal);
 }
 // ===== LB SYSTEM END =====
 
@@ -7007,22 +7010,19 @@ function openContactForm(){
       <span class="lb-modal-desc-strong">35LB</span>를 충전하시겠습니까?
     </div>
 
-    <button class="modal-btn modal-btn-primary" onclick="confirmLBChargeYes()">YES</button>
-    <button class="modal-btn modal-btn-secondary" onclick="closeLBConfirmModal()">NO</button>
-  </div>
-</div>
+    <button
+      type="button"
+      class="modal-btn modal-btn-primary"
+      id="lb-confirm-yes-btn"
+      onclick="confirmLBChargeYes()"
+    >YES</button>
 
-  <div class="modal-overlay" id="lb-confirm-modal">
-  <div class="modal">
-    <div class="modal-icon">📺</div>
-    <div class="modal-title">LB 충전</div>
-    <div class="modal-desc">
-      광고를 시청하시고,<br>
-      <span class="lb-modal-desc-strong">35LB</span>를 충전하시겠습니까?
-    </div>
-
-    <button class="modal-btn modal-btn-primary" onclick="confirmLBChargeYes()">YES</button>
-    <button class="modal-btn modal-btn-secondary" onclick="closeLBConfirmModal()">NO</button>
+    <button
+      type="button"
+      class="modal-btn modal-btn-secondary"
+      id="lb-confirm-no-btn"
+      onclick="closeLBConfirmModal()"
+    >NO</button>
   </div>
 </div>
   
