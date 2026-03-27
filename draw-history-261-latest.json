@@ -4,7 +4,7 @@
 //
 // ※ 참고용 데이터입니다. 당첨을 보장하지 않습니다.
  
-window.FULL_DRAW_HISTORY = [
+[
   { round: 261, nums: [6, 11, 16, 18, 31, 43], bonus: 2 },
   { round: 262, nums: [9, 12, 24, 25, 29, 31], bonus: 36 },
   { round: 263, nums: [1, 27, 28, 32, 37, 40], bonus: 18 },
