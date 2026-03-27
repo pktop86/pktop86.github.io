@@ -960,7 +960,7 @@ window.FULL_DRAW_HISTORY = [
   { round: 1213, nums: [5, 11, 25, 27, 36, 38], bonus: 2 },
   { round: 1214, nums: [10, 15, 19, 27, 30, 33], bonus: 14 },
   { round: 1215, nums: [13, 15, 19, 21, 44, 45], bonus: 39 },
-  { round: 1216, nums: [10, 13, 14, 15, 23, 24], bonus: 25 }
+  { round: 1216, nums: [3, 10, 14, 15, 23, 24], bonus: 25 }
 ];
  
 // 자동 업데이트 안내:
