@@ -3018,13 +3018,12 @@ function claimTodayAttendance(){
 
   alert(`${nextStreak}일 출석 완료!\n+${reward}LB 지급되었습니다.`);
 }
-/*async function askAndCharge(callback){
-  if(!await confirm('광고를 시청하시고 35LB를 충전 하시겠습니까?')) return;
-  openLBChargeModal(callback);
-}*/
-
 function askAndCharge(){
-  alert("LB 충전 기능은 현재 준비중입니다.");
+  if (window.AndroidBridge && AndroidBridge.requestRewardedAd) {
+    AndroidBridge.requestRewardedAd();
+  } else {
+    alert("광고 기능을 사용할 수 없습니다.");
+  }
 }
   
 function openLBChargeModal(onCharged){
