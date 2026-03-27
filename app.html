@@ -3018,15 +3018,42 @@ function claimTodayAttendance(){
 
   alert(`${nextStreak}일 출석 완료!\n+${reward}LB 지급되었습니다.`);
 }
-function askAndCharge(){
+let _lbChargeCallback = null;
+
+function askAndCharge(callback){
+  _lbChargeCallback = typeof callback === 'function' ? callback : null;
+  openLBConfirmModal();
+}
+
+function openLBConfirmModal(){
+  document.getElementById('lb-confirm-modal')?.classList.add('show');
+}
+
+function closeLBConfirmModal(){
+  document.getElementById('lb-confirm-modal')?.classList.remove('show');
+}
+
+function confirmLBChargeYes(){
+  closeLBConfirmModal();
+
   if (window.AndroidBridge && AndroidBridge.requestRewardedAd) {
     AndroidBridge.requestRewardedAd();
   } else {
     alert("광고 기능을 사용할 수 없습니다.");
   }
 }
+
+function onRewardedAdCompleted(){
+  addLB(35);
+  alert('광고 시청 완료!\n+35LB 충전되었습니다.');
+
+  if(_lbChargeCallback){
+    try { _lbChargeCallback(); } catch(e){}
+    _lbChargeCallback = null;
+  }
+}
   
-function openLBChargeModal(onCharged){
+/*function openLBChargeModal(onCharged){
   const modal = document.getElementById('lb-charge-modal');
   const btn = document.getElementById('lb-charge-confirm-btn');
   const text = document.getElementById('lb-charge-timer-text');
@@ -3067,7 +3094,7 @@ function claimLBCharge(){
   closeLBChargeModal();
   alert(`광고 시청 완료!\n+${LB_COSTS.chargeReward}LB 충전되었습니다.`);
   if(_lbChargeCallback){ _lbChargeCallback(); _lbChargeCallback=null; }
-}
+}*/
 
 function injectLBCostLabels(){
   document.querySelectorAll('.seg-btn[data-n]').forEach(btn=>{
@@ -3100,6 +3127,9 @@ function initLBSystem(){
   document.getElementById('lb-charge-confirm-btn')?.addEventListener('click', claimLBCharge);
   document.getElementById('lb-charge-modal')?.addEventListener('click', (e)=>{
     if(e.target === document.getElementById('lb-charge-modal')) closeLBChargeModal();
+  });
+  document.getElementById('lb-confirm-modal')?.addEventListener('click', (e)=>{
+    if(e.target === document.getElementById('lb-confirm-modal')) closeLBConfirmModal();
   });
 }
 // ===== LB SYSTEM END =====
@@ -7039,5 +7069,20 @@ function openContactForm(){
     <div id="sys-modal-btns" style="display:flex;gap:8px;flex-direction:column"></div>
   </div>
 </div>
+
+  <div class="modal-overlay" id="lb-confirm-modal">
+  <div class="modal">
+    <div class="modal-icon">📺</div>
+    <div class="modal-title">LB 충전</div>
+    <div class="modal-desc">
+      광고를 시청하시고,<br>
+      <span class="lb-modal-desc-strong">35LB</span>를 충전하시겠습니까?
+    </div>
+
+    <button class="modal-btn modal-btn-primary" onclick="confirmLBChargeYes()">YES</button>
+    <button class="modal-btn modal-btn-secondary" onclick="closeLBConfirmModal()">NO</button>
+  </div>
+</div>
+  
 </body>
 </html>
