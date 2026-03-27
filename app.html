@@ -3019,7 +3019,7 @@ function confirmLBChargeYes(){
   }
 }
 
-function onRewardedAdCompleted(){
+window.onRewardedAdCompleted = function(){
   addLB(35);
   alert('광고 시청 완료!\n+35LB 충전되었습니다.');
 
@@ -3027,7 +3027,7 @@ function onRewardedAdCompleted(){
     try { _lbChargeCallback(); } catch(e){}
     _lbChargeCallback = null;
   }
-}
+};
 
 function injectLBCostLabels(){
   document.querySelectorAll('.seg-btn[data-n]').forEach(btn=>{
