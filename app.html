@@ -2570,29 +2570,6 @@ h1{
   </div>
 </div>
 
-<div class="modal-overlay" id="lb-charge-modal">
-  <div class="modal">
-    <div class="modal-icon">📺</div>
-    <div class="modal-title">광고 시청 후 충전</div>
-    <div class="modal-desc">
-      광고 시청 완료 후<br>
-      <strong class="lb-modal-desc-strong">럭키볼 35개</strong>가 충전됩니다.
-    </div>
-
-    <div class="modal-ad-area">
-      
-    </div>
-
-    <div class="timer-bar-bg">
-      <div class="timer-bar" id="lb-charge-timer-bar" style="width:100%"></div>
-    </div>
-    <div class="timer-text" id="lb-charge-timer-text">5초 후 활성화...</div>
-
-    <button class="modal-btn modal-btn-primary" id="lb-charge-confirm-btn" disabled style="margin-top:12px">35LB 받기!</button>
-    <button class="modal-btn modal-btn-secondary" id="lb-charge-close-btn">취소</button>
-  </div>
-</div>
-
 <!-- 당첨 번호 확인 모달 -->
 <div class="modal-overlay" id="prize-nums-modal">
   <div class="modal" style="max-width:360px">
@@ -2808,7 +2785,6 @@ const LB_COSTS = {
 };
 
 let lbChargeTimer = null;
-let _lbChargeCallback = null;
 let pendingLbCost = 0;
 let pendingLbReason = '';
 
@@ -3052,49 +3028,6 @@ function onRewardedAdCompleted(){
     _lbChargeCallback = null;
   }
 }
-  
-/*function openLBChargeModal(onCharged){
-  const modal = document.getElementById('lb-charge-modal');
-  const btn = document.getElementById('lb-charge-confirm-btn');
-  const text = document.getElementById('lb-charge-timer-text');
-  const bar = document.getElementById('lb-charge-timer-bar');
-
-  if(!modal || !btn || !text || !bar) return;
-
-  btn.disabled = true;
-  btn.textContent = '35LB 받기!';
-  text.textContent = '5초 후 활성화...';
-  bar.style.width = '100%';
-
-  modal.classList.add('show');
-
-  clearInterval(lbChargeTimer);
-  let sec = 5;
-
-  lbChargeTimer = setInterval(()=>{
-    sec--;
-    bar.style.width = `${Math.max(0, (sec/5)*100)}%`;
-    if(sec <= 0){
-      clearInterval(lbChargeTimer);
-      btn.disabled = false;
-      text.textContent = '✅ 준비 완료!';
-    }else{
-      text.textContent = `${sec}초 후 활성화...`;
-    }
-  },1000);
-}
-
-function closeLBChargeModal(){
-  clearInterval(lbChargeTimer);
-  document.getElementById('lb-charge-modal')?.classList.remove('show');
-}
-
-function claimLBCharge(){
-  addLB(LB_COSTS.chargeReward);
-  closeLBChargeModal();
-  alert(`광고 시청 완료!\n+${LB_COSTS.chargeReward}LB 충전되었습니다.`);
-  if(_lbChargeCallback){ _lbChargeCallback(); _lbChargeCallback=null; }
-}*/
 
 function injectLBCostLabels(){
   document.querySelectorAll('.seg-btn[data-n]').forEach(btn=>{
@@ -3123,11 +3056,6 @@ function initLBSystem(){
     if(e.target === document.getElementById('lb-attend-modal')) closeLBAttendModal();
   });
 
-  document.getElementById('lb-charge-close-btn')?.addEventListener('click', closeLBChargeModal);
-  document.getElementById('lb-charge-confirm-btn')?.addEventListener('click', claimLBCharge);
-  document.getElementById('lb-charge-modal')?.addEventListener('click', (e)=>{
-    if(e.target === document.getElementById('lb-charge-modal')) closeLBChargeModal();
-  });
   document.getElementById('lb-confirm-modal')?.addEventListener('click', (e)=>{
     if(e.target === document.getElementById('lb-confirm-modal')) closeLBConfirmModal();
   });
@@ -7067,6 +6995,20 @@ function openContactForm(){
     <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px">🎰 로또엔진</div>
     <div id="sys-modal-msg" style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:20px;white-space:pre-line"></div>
     <div id="sys-modal-btns" style="display:flex;gap:8px;flex-direction:column"></div>
+  </div>
+</div>
+
+  <div class="modal-overlay" id="lb-confirm-modal">
+  <div class="modal">
+    <div class="modal-icon">📺</div>
+    <div class="modal-title">LB 충전</div>
+    <div class="modal-desc">
+      광고를 시청하시고,<br>
+      <span class="lb-modal-desc-strong">35LB</span>를 충전하시겠습니까?
+    </div>
+
+    <button class="modal-btn modal-btn-primary" onclick="confirmLBChargeYes()">YES</button>
+    <button class="modal-btn modal-btn-secondary" onclick="closeLBConfirmModal()">NO</button>
   </div>
 </div>
 
