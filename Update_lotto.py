@@ -2,15 +2,14 @@
 """
 Update_lotto.py
 매주 토요일 21:15 KST (12:15 UTC) GitHub Actions 실행
-draw-history-261-latest.js 최신 회차 자동 추가 + 최근 회차 재검증
+draw-history-261-latest.json 최신 회차 자동 추가 + 최근 회차 재검증
 """
 
 import json
-import re
 import urllib.request
 from datetime import datetime, timezone, timedelta
 
-JS_FILE = "draw-history-261-latest.js"
+JSON_FILE = "draw-history-261-latest.json"
 LOTTO_API = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo={}"
 START_ROUND = 261
 RECHECK_COUNT = 3  # 최신 3회 재검증
@@ -43,37 +42,43 @@ def fetch_round(round_num: int):
 
 
 def load_existing_history(filepath: str):
-    with open(filepath, "r", encoding="utf-8") as f:
-        content = f.read()
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
 
-    pattern = r"\{\s*round:\s*(\d+),\s*nums:\s*\[([^\]]+)\],\s*bonus:\s*(\d+)\s*\}"
-    matches = re.findall(pattern, content)
+        if not isinstance(data, list):
+            print("기존 JSON 구조가 리스트가 아님. 빈 데이터로 시작")
+            return []
 
-    history = []
-    for round_str, nums_str, bonus_str in matches:
-        nums = [int(x.strip()) for x in nums_str.split(",") if x.strip()]
-        history.append({
-            "round": int(round_str),
-            "nums": nums,
-            "bonus": int(bonus_str),
-        })
+        history = []
+        for item in data:
+            if (
+                isinstance(item, dict)
+                and "round" in item
+                and "nums" in item
+                and "bonus" in item
+            ):
+                history.append({
+                    "round": int(item["round"]),
+                    "nums": [int(x) for x in item["nums"]],
+                    "bonus": int(item["bonus"]),
+                })
 
-    history.sort(key=lambda x: x["round"])
-    return history
+        history.sort(key=lambda x: x["round"])
+        return history
+
+    except FileNotFoundError:
+        print("기존 JSON 파일이 없음. 새로 생성")
+        return []
+
+    except Exception as e:
+        print(f"기존 JSON 읽기 실패: {e}")
+        return []
 
 
 def save_history(filepath: str, history: list):
-    lines = ["window.FULL_DRAW_HISTORY = ["]
-    for item in history:
-        nums_str = ", ".join(str(n) for n in item["nums"])
-        lines.append(
-            f"  {{ round: {item['round']}, nums: [{nums_str}], bonus: {item['bonus']} }},"
-        )
-    lines.append("];")
-    lines.append("")
-
     with open(filepath, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
+        json.dump(history, f, ensure_ascii=False, indent=2)
 
 
 def main():
@@ -81,7 +86,7 @@ def main():
     now = datetime.now(kst)
     print(f"실행 시각 (KST): {now.strftime('%Y-%m-%d %H:%M:%S')}")
 
-    history = load_existing_history(JS_FILE)
+    history = load_existing_history(JSON_FILE)
 
     if not history:
         print("기존 파일이 비어 있음. 시작 회차부터 생성")
@@ -120,9 +125,9 @@ def main():
         check_round += 1
 
     final_history = sorted(history_map.values(), key=lambda x: x["round"])
-    save_history(JS_FILE, final_history)
+    save_history(JSON_FILE, final_history)
 
-    print("완료: 파일 저장됨")
+    print("완료: JSON 파일 저장됨")
 
 
 if __name__ == "__main__":
