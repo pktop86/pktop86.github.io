@@ -3014,10 +3014,15 @@ function claimTodayAttendance(){
 
   alert(`${nextStreak}일 출석 완료!\n+${reward}LB 지급되었습니다.`);
 }
-async function askAndCharge(callback){
+/*async function askAndCharge(callback){
   if(!await confirm('광고를 시청하시고 35LB를 충전 하시겠습니까?')) return;
   openLBChargeModal(callback);
+}*/
+
+function askAndCharge(){
+  alert("LB 충전 기능은 현재 준비중입니다.");
 }
+  
 function openLBChargeModal(onCharged){
   const modal = document.getElementById('lb-charge-modal');
   const btn = document.getElementById('lb-charge-confirm-btn');
