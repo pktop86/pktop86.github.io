@@ -364,6 +364,38 @@
     .challenge-my-status.show{display:block}
     .challenge-my-nums{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
     .challenge-rank-badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;margin-left:6px}
+    .challenge-summary-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+
+.challenge-summary-card{
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px;
+  text-align:center;
+}
+
+.challenge-summary-val{
+  font-size:18px;
+  font-weight:800;
+  color:var(--accent);
+}
+
+.challenge-summary-label{
+  font-size:11px;
+  color:var(--text);
+  margin-top:4px;
+}
+
+.challenge-summary-reward{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:4px;
+}
     .rank-top10{background:rgba(240,192,64,.25);color:var(--accent)}
     .rank-top100{background:rgba(58,184,255,.2);color:var(--accent3)}
     .rank-done{background:rgba(255,255,255,.08);color:var(--muted)}
@@ -2502,7 +2534,7 @@
   <script type="module">
 
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-    import { getFirestore, collection, addDoc, getDocs, getDocsFromServer, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, setDoc, getDoc }
+    import { getFirestore, collection, addDoc, getDocs, getDocsFromServer, query, where, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, setDoc, getDoc, getDocFromServer }
       from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
     import { getAuth, signInAnonymously, onAuthStateChanged }
       from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
@@ -2540,14 +2572,14 @@
     let latestRound = _lastDraw.round;
 
 
-    let latestWinNums  = [..._lastDraw.nums];
+    let latestWinNums = [..._lastDraw.nums];
     let latestBonusNum = _lastDraw.bonus;
     let isReady = false;
     let genCount = 5;
     let currentUid = null;
     let authReady = false;
     let authCallbacks = [];
-    let viewRound = 1216;
+    let viewRound = latestRound;
     let prizeUnlocked = false;
     let unsubPrize = null;
     let unsubHistory = null;
@@ -2623,6 +2655,15 @@ function shouldRunUpdate(){
       const kst=new Date(new Date().getTime()+9*3600000);
       return kst.toISOString().slice(0,10); // YYYY-MM-DD
     }
+
+    function getChallengeRound(){
+      const last = window.FULL_DRAW_HISTORY?.at(-1);
+      const latest = Number(last?.round || latestRound || 0);
+
+      // 최신 당첨 결과가 이미 나온 상태면 다음 회차가 현재 챌린지 회차
+      return latest + 1;
+    }
+
     function loadUsedFree(){
       try{
         const saved=localStorage.getItem(FREE_KEY);
@@ -3091,17 +3132,29 @@ function shouldRunUpdate(){
      return count;
    }
 
+   renderLatestDrawCard();
+   maybeScoreCurrentChallenge();
+
     function getPickRoundWinCounts(round){
-      const cnt = {1:0,2:0,3:0,4:0,5:0};
+  const cnt = {1:0,2:0,3:0,4:0,5:0};
 
-      myDocs.forEach(d=>{
-        if(d.round !== round) return;
-        const p = checkPrize(d.nums || [], latestWinNums, latestBonusNum);
-        if(p > 0) cnt[p]++;
-      });
+  const target = window.FULL_DRAW_HISTORY?.find(h => Number(h.round) === Number(round));
+  if(!target || !Array.isArray(target.nums) || target.nums.length !== 6){
+    return cnt;
+  }
 
-      return cnt;
-    }
+  const winNums = target.nums;
+  const bonus = target.bonus || 0;
+
+  myDocs.forEach(d=>{
+    if(Number(d.round) !== Number(round)) return;
+
+    const p = checkPrize(d.nums || [], winNums, bonus);
+    if(p > 0) cnt[p]++;
+  });
+
+  return cnt;
+}
 
     // ── 당첨 번호 모달 ──
     function openPrizeNumsModal(rank, mode){
@@ -3166,28 +3219,37 @@ function shouldRunUpdate(){
     }
 
     function renderLatestDrawCard(){
-      const roundEl = document.getElementById('latest-draw-round');
-      const ballsEl = document.getElementById('latest-draw-balls');
-      const bonusEl = document.getElementById('latest-bonus-ball');
+  const roundEl = document.getElementById('latest-draw-round');
+  const ballsEl = document.getElementById('latest-draw-balls');
+  const bonusEl = document.getElementById('latest-bonus-ball');
 
-      if(roundEl) roundEl.textContent = `${latestRound}회`;
-      if(ballsEl){
-        ballsEl.innerHTML = '';
-        latestWinNums.forEach(n=>{
-          const b = document.createElement('div');
-          b.className = 'ball ' + ballCls(n);
-          b.textContent = n;
-          ballsEl.appendChild(b);
-        });
-      }
-      if(bonusEl) bonusEl.textContent = latestBonusNum || '?';
+  const last = window.FULL_DRAW_HISTORY?.at(-1);
 
-      const cnt = getPickRoundWinCounts(latestRound);
-      for(let i=1;i<=5;i++){
-        const el = document.getElementById('pick-cnt'+i);
-        if(el) el.textContent = cnt[i];
-      }
-    }
+  // 최신 히스토리가 없으면 기존 값 fallback
+  const round = last?.round ?? latestRound;
+  const nums = Array.isArray(last?.nums) ? last.nums : latestWinNums;
+  const bonus = last?.bonus ?? latestBonusNum;
+
+  if(roundEl) roundEl.textContent = `${round}회`;
+
+  if(ballsEl){
+    ballsEl.innerHTML = '';
+    nums.forEach(n=>{
+      const b = document.createElement('div');
+      b.className = 'ball ' + ballCls(n);
+      b.textContent = n;
+      ballsEl.appendChild(b);
+    });
+  }
+
+  if(bonusEl) bonusEl.textContent = bonus || '?';
+
+  const cnt = getPickRoundWinCounts(round);
+  for(let i=1;i<=5;i++){
+    const el = document.getElementById('pick-cnt'+i);
+    if(el) el.textContent = cnt[i];
+  }
+}
 
   async function loadRemoteDrawHistory(){
   try {
@@ -3204,6 +3266,16 @@ function shouldRunUpdate(){
       throw new Error("원격 draw-history JSON이 비어 있음");
     }
 
+    if(Array.isArray(data) && data.length > 0){
+  window.FULL_DRAW_HISTORY = data;
+
+  const last = data[data.length - 1];
+
+  latestRound = last.round;
+  latestWinNums = [...last.nums];
+  latestBonusNum = last.bonus || 0;
+}
+
     // 전역 히스토리 덮어쓰기
     window.FULL_DRAW_HISTORY = data;
 
@@ -3212,6 +3284,7 @@ function shouldRunUpdate(){
     latestRound = Number(latest.round);
     latestWinNums = Array.isArray(latest.nums) ? latest.nums.map(Number) : [];
     latestBonusNum = Number(latest.bonus || 0);
+    viewRound = latestRound;
 
     // 최근 히스토리 갱신 (최근 15개만)
     recentHist = data.slice(-15).map(item => ({
@@ -3240,7 +3313,9 @@ function shouldRunUpdate(){
     async function init(){
     setStatus('loading', 'init 시작됨'); // 수정수정
       try{
-        loadRemoteDrawHistory().catch(e => console.warn('원격 히스토리 로드 실패:', e));
+        loadRemoteDrawHistory()
+         .then(() => maybeScoreCurrentChallenge())
+         .catch(e => console.warn('원격 히스토리 로드 실패:', e));
         // 즉시 준비
         isReady=true; genBtn.disabled=false; viewRound=latestRound;
         updateStats(); renderFreqBars(); renderFreqGrid(); updateFreeCounter();
@@ -3271,7 +3346,6 @@ function shouldRunUpdate(){
           navigator.clipboard.writeText(fullUid).then(()=>{
             const orig = btn.textContent;
             btn.textContent = '✅ 복사됨';
-            setTimeout(()=>{ btn.textContent = orig; }, 2000);
           }).catch(()=>{
             alert('ID: ' + fullUid);
           });
@@ -3333,48 +3407,74 @@ function shouldRunUpdate(){
     // ── 자동업데이트 스케줄 ──
     // 자동 업데이트 (재시도 포함)
     async function autoUpdate(retry=0){
-    setStatus('loading', 'autoUpdate 시작됨'); //수정수정
-    //setStatus('loading', '최신 회차 확인 중...');
+  if(!shouldRunUpdate()){
+    setStatus('ok', `최신 상태 (261~${latestRound}회) · 내장 통계 사용 중`);
+    if(currentUid) loadMyNums();
+    return;
+  }
 
+  setStatus('loading', '최신 회차 확인 중...');
 
   try{
     const oldRound = latestRound;
     const added = await fetchNewRounds();
 
     if(added > 0){
+      // 실제 새 회차를 가져왔을 때만 캐시 저장
       saveUpdateTime();
 
       setStatus('ok', `${added}회차 업데이트 완료 — 최신: ${latestRound}회`);
+      viewRound = latestRound;
       updateStats();
       renderFreqBars();
       renderFreqGrid();
       renderPrizeHeader();
       renderLatestDrawCard();
-      if(typeof loadPrizeTab === 'function') loadPrizeTab(latestRound);
 
-      if(currentUid) loadMyNums();
-
-      if(latestRound !== oldRound){
-        if(typeof resetChallengeState === 'function') resetChallengeState();
-        if(typeof initChallenge === 'function') onAuthReady(()=>initChallenge());
+      if(typeof loadPrizeTab === 'function'){
+        loadPrizeTab(latestRound);
       }
 
-      if(typeof checkPrizeUnlock === 'function') checkPrizeUnlock();
-      if(typeof maybeScoreCurrentChallenge === 'function') maybeScoreCurrentChallenge();
+      if(currentUid){
+        loadMyNums();
+      }
+
+      if(latestRound !== oldRound){
+        if(typeof resetChallengeState === 'function'){
+          resetChallengeState();
+        }
+        if(typeof initChallenge === 'function'){
+          onAuthReady(()=>initChallenge());
+        }
+      }
+
+      if(typeof checkPrizeUnlock === 'function'){
+        checkPrizeUnlock();
+      }
+      if(typeof maybeScoreCurrentChallenge === 'function'){
+        maybeScoreCurrentChallenge();
+      }
+
     }else{
-      // 최신 상태여도 이번 주 체크 완료로 기록
-      saveUpdateTime();
-      setStatus('ok', `최신 상태 (261~${latestRound}회)`);
-      if(currentUid) loadMyNums();
-    }
+     // 업데이트 없음 (현재 최신)
+     setStatus('ok', `업데이트 없음 (현재 ${latestRound}회)`);
+     if(currentUid){
+       loadMyNums();
+     }
+     maybeScoreCurrentChallenge(); // ✅ ADD: 새 회차 없어도 채점 시도
+   }
 
   }catch(e){
+    console.warn('autoUpdate error:', e);
+
     if(retry < 2){
       setStatus('loading', `업데이트 재시도 중... (${retry+1}/2)`);
       setTimeout(()=>autoUpdate(retry+1), 4000);
     }else{
       setStatus('ok', `내장 통계 사용 중 (261~${latestRound}회)`);
-      if(currentUid) loadMyNums();
+      if(currentUid){
+        loadMyNums();
+      }
     }
   }
 }
@@ -5693,16 +5793,26 @@ function renderFreqGrid(){
 
     // 회차 상태 계산 - 서버 문서 기준 우선, 클라이언트 시간은 fallback
     function getChallengeStatus(){
-      // 서버 문서에 status가 있으면 우선 사용
-      if(challengeRoundData?.status==='scored') return 'scored';
-      if(challengeRoundData?.status==='closed') return 'closed';
-      if(challengeRoundData?.scored===true) return 'scored';
-      // 서버 상태 없으면 클라이언트 시간으로 fallback
-      const kst=new Date(new Date().getTime()+9*3600000);
-      const d=kst.getDay(), h=kst.getHours(), m=kst.getMinutes();
-      if((d===6&&(h>21||(h===21&&m>=15)))||(d===0&&h<3)) return 'closed';
-      return 'open';
-    }
+     if(challengeRoundData?.status === 'scored') return 'scored';
+     if(challengeRoundData?.status === 'closed') return 'closed';
+     if(challengeRoundData?.scored === true) return 'scored';
+
+     const currentRound = Number(window.FULL_DRAW_HISTORY?.at(-1)?.round || latestRound);
+     const challengeRound = Number(challengeRoundData?.roundId || currentRound);
+
+     // 최신 회차보다 이전 회차면 scored 취급
+     if(challengeRound < currentRound){
+       return 'scored';
+     }
+
+     const kst = new Date(new Date().getTime() + 9*3600000);
+     const d = kst.getDay(), h = kst.getHours(), m = kst.getMinutes();
+     if((d === 6 && (h > 21 || (h === 21 && m >= 15))) || (d === 0 && h < 3)){
+       return 'closed';
+     }
+
+     return 'open';
+   }
 
     // 상태 배지 업데이트
     function updateStatusBadge(status){
@@ -5741,43 +5851,52 @@ function renderFreqGrid(){
 
     // 챌린지 초기화
     async function initChallenge(){
-      const roundId = String(latestRound);
-      document.getElementById('challenge-round-badge').textContent = latestRound + '회차';
-      if(!db){ renderChallengeOffline(); return; }
+  const challengeRound = getChallengeRound();
+  const roundId = String(challengeRound);
 
-      try{
-        // round summary 문서 구독 (entries 전체 대신)
-        const roundRef = doc(db,'challenge_rounds',roundId);
-        if(challengeUnsubRound) challengeUnsubRound();
-        challengeUnsubRound = onSnapshot(roundRef, snap=>{
-          challengeRoundData = snap.exists() ? snap.data() : null;
-          const count = challengeRoundData?.participantCount || 0;
-          document.getElementById('challenge-count').textContent = count.toLocaleString()+'명';
-          const status = getChallengeStatus();
-          updateStatusBadge(status);
-          // 마감/채점 후 참여 버튼 비활성화
-          const btnsEl=document.getElementById('challenge-btns');
-          if(status!=='open'&&btnsEl&&!challengeMyEntry) {
-            btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.style.opacity='.4';});
-          }
-          else if(status==='open'&&btnsEl) {
-            btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{b.disabled=false;b.style.opacity='1';});
-          }
-          // 채점 완료 시 TOP10 표시
-          if(status==='scored'&&challengeRoundData?.top10Preview){
-            renderTop10(challengeRoundData.top10Preview);
-          }
+  document.getElementById('challenge-round-badge').textContent = challengeRound + '회차';
+  if(!db){ renderChallengeOffline(); return; }
+
+  try{
+    const roundRef = doc(db,'challenge_rounds',roundId);
+    if(challengeUnsubRound) challengeUnsubRound();
+
+    challengeUnsubRound = onSnapshot(roundRef, snap=>{
+      challengeRoundData = snap.exists() ? snap.data() : null;
+      const count = challengeRoundData?.participantCount || 0;
+      document.getElementById('challenge-count').textContent = count.toLocaleString() + '명';
+
+      const status = getChallengeStatus();
+      updateStatusBadge(status);
+
+      const btnsEl = document.getElementById('challenge-btns');
+      if(status !== 'open' && btnsEl && !challengeMyEntry){
+        btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{
+          b.disabled = true;
+          b.style.opacity = '.4';
         });
-
-        // 내 참여 여부 확인
-        onAuthReady(()=>{
-          checkMyEntry(roundId);
-          loadChallengeHistory();
+      }else if(status === 'open' && btnsEl){
+        btnsEl.querySelectorAll('.challenge-btn').forEach(b=>{
+          b.disabled = false;
+          b.style.opacity = '1';
         });
-      }catch(e){ console.warn('challenge init error:',e); }
+      }
 
-      buildNumGrid();
-    }
+      if(status === 'scored'){
+        renderChallengeSummary(challengeRoundData);
+      }
+    });
+
+    onAuthReady(()=>{
+      checkMyEntry(roundId);
+      loadChallengeHistory();
+    });
+  }catch(e){
+    console.warn('challenge init error:', e);
+  }
+
+  buildNumGrid();
+}
 
     function renderChallengeOffline(){
       document.getElementById('challenge-count').textContent='—';
@@ -5830,8 +5949,40 @@ function renderFreqGrid(){
       }
     }
 
+    function renderChallengeSummary(data){
+  // ✅ FIX: 'challenge-top10-box' → 'challenge-top10' (HTML에 실제 존재하는 id)
+  const box = document.getElementById('challenge-top10');
+  if(!box) return;
+  box.style.display = 'block';
+
+  const hit4Plus = Number(data?.summaryHit4Plus || 0);
+  const hit3 = Number(data?.summaryHit3 || 0);
+  const total = Number(data?.summaryTotal || 0);
+
+  box.innerHTML = `
+    <div class="challenge-top10-title">🏆 챌린지 결과 요약</div>
+    <div class="challenge-summary-grid">
+      <div class="challenge-summary-card">
+        <div class="challenge-summary-val">${hit4Plus}명</div>
+        <div class="challenge-summary-label">4개 이상 맞춤</div>
+        <div class="challenge-summary-reward">100LB 지급</div>
+      </div>
+      <div class="challenge-summary-card">
+        <div class="challenge-summary-val">${hit3}명</div>
+        <div class="challenge-summary-label">3개 맞춤</div>
+        <div class="challenge-summary-reward">30LB 지급</div>
+      </div>
+      <div class="challenge-summary-card">
+        <div class="challenge-summary-val">${Math.max(0, total - hit4Plus - hit3)}명</div>
+        <div class="challenge-summary-label">0~2개 맞춤</div>
+        <div class="challenge-summary-reward">10LB 지급</div>
+      </div>
+    </div>
+  `;
+}
+
     // TOP10 렌더
-    function renderTop10(top10){
+    /*function renderTop10(top10){
       const el=document.getElementById('challenge-top10');
       const list=document.getElementById('challenge-top10-list');
       if(!el||!list) return;
@@ -5849,137 +6000,187 @@ function renderFreqGrid(){
           ${isMe?'<span style="font-size:9px;color:#b060ff">나</span>':''}
         </div>`;
       }).join('');
-    }
+    }*/
 
     // 최근 참여자 UI 제거
 
     // 지난 회차 히스토리
     async function loadChallengeHistory(){
-      if(!currentUid||!db) return;
-      const list=document.getElementById('challenge-history-list');
-      if(!list) return;
-      try{
-        // 최근 3회차 히스토리 - 병렬 처리
-        const prevRounds=[latestRound-1,latestRound-2,latestRound-3].filter(r=>r>0);
-        const results=await Promise.all(prevRounds.map(async r=>{
-          const [roundSnap,entrySnap]=await Promise.all([
-            getDoc(doc(db,'challenge_rounds',String(r))),
-            getDoc(doc(db,'challenge_rounds',String(r),'entries',currentUid))
-          ]);
-          if(!roundSnap.exists()||!roundSnap.data().scored) return null;
-          return{round:r,roundData:roundSnap.data(),myEntry:entrySnap.exists()?entrySnap.data():null};
-        }));
-        const items=results.filter(Boolean);
-        if(!items.length){
-          list.innerHTML='<div style="font-size:11px;color:var(--muted);padding:8px">지난 회차 참여 기록이 없습니다.</div>';
-          return;
-        }
-        list.innerHTML=items.map(item=>{
-          const {round,roundData,myEntry}=item;
-          const winNums=roundData.winNums||[];
-          const bonus=roundData.bonusNum||0;
-          const myNums=myEntry?.numbers||[];
-          const myRank=myEntry?.rank||0;
-          const myMatch=myEntry?.matchCount||0;
-          const rankLabel=myRank>0&&myRank<=10?'TOP10':myRank>0&&myRank<=100?'TOP100':myRank>0?`${myRank}위`:'미참여';
-          const rankCls=myRank>0&&myRank<=10?'rank-top10':myRank>0&&myRank<=100?'rank-top100':'rank-done';
-          const winBalls=winNums.map(n=>`<div class="ball ${ballCls(n)}" style="width:22px;height:22px;font-size:9px">${n}</div>`).join('');
-          const myBalls=myNums.map(n=>`<div class="ball ${ballCls(n)}" style="width:22px;height:22px;font-size:9px">${n}</div>`).join('');
-          return `<div class="challenge-hist-item">
-            <div class="challenge-hist-round">${round}회차 · ${roundData.participantCount||0}명 참여</div>
-            <div class="challenge-hist-my" style="font-size:10px;color:var(--muted)">결과번호: <span style="font-size:10px;color:var(--muted)">보너스 ${bonus}</span></div>
-            <div class="challenge-hist-nums">${winBalls}</div>
-            ${myEntry?`
-              <div style="font-size:10px;color:var(--muted);margin-top:6px">내 번호</div>
-              <div class="challenge-hist-nums">${myBalls}</div>
-              <div class="challenge-hist-result">
-                <span class="challenge-hist-rank challenge-rank-badge ${rankCls}" style="display:inline-block">${rankLabel}</span>
-                <span style="font-size:10px;color:var(--muted)">${myMatch}개 일치${myEntry.bonusMatch?' + 보너스':''}</span>
-              </div>
-            `:'<div style="font-size:10px;color:var(--muted);margin-top:6px">미참여</div>'}
-          </div>`;
-        }).join('');
-      }catch(e){ console.warn('loadChallengeHistory error:',e); }
+  if(!currentUid || !db) return;
+
+  const list = document.getElementById('challenge-history-list');
+  if(!list) return;
+
+  try{
+    const challengeRound = getChallengeRound();
+    const prevRounds = [challengeRound - 1].filter(r => r > 0);
+
+    const results = await Promise.all(
+      prevRounds.map(async r=>{
+        const [roundSnap, entrySnap] = await Promise.all([
+         getDocFromServer(doc(db, 'challenge_rounds', String(r))),
+         getDocFromServer(doc(db, 'challenge_rounds', String(r), 'entries', currentUid))
+       ]);
+
+        if(!roundSnap.exists()) return null;
+
+        const roundData = roundSnap.data();
+        const myEntry = entrySnap.exists() ? entrySnap.data() : null;
+
+        return {
+          round: r,
+          roundData,
+          myEntry
+        };
+      })
+    );
+
+    const items = results.filter(Boolean);
+
+    if(!items.length){
+      list.innerHTML = '<div style="font-size:11px;color:var(--muted);padding:8px">지난 회차 참여 기록이 없습니다.</div>';
+      return;
     }
+
+    list.innerHTML = items.map(item=>{
+      const { round, roundData, myEntry } = item;
+
+      const winNums = roundData.winNums || [];
+      const bonus = roundData.bonusNum || 0;
+      const myNums = myEntry?.numbers || [];
+      const myMatch = myEntry?.matchCount || 0;
+      const rewardLB = myEntry?.rewardLB || 0;
+      const resultLabel = myEntry?.resultLabel || '미참여';
+      const scored = !!roundData.scored;
+
+      const statusText = scored ? '결과 확정' : '진행중';
+
+      const winBalls = winNums.map(n =>
+        `<div class="ball ${ballCls(n)}" style="width:22px;height:22px;font-size:9px">${n}</div>`
+      ).join('');
+
+      const myBalls = myNums.map(n =>
+        `<div class="ball ${ballCls(n)}" style="width:22px;height:22px;font-size:9px">${n}</div>`
+      ).join('');
+
+      return `
+        <div class="challenge-hist-item">
+          <div class="challenge-hist-round">
+            ${round}회차 · ${roundData.participantCount || 0}명 참여 · ${statusText}
+          </div>
+
+          ${winNums.length === 6 ? `
+            <div class="challenge-hist-my" style="font-size:10px;color:var(--muted)">
+              결과번호 <span style="font-size:10px;color:var(--muted)">보너스 ${bonus}</span>
+            </div>
+            <div class="challenge-hist-nums">${winBalls}</div>
+          ` : `
+            <div style="font-size:10px;color:var(--muted);margin-top:6px">
+               아직 결과 집계 전입니다.
+            </div>
+          `}
+
+          ${myEntry ? `
+            <div style="font-size:10px;color:var(--muted);margin-top:6px">내 번호</div>
+            <div class="challenge-hist-nums">${myBalls}</div>
+            <div class="challenge-hist-result">
+              <span class="challenge-hist-rank challenge-rank-badge rank-done" style="display:inline-block">${resultLabel}</span>
+              <span style="font-size:10px;color:var(--muted)">
+                ${myMatch}개 일치 · ${rewardLB}LB
+              </span>
+            </div>
+          ` : `
+            <div style="font-size:10px;color:var(--muted);margin-top:6px">미참여</div>
+          `}
+        </div>
+      `;
+    }).join('');
+
+  }catch(e){
+    console.warn('loadChallengeHistory error:', e);
+  }
+}
 
     // 챌린지 참여 - 검증 강화
     async function joinChallenge(numbers, sourceType){
-      // 검증
-      if(!numbers || numbers.length!==6){ alert('6개 번호를 선택해주세요.'); return; }
-      if(new Set(numbers).size!==6){ alert('중복된 번호가 있습니다.'); return; }
-      if(numbers.some(n=>n<1||n>45||!Number.isInteger(n))){ alert('번호는 1~45 사이 정수여야 합니다.'); return; }
-      if(!db || !currentUid){ alert('로그인 정보가 없습니다. 잠시 후 시도해주세요.'); return; }
+  if(!numbers || numbers.length!==6){ alert('6개 번호를 선택해주세요.'); return; }
+  if(new Set(numbers).size!==6){ alert('중복된 번호가 있습니다.'); return; }
+  if(numbers.some(n=>n<1||n>45||!Number.isInteger(n))){ alert('번호는 1~45 사이 정수여야 합니다.'); return; }
+  if(!db || !currentUid){ alert('로그인 정보가 없습니다. 잠시 후 시도해주세요.'); return; }
 
-      const status = getChallengeStatus();
-      if(status !== 'open'){ alert('이번 회차 참여는 마감됐습니다.'); return; }
+  const status = getChallengeStatus();
+  if(status !== 'open'){ alert('이번 회차 참여는 마감됐습니다.'); return; }
 
-      const roundId = String(latestRound);
-      const entryRef = doc(db,'challenge_rounds',roundId,'entries',currentUid);
-      const roundRef = doc(db,'challenge_rounds',roundId);
+  // ✅ FIX: getChallengeRound()로 통일 (initChallenge, checkMyEntry, loadChallengeHistory와 일치)
+  const challengeRound = getChallengeRound();
+  const roundId = String(challengeRound);
 
-      try{
-        // 이미 참여했는지 확인
-        const entrySnap = await getDoc(entryRef);
-        if(entrySnap.exists()){
-          challengeMyEntry = {id:currentUid, ...entrySnap.data()};
-          renderMyEntry();
-          alert('이미 이번 회차에 참여하셨습니다.');
-          return;
-        }
+  const entryRef = doc(db,'challenge_rounds',roundId,'entries',currentUid);
+  const roundRef = doc(db,'challenge_rounds',roundId);
 
-        // entry 저장
-        await setDoc(entryRef, {
-          uid: currentUid,
-          numbers,
-          sourceType,
-          createdAt: serverTimestamp(),
-          matchCount: 0,
-          bonusMatch: false,
-          rank: 0,
-          resultLabel: '집계 대기'
-        });
-
-        // participantCount 업데이트 (별도 요청)
-        try{
-          const roundSnap = await getDoc(roundRef);
-          if(roundSnap.exists()){
-            const current = roundSnap.data().participantCount || 0;
-            await setDoc(roundRef, {
-              participantCount: current + 1,
-              updatedAt: serverTimestamp()
-            }, {merge:true});
-          }else{
-            await setDoc(roundRef, {
-              roundId: latestRound,
-              participantCount: 1,
-              updatedAt: serverTimestamp()
-            });
-          }
-        }catch(e2){
-          // participantCount 업데이트 실패해도 참여 자체는 성공으로 처리
-          console.warn('participantCount 업데이트 실패(무시):', e2);
-        }
-
-        challengeMyEntry = {
-          id: currentUid,
-          uid: currentUid,
-          numbers,
-          sourceType,
-          rank: 0,
-          resultLabel: '집계 대기'
-        };
-        renderMyEntry();
-        alert('✅ 참여가 완료되었습니다!');
-      }catch(e){
-        console.error('joinChallenge error:', e);
-        alert('참여 중 오류가 발생했습니다.\n' + e.message);
-      }
+  try{
+    const entrySnap = await getDoc(entryRef);
+    if(entrySnap.exists()){
+      challengeMyEntry = {id:currentUid, ...entrySnap.data()};
+      renderMyEntry();
+      alert('이미 이번 회차에 참여하셨습니다.');
+      return;
     }
+
+    await setDoc(entryRef, {
+      uid: currentUid,
+      numbers,
+      sourceType,
+      createdAt: serverTimestamp(),
+      matchCount: 0,
+      bonusMatch: false,
+      rank: 0,
+      resultLabel: '집계 대기'
+    });
+
+    try{
+      const roundSnap = await getDoc(roundRef);
+      if(roundSnap.exists()){
+        const current = roundSnap.data().participantCount || 0;
+        await setDoc(roundRef, {
+          participantCount: current + 1,
+          updatedAt: serverTimestamp()
+        }, {merge:true});
+      }else{
+        await setDoc(roundRef, {
+          roundId: challengeRound,
+          participantCount: 1,
+          updatedAt: serverTimestamp()
+        });
+      }
+    }catch(e2){
+      console.warn('participantCount 업데이트 실패(무시):', e2);
+    }
+
+    challengeMyEntry = {
+      id: currentUid,
+      uid: currentUid,
+      numbers,
+      sourceType,
+      rank: 0,
+      resultLabel: '집계 대기'
+    };
+    renderMyEntry();
+    alert('✅ 참여가 완료되었습니다!');
+  }catch(e){
+    console.error('joinChallenge error:', e);
+    alert('참여 중 오류가 발생했습니다.\n' + e.message);
+  }
+}
     // 챌린지 취소
       async function cancelChallenge(){
       if(!await confirm('챌린지 참여를 취소 하시겠습니까?')) return;
       if(!db || !currentUid) return;
-      const roundId = String(latestRound);
+      const last = window.FULL_DRAW_HISTORY?.at(-1);
+      const round = Number(last?.round || latestRound);
+      const challengeRound = getChallengeRound();
+      const roundId = String(challengeRound);
+
       const entryRef = doc(db,'challenge_rounds',roundId,'entries',currentUid);
       const roundRef = doc(db,'challenge_rounds',roundId);
       try{
@@ -6023,64 +6224,166 @@ function renderFreqGrid(){
         alert('취소 중 오류가 발생했습니다.\n' + e.message);
       }
     }
-    // 자동 채점 (클라이언트 fallback - Cloud Functions 미사용 시)
-    async function maybeScoreCurrentChallenge(){
-      if(!db||!latestWinNums||latestWinNums.length!==6) return;
-      const kst=new Date(new Date().getTime()+9*3600000);
-      const day=kst.getDay(), h=kst.getHours(), m=kst.getMinutes();
-      const afterDraw=(day===6&&(h>21||(h===21&&m>=15)))||(day===0&&h<3);
-    if(!afterDraw) return;
-      const roundId=String(latestRound);
-      const roundRef=doc(db,'challenge_rounds',roundId);
-      try{
-        const roundSnap=await getDoc(roundRef);
-        const currentData=roundSnap.exists()?roundSnap.data():{};
-        if(currentData.scored===true) return;
-        await scoreChallenge(roundId,latestWinNums,latestBonusNum);
-        // round 문서에 채점 결과 요약 저장
-        const entriesSnap=await getDocsFromServer(collection(db,'challenge_rounds',roundId,'entries'));
-        const entries=entriesSnap.docs.map(d=>d.data());
-        const top10=entries
-          .filter(e=>e.rank>0&&e.rank<=10)
-          .sort((a,b)=>a.rank-b.rank)
-          .map(e=>({uid:e.uid,numbers:e.numbers,matchCount:e.matchCount,bonusMatch:e.bonusMatch,rank:e.rank}));
-        await setDoc(roundRef,{
-          scored:true, status:'scored', updatedAt:serverTimestamp(),
-          winNums:latestWinNums, bonusNum:latestBonusNum,
-          top10Preview:top10
-        },{merge:true});
-        console.log('챌린지 자동 채점 완료');
-      }catch(e){ console.error('maybeScoreCurrentChallenge error:',e); }
+
+    async function grantChallengeReward(roundId, uid, rewardLB){
+  if(!db || !uid || !rewardLB) return false;
+
+  try{
+    const entriesRef = collection(db, 'challenge_rounds', roundId, 'entries');
+    const q = query(entriesRef, where('uid', '==', uid));
+    const snap = await getDocs(q);
+
+    if(snap.empty) return false;
+
+    const entryDoc = snap.docs[0];
+    const entryRef = entryDoc.ref;
+    const data = entryDoc.data();
+
+    // 중복 지급 방지
+    if(data.rewardPaid === true){
+      return false;
     }
 
+    // LB 상태 문서
+    const userRef = doc(db, 'lb_states', uid);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.exists() ? userSnap.data() : {};
+
+    const currentLB = Number(userData.balance || 0);
+
+    // LB 지급
+    await setDoc(userRef, {
+      balance: currentLB + rewardLB,
+      updatedAt: serverTimestamp()
+    }, { merge:true });
+
+    // entry 문서에 지급 완료 기록
+    await setDoc(entryRef, {
+      rewardPaid: true,
+      rewardPaidAt: serverTimestamp()
+    }, { merge:true });
+
+    return true;
+  }catch(e){
+    console.error('grantChallengeReward error:', e);
+    return false;
+  }
+}
+
+    // 자동 채점 (클라이언트 fallback - Cloud Functions 미사용 시)
+    async function maybeScoreCurrentChallenge(){
+  if(!db || !window.FULL_DRAW_HISTORY || window.FULL_DRAW_HISTORY.length === 0) return;
+
+  try{
+    const challengeRound = getChallengeRound();   // 예: 1218
+    const resultRound = challengeRound - 1;       // 예: 1217
+
+    const resultData = window.FULL_DRAW_HISTORY.find(x => Number(x.round) === Number(resultRound));
+    if(!resultData || !Array.isArray(resultData.nums) || resultData.nums.length !== 6) return;
+
+    const roundId = String(resultRound);
+    const winNums = resultData.nums;
+    const bonus = resultData.bonus || 0;
+
+    const roundRef = doc(db, 'challenge_rounds', roundId);
+    const roundSnap = await getDoc(roundRef);
+    const currentData = roundSnap.exists() ? roundSnap.data() : null;
+
+    if(currentData?.scored === true) return;
+
+    const entriesSnap = await getDocsFromServer(collection(db, 'challenge_rounds', roundId, 'entries'));
+    if(entriesSnap.empty) return;
+
+    const summary = await scoreChallenge(roundId, winNums, bonus);
+
+    await setDoc(roundRef, {
+      scored: true,
+      status: 'scored',
+      updatedAt: serverTimestamp(),
+      winNums: winNums,
+      bonusNum: bonus,
+      summaryHit4Plus: summary.hit4Plus || 0,
+      summaryHit3: summary.hit3 || 0,
+      summaryTotal: summary.total || 0,
+      rewardRule: {
+        hit4Plus: 100,
+        hit3: 30,
+        hit0to2: 10
+      }
+    }, { merge:true });
+
+    console.log('챌린지 자동 집계 완료:', roundId);
+
+    loadChallengeHistory();
+  }catch(e){
+    console.error('maybeScoreCurrentChallenge error:', e);
+  }
+}
+
     // 채점 함수
-    async function scoreChallenge(roundId,winNums,bonusNum){
-      if(!db) return;
-      try{
-        const entriesRef=collection(db,'challenge_rounds',roundId,'entries');
-        const snap=await getDocsFromServer(entriesRef);
-        const entries=snap.docs.map(d=>({id:d.id,...d.data()}));
-        const scored=entries.map(e=>{
-          const nums=e.numbers||[];
-          const mc=nums.filter(n=>winNums.includes(n)).length;
-          const bm=nums.includes(bonusNum);
-          return{...e,matchCount:mc,bonusMatch:bm};
-        });
-        scored.sort((a,b)=>{
-          if(b.matchCount!==a.matchCount) return b.matchCount-a.matchCount;
-          if(b.bonusMatch!==a.bonusMatch) return b.bonusMatch?1:-1;
-          return (a.createdAt?.seconds||0)-(b.createdAt?.seconds||0);
-        });
-        for(let i=0;i<scored.length;i++){
-          const e=scored[i];
-          const rank=i+1;
-          const label=rank<=10?'TOP10':rank<=100?'TOP100':'참가완료';
-          await setDoc(doc(db,'challenge_rounds',roundId,'entries',e.id),
-            {matchCount:e.matchCount,bonusMatch:e.bonusMatch,rank,resultLabel:label},{merge:true});
-        }
-        console.log('채점 완료:',scored.length,'명');
-      }catch(e){ console.error('scoreChallenge error:',e); }
+    async function scoreChallenge(roundId, winNums, bonusNum){
+  if(!db) return { hit4Plus: 0, hit3: 0, total: 0 };
+
+  try{
+    const entriesRef = collection(db, 'challenge_rounds', roundId, 'entries');
+    const snap = await getDocsFromServer(entriesRef);
+
+    const entries = snap.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+
+    let hit4Plus = 0;
+    let hit3 = 0;
+
+    for(const e of entries){
+      const nums = e.numbers || [];
+      const matchCount = nums.filter(n => winNums.includes(n)).length;
+      const bonusMatch = nums.includes(bonusNum);
+
+      let rewardLB = 10;
+      let resultLabel = '참여 보상';
+
+      if(matchCount >= 4){
+        rewardLB = 100;
+        resultLabel = '4개 이상 맞춤';
+        hit4Plus++;
+      }else if(matchCount === 3){
+        rewardLB = 30;
+        resultLabel = '3개 맞춤';
+        hit3++;
+      }
+
+      const entryRef = doc(db, 'challenge_rounds', roundId, 'entries', e.id);
+
+      await setDoc(
+        entryRef,
+        {
+          matchCount,
+          bonusMatch,
+          rewardLB,
+          resultLabel,
+          scoredAt: serverTimestamp()
+        },
+        { merge:true }
+      );
+
+      await grantChallengeReward(roundId, e.uid, rewardLB);
     }
+
+    console.log('채점 완료:', entries.length, '명');
+
+    return {
+      hit4Plus,
+      hit3,
+      total: entries.length
+    };
+
+  }catch(e){
+    console.error('scoreChallenge error:', e);
+    return { hit4Plus: 0, hit3: 0, total: 0 };
+  }
+}
 
     // 직접 선택 번호 그리드
     function buildNumGrid(){
