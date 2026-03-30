@@ -5,8 +5,11 @@ permissions:
 
 on:
   schedule:
-    # 매주 토요일 21:15 KST = 12:15 UTC
-    - cron: '15 12 * * 6'
+    - cron: '15 12 * * 6'  # 토 21:15 KST
+    - cron: '25 12 * * 6'  # 토 21:25 KST
+    - cron: '45 12 * * 6'  # 토 21:45 KST
+    - cron: '0 13 * * 6'   # 토 22:00 KST
+    - cron: '55 14 * * 6'   # 토 23:55 KST
   workflow_dispatch:
 
 jobs:
@@ -31,10 +34,20 @@ jobs:
       - name: Run update script
         run: python Update_lotto.py
 
+      - name: Show latest json tail
+        run: |
+          python - << 'PY'
+          import json
+          with open('draw-history-261-latest.json', 'r', encoding='utf-8') as f:
+              data = json.load(f)
+          print("count:", len(data))
+          print("last:", data[-1] if data else None)
+          PY
+
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add draw-history-261-latest.json
-          git diff --staged --quiet || git commit -m "auto: update lotto draw history $(date +'%Y-%m-%d')"
+          git diff --staged --quiet || git commit -m "auto: update lotto draw history $(date +'%Y-%m-%d %H:%M')"
           git push
