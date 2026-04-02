@@ -32,7 +32,7 @@ jobs:
           ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
           EOF
 
-      - name: Show files
+      - name: Show files before build
         run: |
           pwd
           ls -la
@@ -46,7 +46,7 @@ jobs:
         run: |
           ls -la generated_pools
           python - << 'PY'
-          import os, json, glob
+          import glob, json
           files = sorted(glob.glob("generated_pools/pool_*.json"))
           print("generated files:", files)
           for f in files:
