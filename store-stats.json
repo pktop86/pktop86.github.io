@@ -1,12 +1,237 @@
-[
-  {
-    "_id": "shop_001",
-    "name": "행운복권방",
-    "addr": "서울 ...",
-    "firstAutoCount": 3,
-    "firstManualCount": 1,
-    "secondCount": 8,
-    "recentWinRound": 1165,
-    "luckyScore": 160
-  }
-]
+{
+  "meta": {
+    "source": "manual-seed",
+    "count": 20,
+    "generatedAt": "2026-04-02T04:30:00Z"
+  },
+  "items": [
+    {
+      "_id": "seoul_001",
+      "name": "인터파크복권방",
+      "addr": "서울 중구 충무로1가",
+      "nameNorm": "인터파크복권방",
+      "addrNorm": "서울중구충무로1가",
+      "firstAutoCount": 6,
+      "firstManualCount": 2,
+      "secondCount": 18,
+      "recentWinRound": 1158,
+      "luckyScore": 220
+    },
+    {
+      "_id": "seoul_002",
+      "name": "행운복권방",
+      "addr": "서울 동대문구",
+      "nameNorm": "행운복권방",
+      "addrNorm": "서울동대문구",
+      "firstAutoCount": 4,
+      "firstManualCount": 1,
+      "secondCount": 12,
+      "recentWinRound": 1163,
+      "luckyScore": 160
+    },
+    {
+      "_id": "busan_001",
+      "name": "로또명당",
+      "addr": "부산 부산진구",
+      "nameNorm": "로또명당",
+      "addrNorm": "부산부산진구",
+      "firstAutoCount": 3,
+      "firstManualCount": 1,
+      "secondCount": 9,
+      "recentWinRound": 1160,
+      "luckyScore": 140
+    },
+    {
+      "_id": "busan_002",
+      "name": "행운복권방",
+      "addr": "부산 해운대구",
+      "nameNorm": "행운복권방",
+      "addrNorm": "부산해운대구",
+      "firstAutoCount": 2,
+      "firstManualCount": 0,
+      "secondCount": 6,
+      "recentWinRound": 1155,
+      "luckyScore": 90
+    },
+    {
+      "_id": "gyeongnam_001",
+      "name": "양산복권방",
+      "addr": "경남 양산시",
+      "nameNorm": "양산복권방",
+      "addrNorm": "경남양산시",
+      "firstAutoCount": 2,
+      "firstManualCount": 0,
+      "secondCount": 5,
+      "recentWinRound": 1152,
+      "luckyScore": 80
+    },
+    {
+      "_id": "gyeongnam_002",
+      "name": "행운복권방",
+      "addr": "경남 김해시",
+      "nameNorm": "행운복권방",
+      "addrNorm": "경남김해시",
+      "firstAutoCount": 2,
+      "firstManualCount": 1,
+      "secondCount": 7,
+      "recentWinRound": 1161,
+      "luckyScore": 110
+    },
+    {
+      "_id": "daegu_001",
+      "name": "대구복권방",
+      "addr": "대구 수성구",
+      "nameNorm": "대구복권방",
+      "addrNorm": "대구수성구",
+      "firstAutoCount": 3,
+      "firstManualCount": 0,
+      "secondCount": 8,
+      "recentWinRound": 1159,
+      "luckyScore": 120
+    },
+    {
+      "_id": "incheon_001",
+      "name": "인천복권방",
+      "addr": "인천 남동구",
+      "nameNorm": "인천복권방",
+      "addrNorm": "인천남동구",
+      "firstAutoCount": 3,
+      "firstManualCount": 1,
+      "secondCount": 10,
+      "recentWinRound": 1162,
+      "luckyScore": 140
+    },
+    {
+      "_id": "daejeon_001",
+      "name": "대전행운복권",
+      "addr": "대전 서구",
+      "nameNorm": "대전행운복권",
+      "addrNorm": "대전서구",
+      "firstAutoCount": 2,
+      "firstManualCount": 1,
+      "secondCount": 6,
+      "recentWinRound": 1154,
+      "luckyScore": 100
+    },
+    {
+      "_id": "gwangju_001",
+      "name": "광주복권방",
+      "addr": "광주 북구",
+      "nameNorm": "광주복권방",
+      "addrNorm": "광주북구",
+      "firstAutoCount": 2,
+      "firstManualCount": 0,
+      "secondCount": 5,
+      "recentWinRound": 1153,
+      "luckyScore": 90
+    },
+    {
+      "_id": "ulsan_001",
+      "name": "울산행운복권",
+      "addr": "울산 남구",
+      "nameNorm": "울산행운복권",
+      "addrNorm": "울산남구",
+      "firstAutoCount": 2,
+      "firstManualCount": 0,
+      "secondCount": 5,
+      "recentWinRound": 1150,
+      "luckyScore": 80
+    },
+    {
+      "_id": "jeju_001",
+      "name": "제주복권방",
+      "addr": "제주 제주시",
+      "nameNorm": "제주복권방",
+      "addrNorm": "제주제주시",
+      "firstAutoCount": 1,
+      "firstManualCount": 0,
+      "secondCount": 3,
+      "recentWinRound": 1148,
+      "luckyScore": 60
+    },
+    {
+      "_id": "sejong_001",
+      "name": "세종복권방",
+      "addr": "세종시",
+      "nameNorm": "세종복권방",
+      "addrNorm": "세종시",
+      "firstAutoCount": 1,
+      "firstManualCount": 0,
+      "secondCount": 2,
+      "recentWinRound": 1149,
+      "luckyScore": 50
+    },
+    {
+      "_id": "gangwon_001",
+      "name": "강릉복권방",
+      "addr": "강원 강릉시",
+      "nameNorm": "강릉복권방",
+      "addrNorm": "강원강릉시",
+      "firstAutoCount": 2,
+      "firstManualCount": 0,
+      "secondCount": 4,
+      "recentWinRound": 1151,
+      "luckyScore": 80
+    },
+    {
+      "_id": "gyeonggi_001",
+      "name": "수원복권방",
+      "addr": "경기 수원시",
+      "nameNorm": "수원복권방",
+      "addrNorm": "경기수원시",
+      "firstAutoCount": 4,
+      "firstManualCount": 1,
+      "secondCount": 11,
+      "recentWinRound": 1164,
+      "luckyScore": 170
+    },
+    {
+      "_id": "gyeonggi_002",
+      "name": "성남복권방",
+      "addr": "경기 성남시",
+      "nameNorm": "성남복권방",
+      "addrNorm": "경기성남시",
+      "firstAutoCount": 3,
+      "firstManualCount": 1,
+      "secondCount": 9,
+      "recentWinRound": 1161,
+      "luckyScore": 140
+    },
+    {
+      "_id": "gyeonggi_003",
+      "name": "고양복권방",
+      "addr": "경기 고양시",
+      "nameNorm": "고양복권방",
+      "addrNorm": "경기고양시",
+      "firstAutoCount": 3,
+      "firstManualCount": 0,
+      "secondCount": 8,
+      "recentWinRound": 1159,
+      "luckyScore": 120
+    },
+    {
+      "_id": "chungnam_001",
+      "name": "천안복권방",
+      "addr": "충남 천안시",
+      "nameNorm": "천안복권방",
+      "addrNorm": "충남천안시",
+      "firstAutoCount": 2,
+      "firstManualCount": 0,
+      "secondCount": 5,
+      "recentWinRound": 1156,
+      "luckyScore": 90
+    },
+    {
+      "_id": "chungbuk_001",
+      "name": "청주복권방",
+      "addr": "충북 청주시",
+      "nameNorm": "청주복권방",
+      "addrNorm": "충북청주시",
+      "firstAutoCount": 2,
+      "firstManualCount": 1,
+      "secondCount": 6,
+      "recentWinRound": 1157,
+      "luckyScore": 100
+    }
+  ]
+}
