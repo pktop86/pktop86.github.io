@@ -40,7 +40,7 @@ jobs:
 
       - name: Build ticket pools
         run: |
-          python scripts/build_ticket_pool.py
+         python scripts/build_ticket_pool.py || python scripts/build_ticket_pool.py
 
       - name: Show generated pools
         run: |
@@ -59,4 +59,4 @@ jobs:
 
       - name: Push pools to Firestore
         run: |
-          python scripts/push_ticket_pool_to_firestore.py
+          python scripts/push_ticket_pool_to_firestore.py || python scripts/push_ticket_pool_to_firestore.py
