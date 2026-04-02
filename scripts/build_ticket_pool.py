@@ -13,8 +13,8 @@ OUT_DIR.mkdir(exist_ok=True)
 # ===== 생성 설정 =====
 POOL_CONFIGS = [
     {"count": 5, "total_sets": 1000},
-    {"count": 10, "total_sets": 400},
-    {"count": 20, "total_sets": 200},
+    {"count": 10, "total_sets": 1000},
+    {"count": 20, "total_sets": 1000},
 ]
 
 # True  -> 최신 회차 + 1 생성
