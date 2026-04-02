@@ -6,7 +6,7 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    - cron: "15 19 * * *"   # KST 04:15
+    - cron: "0 3 * * 0"   # 일요일 KST 12:00
 
 jobs:
   update-store-stats:
@@ -38,6 +38,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add store-stats.json
-
           git diff --staged --quiet || git commit -m "auto: update store-stats.json $(date +'%Y-%m-%d %H:%M')"
           git push
