@@ -1,26 +1,21 @@
 import json
-import os
 from pathlib import Path
 
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-JSON_FILE = Path("pool_1218_5.json")
 SERVICE_ACCOUNT_FILE = Path("firebase-service-account.json")
+POOL_DIR = Path("generated_pools")
 
 
-def main():
-    if not SERVICE_ACCOUNT_FILE.exists():
-        raise FileNotFoundError("firebase-service-account.json 파일이 필요합니다.")
-
-    if not JSON_FILE.exists():
-        raise FileNotFoundError(f"{JSON_FILE} 파일이 없습니다.")
-
+def init_firestore():
     cred = credentials.Certificate(str(SERVICE_ACCOUNT_FILE))
     firebase_admin.initialize_app(cred)
-    db = firestore.client()
+    return firestore.client()
 
-    data = json.loads(JSON_FILE.read_text(encoding="utf-8"))
+
+def upload_one_pool(db, json_file: Path):
+    data = json.loads(json_file.read_text(encoding="utf-8"))
 
     meta = data["meta"]
     items = data["items"]
@@ -39,11 +34,13 @@ def main():
 
     batch = db.batch()
     batch_count = 0
+    uploaded = 0
 
     for item in items:
         doc_ref = parent_ref.collection("items").document(item["setId"])
         batch.set(doc_ref, item, merge=True)
         batch_count += 1
+        uploaded += 1
 
         if batch_count >= 400:
             batch.commit()
@@ -53,7 +50,24 @@ def main():
     if batch_count > 0:
         batch.commit()
 
-    print(f"uploaded pool: {pool_key}, items={len(items)}")
+    print(f"uploaded pool: {pool_key}, items={uploaded}")
+
+
+def main():
+    if not SERVICE_ACCOUNT_FILE.exists():
+        raise FileNotFoundError("firebase-service-account.json 파일이 필요합니다.")
+
+    if not POOL_DIR.exists():
+        raise FileNotFoundError("generated_pools 폴더가 없습니다.")
+
+    db = init_firestore()
+
+    json_files = sorted(POOL_DIR.glob("pool_*.json"))
+    if not json_files:
+        raise FileNotFoundError("업로드할 pool_*.json 파일이 없습니다.")
+
+    for json_file in json_files:
+        upload_one_pool(db, json_file)
 
 
 if __name__ == "__main__":
