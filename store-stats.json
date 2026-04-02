@@ -1,0 +1,12 @@
+[
+  {
+    "_id": "shop_001",
+    "name": "행운복권방",
+    "addr": "서울 ...",
+    "firstAutoCount": 3,
+    "firstManualCount": 1,
+    "secondCount": 8,
+    "recentWinRound": 1165,
+    "luckyScore": 160
+  }
+]
