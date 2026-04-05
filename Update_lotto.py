@@ -20,12 +20,26 @@ def fetch_round(round_num: int):
     try:
         req = urllib.request.Request(
             url,
-            headers={"User-Agent": "Mozilla/5.0"}
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Accept": "application/json, text/plain, */*",
+                "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Referer": "https://www.dhlottery.co.kr/"
+            }
         )
+
         with urllib.request.urlopen(req, timeout=10) as res:
-            data = json.loads(res.read().decode("utf-8"))
+            raw = res.read().decode("utf-8", errors="replace")
+
+        try:
+            data = json.loads(raw)
+        except Exception as je:
+            print(f"[ERROR] JSON 파싱 실패 ({round_num}회): {je}")
+            print(f"[DEBUG] 응답 앞부분 ({round_num}회): {raw[:300]!r}")
+            return "PARSE_ERROR"
 
         if data.get("returnValue") != "success":
+            print(f"[INFO] {round_num}회 응답 returnValue={data.get('returnValue')}")
             return None
 
         nums = sorted([int(data[f"drwtNo{i}"]) for i in range(1, 7)])
@@ -39,8 +53,7 @@ def fetch_round(round_num: int):
 
     except Exception as e:
         print(f"[ERROR] fetch 실패 ({round_num}회): {e}")
-        return None
-
+        return "FETCH_ERROR"
 
 def load_existing_history(filepath: str):
     try:
@@ -98,6 +111,10 @@ def main():
     for round_num in range(recheck_from, latest_round + 1):
         print(f"[INFO] {round_num}회차 재검증 중...")
         draw = fetch_round(round_num)
+
+        if draw == "PARSE_ERROR" or draw == "FETCH_ERROR":
+            raise RuntimeError(f"{round_num}회차 재검증 중 파싱/네트워크 오류")
+
         if draw:
             old = history_map.get(round_num)
             if old != draw:
@@ -109,6 +126,10 @@ def main():
     while True:
         print(f"[INFO] {check_round}회차 확인 중...")
         draw = fetch_round(check_round)
+
+        if draw == "PARSE_ERROR" or draw == "FETCH_ERROR":
+            raise RuntimeError(f"{check_round}회차 조회 중 파싱/네트워크 오류")
+
         if draw is None:
             print(f"[INFO] {check_round}회차 없음 — 종료")
             break
