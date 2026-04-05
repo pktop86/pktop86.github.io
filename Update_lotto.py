@@ -112,7 +112,7 @@ def main():
         draw = fetch_round(round_num)
 
         if draw in ("PARSE_ERROR", "FETCH_ERROR", "HTML_BLOCKED"):
-        raise RuntimeError(f"{round_num}회차 재검증 중 차단/네트워크 오류")
+            raise RuntimeError(f"{round_num}회차 재검증 중 차단/네트워크 오류")
         
         if draw:
             old = history_map.get(round_num)
@@ -127,7 +127,7 @@ def main():
         draw = fetch_round(check_round)
 
         if draw in ("PARSE_ERROR", "FETCH_ERROR", "HTML_BLOCKED"):
-        raise RuntimeError(f"{check_round}회차 조회 중 차단/네트워크 오류")
+            raise RuntimeError(f"{check_round}회차 조회 중 차단/네트워크 오류")
 
         if draw is None:
             print(f"[INFO] {check_round}회차 없음 — 종료")
