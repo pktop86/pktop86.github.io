@@ -129,6 +129,13 @@ def main():
             continue
  
         fails = 0
+        prev = history_map.get(check - 1)
+
+        # 직전 회차와 번호+보너스가 같으면 오탐으로 판단하고 종료
+        if prev and prev.get("nums") == result.get("nums") and prev.get("bonus") == result.get("bonus"):
+            print(f"[WARN] {check}회차 결과가 직전 회차와 동일 → 오탐 가능성 높음, 저장 중단")
+            break
+ 
         history_map[check] = result
         added += 1
         check += 1
