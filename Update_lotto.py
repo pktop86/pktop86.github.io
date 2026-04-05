@@ -12,7 +12,7 @@ from datetime import datetime, timezone, timedelta
 JSON_FILE = "draw-history-261-latest.json"
 LOTTO_API = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo={}"
 START_ROUND = 261
-RECHECK_COUNT = 5  # 최근 5회 재검증
+RECHECK_COUNT = 5
 
 
 def fetch_round(round_num: int):
