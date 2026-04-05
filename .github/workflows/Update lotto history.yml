@@ -5,7 +5,6 @@ permissions:
  
 on:
   schedule:
-    # UTC → KST (+9) / 추첨 20:35 이후 여유 있게
     - cron: "15 12 * * 6"   # KST 토 21:15
     - cron: "35 12 * * 6"   # KST 토 21:35
     - cron: "0 13 * * 6"    # KST 토 22:00
@@ -24,6 +23,9 @@ jobs:
         with:
           python-version: '3.11'
  
+      - name: Install dependencies
+        run: pip install requests
+ 
       - name: Run update script
         run: python Update_lotto.py
  
@@ -34,7 +36,9 @@ jobs:
           with open('draw-history-261-latest.json', 'r', encoding='utf-8') as f:
               data = json.load(f)
           print("총 회차:", len(data))
-          print("최신:", data[-1] if data else None)
+          if data:
+              last = data[-1]
+              print("최신:", last['round'], "회차:", last['nums'], "보너스:", last.get('bonus'))
           PY
  
       - name: Commit and push if changed
@@ -42,6 +46,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add draw-history-261-latest.json
-          git diff --staged --quiet || git commit -m "auto: lotto history $(date +'%Y-%m-%d %H:%M KST')"
+          git diff --staged --quiet || git commit -m "auto: lotto $(date +'%Y-%m-%d %H:%M KST')"
           git push
- 
