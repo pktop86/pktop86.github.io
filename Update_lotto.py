@@ -106,19 +106,20 @@ def main():
 
     history_map = {item["round"]: item for item in history}
 
-    recheck_from = max(START_ROUND, latest_round - RECHECK_COUNT + 1)
-    for round_num in range(recheck_from, latest_round + 1):
-        print(f"[INFO] {round_num}회차 재검증 중...")
-        draw = fetch_round(round_num)
-
-        if draw in ("PARSE_ERROR", "FETCH_ERROR", "HTML_BLOCKED"):
-            raise RuntimeError(f"{round_num}회차 재검증 중 차단/네트워크 오류")
-        
-        if draw:
-            old = history_map.get(round_num)
-            if old != draw:
-                print(f"[UPDATE] {round_num}회차 수정")
-                history_map[round_num] = draw
+# 최근 회차 재검증은 임시 비활성화
+# recheck_from = max(START_ROUND, latest_round - RECHECK_COUNT + 1)
+# for round_num in range(recheck_from, latest_round + 1):
+#     print(f"[INFO] {round_num}회차 재검증 중...")
+#     draw = fetch_round(round_num)
+#
+#     if draw in ("PARSE_ERROR", "FETCH_ERROR", "HTML_BLOCKED"):
+#         raise RuntimeError(f"{round_num}회차 재검증 중 차단/네트워크 오류")
+#
+#     if draw:
+#         old = history_map.get(round_num)
+#         if old != draw:
+#             print(f"[UPDATE] {round_num}회차 수정")
+#             history_map[round_num] = draw
 
     check_round = latest_round + 1
     added = 0
