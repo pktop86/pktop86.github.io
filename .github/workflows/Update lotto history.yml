@@ -5,11 +5,11 @@ permissions:
  
 on:
   schedule:
-    # KST 기준 (UTC+9) — 추첨 20:35 이후 여유 있게
-    - cron: "15 12 * * 6"   # KST 21:15 (추첨 40분 후)
-    - cron: "30 12 * * 6"   # KST 21:30 (재시도)
-    - cron: "0 13 * * 6"    # KST 22:00 (마지막 재시도)
-  workflow_dispatch:        # 수동 실행
+    # UTC → KST (+9) / 추첨 20:35 이후 여유 있게
+    - cron: "15 12 * * 6"   # KST 토 21:15
+    - cron: "35 12 * * 6"   # KST 토 21:35
+    - cron: "0 13 * * 6"    # KST 토 22:00
+  workflow_dispatch:
  
 jobs:
   update:
@@ -33,8 +33,8 @@ jobs:
           import json
           with open('draw-history-261-latest.json', 'r', encoding='utf-8') as f:
               data = json.load(f)
-          print("총 회차 수:", len(data))
-          print("최신 회차:", data[-1] if data else None)
+          print("총 회차:", len(data))
+          print("최신:", data[-1] if data else None)
           PY
  
       - name: Commit and push if changed
@@ -42,5 +42,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add draw-history-261-latest.json
-          git diff --staged --quiet || git commit -m "auto: update lotto draw history $(date +'%Y-%m-%d %H:%M KST')"
+          git diff --staged --quiet || git commit -m "auto: lotto history $(date +'%Y-%m-%d %H:%M KST')"
           git push
+ 
