@@ -1,51 +1,46 @@
 name: Update Lotto Draw History
-
+ 
 permissions:
   contents: write
-
+ 
 on:
   schedule:
-    - cron: "45 11 * * 6"
-    - cron: "52 11 * * 6"
-    - cron: "5 12 * * 6"
-  workflow_dispatch:
-
+    # KST 기준 (UTC+9) — 추첨 20:35 이후 여유 있게
+    - cron: "15 12 * * 6"   # KST 21:15 (추첨 40분 후)
+    - cron: "30 12 * * 6"   # KST 21:30 (재시도)
+    - cron: "0 13 * * 6"    # KST 22:00 (마지막 재시도)
+  workflow_dispatch:        # 수동 실행
+ 
 jobs:
   update:
     runs-on: ubuntu-latest
-
+ 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+ 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
-      - name: Show python version
-        run: python --version
-
-      - name: List files
-        run: ls -la
-
+ 
       - name: Run update script
         run: python Update_lotto.py
-
-      - name: Show latest json tail
+ 
+      - name: Show result
         run: |
           python - << 'PY'
           import json
           with open('draw-history-261-latest.json', 'r', encoding='utf-8') as f:
               data = json.load(f)
-          print("count:", len(data))
-          print("last:", data[-1] if data else None)
+          print("총 회차 수:", len(data))
+          print("최신 회차:", data[-1] if data else None)
           PY
-
+ 
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add draw-history-261-latest.json
-          git diff --staged --quiet || git commit -m "auto: update lotto draw history $(date +'%Y-%m-%d %H:%M')"
+          git diff --staged --quiet || git commit -m "auto: update lotto draw history $(date +'%Y-%m-%d %H:%M KST')"
           git push
