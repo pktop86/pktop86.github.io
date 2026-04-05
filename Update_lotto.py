@@ -31,15 +31,14 @@ def fetch_round(round_num: int):
         with urllib.request.urlopen(req, timeout=10) as res:
             raw = res.read().decode("utf-8", errors="replace")
 
-        try:
-            data = json.loads(raw)
-        except Exception as je:
-            print(f"[ERROR] JSON 파싱 실패 ({round_num}회): {je}")
+        if raw.lstrip().startswith("<!DOCTYPE html") or "<html" in raw[:500].lower():
+            print(f"[ERROR] {round_num}회 응답이 JSON이 아니라 HTML입니다.")
             print(f"[DEBUG] 응답 앞부분 ({round_num}회): {raw[:300]!r}")
-            return "PARSE_ERROR"
+            return "HTML_BLOCKED"
+
+        data = json.loads(raw)
 
         if data.get("returnValue") != "success":
-            print(f"[INFO] {round_num}회 응답 returnValue={data.get('returnValue')}")
             return None
 
         nums = sorted([int(data[f"drwtNo{i}"]) for i in range(1, 7)])
@@ -112,9 +111,9 @@ def main():
         print(f"[INFO] {round_num}회차 재검증 중...")
         draw = fetch_round(round_num)
 
-        if draw == "PARSE_ERROR" or draw == "FETCH_ERROR":
-            raise RuntimeError(f"{round_num}회차 재검증 중 파싱/네트워크 오류")
-
+        if draw in ("PARSE_ERROR", "FETCH_ERROR", "HTML_BLOCKED"):
+        raise RuntimeError(f"{round_num}회차 재검증 중 차단/네트워크 오류")
+        
         if draw:
             old = history_map.get(round_num)
             if old != draw:
@@ -127,8 +126,8 @@ def main():
         print(f"[INFO] {check_round}회차 확인 중...")
         draw = fetch_round(check_round)
 
-        if draw == "PARSE_ERROR" or draw == "FETCH_ERROR":
-            raise RuntimeError(f"{check_round}회차 조회 중 파싱/네트워크 오류")
+        if draw in ("PARSE_ERROR", "FETCH_ERROR", "HTML_BLOCKED"):
+        raise RuntimeError(f"{check_round}회차 조회 중 차단/네트워크 오류")
 
         if draw is None:
             print(f"[INFO] {check_round}회차 없음 — 종료")
