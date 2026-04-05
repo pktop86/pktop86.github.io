@@ -5,11 +5,9 @@ permissions:
 
 on:
   schedule:
-    - cron: '15 12 * * 6'  # 토 21:15 KST
-    - cron: '25 12 * * 6'  # 토 21:25 KST
-    - cron: '45 12 * * 6'  # 토 21:45 KST
-    - cron: '0 13 * * 6'   # 토 22:00 KST
-    - cron: '55 14 * * 6'   # 토 23:55 KST
+    - cron: "45 11 * * 6"
+    - cron: "52 11 * * 6"
+    - cron: "5 12 * * 6"
   workflow_dispatch:
 
 jobs:
