@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Update_lotto.py — Naver 검색 전용
+Update_lotto.py — Naver 검색 전용 (회차 검증 포함)
 """
  
 import json, re, time, urllib.parse
@@ -22,7 +22,13 @@ def fetch_round(round_num):
         print(f"  [{round_num}] 요청 실패: {e}")
         return "ERROR"
  
-    # 패턴 1: JSON 임베드
+    # ★ 핵심: HTML에 해당 회차 번호가 실제로 있는지 먼저 확인
+    round_str = str(round_num)
+    if round_str + "회" not in html and round_str + "회차" not in html:
+        print(f"  [{round_num}] HTML에 {round_num}회 없음 → 추첨 전으로 판단")
+        return None  # 아직 추첨 안 된 회차
+ 
+    # 패턴 1: JSON 임베드 (drwtNo 필드)
     m = re.search(
         r'"drwtNo1"\s*:\s*(\d+).*?"drwtNo2"\s*:\s*(\d+).*?"drwtNo3"\s*:\s*(\d+)'
         r'.*?"drwtNo4"\s*:\s*(\d+).*?"drwtNo5"\s*:\s*(\d+).*?"drwtNo6"\s*:\s*(\d+)'
@@ -45,7 +51,7 @@ def fetch_round(round_num):
             print(f"  [{round_num}] 패턴2 성공: {nums} 보너스:{bonus}")
             return make(round_num, nums, bonus)
  
-    # 패턴 3: 텍스트 당첨번호 뒤 6개 숫자
+    # 패턴 3: 당첨번호 뒤 6개 숫자
     m = re.search(
         r'당첨번호[^0-9]*(\d{1,2})[^0-9]+(\d{1,2})[^0-9]+(\d{1,2})'
         r'[^0-9]+(\d{1,2})[^0-9]+(\d{1,2})[^0-9]+(\d{1,2})',
@@ -56,11 +62,6 @@ def fetch_round(round_num):
         if valid(nums):
             print(f"  [{round_num}] 패턴3 성공: {nums}")
             return make(round_num, nums, 0)
- 
-    # 해당 회차 없음 확인 (검색 결과 없음)
-    if f"{round_num}회" not in html and f"{round_num}회차" not in html:
-        print(f"  [{round_num}] 검색 결과에 회차 없음 → 추첨 전으로 판단")
-        return None
  
     print(f"  [{round_num}] 파싱 실패")
     return "ERROR"
